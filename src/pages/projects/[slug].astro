@@ -172,55 +172,52 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
         <span class="meta-item">{readingTime}</span>
       </div>
       <p class="outcome-summary">{outcomeSummary}</p>
+      <div class="tech-stack-badges">
+        {techStack.map((tech) => (
+          <span class="tech-badge">{tech}</span>
+        ))}
+      </div>
     </header>
 
-    <!-- Overview Section -->
-    <section class="case-study-section">
-      <h2>Overview</h2>
-      <p>{overview}</p>
-    </section>
+    <div class="two-col">
+      <section class="case-study-section">
+        <h2>Overview</h2>
+        <p>{overview}</p>
+      </section>
+      <section class="case-study-section">
+        <h2>Problem</h2>
+        <p>{problem}</p>
+      </section>
+    </div>
 
-    <!-- Problem Section -->
-    <section class="case-study-section">
-      <h2>Problem</h2>
-      <p>{problem}</p>
-    </section>
+    <div class="two-col">
+      <section class="case-study-section">
+        <h2>Approach</h2>
+        <p>{approach}</p>
+      </section>
+      <section class="case-study-section">
+        <h2>Constraints</h2>
+        <ul class="constraints-list">
+          {constraints.map((constraint) => (
+            <li>{constraint}</li>
+          ))}
+        </ul>
+      </section>
+    </div>
 
-    <!-- Constraints Section -->
-    <section class="case-study-section">
-      <h2>Constraints</h2>
-      <ul class="constraints-list">
-        {constraints.map((constraint) => (
-          <li>{constraint}</li>
-        ))}
-      </ul>
-    </section>
-
-    <!-- Approach Section -->
-    <section class="case-study-section">
-      <h2>Approach</h2>
-      <p>{approach}</p>
-    </section>
-
-    <!-- Key Decisions Section -->
     <section class="case-study-section">
       <h2>Key Decisions</h2>
       <div class="decisions-list">
         {keyDecisions.map((decision) => (
           <div class="decision-item">
             <h3 class="decision-title">{decision.decision}</h3>
-            <div class="decision-reasoning">
-              <strong>Reasoning:</strong>
-              <p>{decision.reasoning}</p>
-            </div>
+            <p class="decision-reasoning-text">{decision.reasoning}</p>
             {decision.alternatives && decision.alternatives.length > 0 && (
               <div class="decision-alternatives">
-                <strong>Alternatives considered:</strong>
-                <ul>
-                  {decision.alternatives.map((alt) => (
-                    <li>{alt}</li>
-                  ))}
-                </ul>
+                <span class="alt-label">Alternatives:</span>
+                {decision.alternatives.map((alt) => (
+                  <span class="alt-badge">{alt}</span>
+                ))}
               </div>
             )}
           </div>
@@ -228,37 +225,23 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
       </div>
     </section>
 
-    <!-- Tech Stack Section -->
-    <section class="case-study-section">
-      <h2>Tech Stack</h2>
-      <ul class="tech-stack-list">
-        {techStack.map((tech) => (
-          <li>{tech}</li>
-        ))}
-      </ul>
-    </section>
-
-    <!-- Result/Impact Section -->
-    <section class="case-study-section">
-      <h2>Result & Impact</h2>
-      
-      {/* Display metrics with visualization */}
-      {impact.metrics && impact.metrics.length > 0 && (
-        <ImpactMetrics metrics={impact.metrics} />
-      )}
-      
-      <p class="impact-qualitative">{impact.qualitative}</p>
-    </section>
-
-    <!-- Learnings Section -->
-    <section class="case-study-section">
-      <h2>Learnings</h2>
-      <ul class="learnings-list">
-        {learnings.map((learning) => (
-          <li>{learning}</li>
-        ))}
-      </ul>
-    </section>
+    <div class="two-col">
+      <section class="case-study-section">
+        <h2>Result & Impact</h2>
+        {impact.metrics && impact.metrics.length > 0 && (
+          <ImpactMetrics metrics={impact.metrics} />
+        )}
+        <p class="impact-qualitative">{impact.qualitative}</p>
+      </section>
+      <section class="case-study-section">
+        <h2>Learnings</h2>
+        <ul class="learnings-list">
+          {learnings.map((learning) => (
+            <li>{learning}</li>
+          ))}
+        </ul>
+      </section>
+    </div>
 
     <!-- Additional MDX Content (if any) -->
     {Content && (
@@ -285,8 +268,8 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
     }
 
     .case-study-header {
-      margin-bottom: 3rem;
-      padding-bottom: 2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
       border-bottom: 1px solid var(--color-border);
     }
 
@@ -320,8 +303,8 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
     }
 
     .case-study-header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
       font-weight: 700;
       letter-spacing: -0.02em;
       line-height: 1.2;
@@ -330,10 +313,11 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
     .case-study-meta {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      font-size: 0.9375rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.875rem;
       color: var(--color-text-secondary);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .meta-separator {
@@ -341,48 +325,70 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
     }
 
     .outcome-summary {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--color-text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .tech-stack-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.375rem;
+    }
+
+    .tech-badge {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.625rem;
+      border-radius: 3px;
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-muted);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .case-study-section {
+      margin-bottom: 1.75rem;
+    }
+
+    .case-study-section h2 {
       font-size: 1.125rem;
+      margin-bottom: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-text-muted);
+    }
+
+    .case-study-section p {
+      font-size: 0.9375rem;
       line-height: 1.6;
       color: var(--color-text-secondary);
     }
 
-    .case-study-section {
-      margin-bottom: 3rem;
-    }
-
-    .case-study-section h2 {
-      font-size: 1.75rem;
-      margin-bottom: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .case-study-section p {
-      font-size: 1.125rem;
-      line-height: 1.7;
-      color: var(--color-text-secondary);
-    }
-
     .constraints-list,
-    .tech-stack-list,
     .learnings-list {
       list-style: none;
       padding: 0;
+      margin: 0;
     }
 
     .constraints-list li,
-    .tech-stack-list li,
     .learnings-list li {
-      font-size: 1.0625rem;
-      line-height: 1.7;
-      padding: 0.5rem 0;
-      padding-left: 1.5rem;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      padding: 0.125rem 0;
+      padding-left: 1.25rem;
       position: relative;
       color: var(--color-text-secondary);
     }
 
     .constraints-list li::before,
-    .tech-stack-list li::before,
     .learnings-list li::before {
       content: "→";
       position: absolute;
@@ -393,102 +399,82 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
     .decisions-list {
       display: flex;
       flex-direction: column;
-      gap: 2rem;
+      gap: 0.75rem;
     }
 
     .decision-item {
-      padding: 1.5rem;
+      padding: 1rem 1.25rem;
       border: 1px solid var(--color-border);
-      border-radius: 8px;
+      border-radius: 6px;
       background: var(--color-bg-secondary);
     }
 
     .decision-title {
-      font-size: 1.25rem;
+      font-size: 1rem;
       font-weight: 600;
-      margin-bottom: 1rem;
+      margin-bottom: 0.375rem;
       color: var(--color-text);
     }
 
-    .decision-reasoning,
-    .decision-alternatives {
-      margin-top: 1rem;
-    }
-
-    .decision-reasoning strong,
-    .decision-alternatives strong {
-      display: block;
+    .decision-reasoning-text {
       font-size: 0.9375rem;
+      line-height: 1.5;
+      color: var(--color-text-secondary);
+    }
+
+    .decision-alternatives {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.375rem;
+      margin-top: 0.625rem;
+    }
+
+    .alt-label {
+      font-size: 0.75rem;
       color: var(--color-text-muted);
-      margin-bottom: 0.5rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
+      margin-right: 0.125rem;
     }
 
-    .decision-reasoning p {
-      font-size: 1.0625rem;
-      margin-top: 0.5rem;
+    .alt-badge {
+      font-size: 0.75rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 3px;
+      background: var(--color-accent-muted);
       color: var(--color-text-secondary);
-    }
-
-    .decision-alternatives ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 0.5rem;
-    }
-
-    .decision-alternatives li {
-      font-size: 1.0625rem;
-      line-height: 1.6;
-      padding: 0.25rem 0;
-      padding-left: 1.25rem;
-      position: relative;
-      color: var(--color-text-secondary);
-    }
-
-    .decision-alternatives li::before {
-      content: "•";
-      position: absolute;
-      left: 0;
-      color: var(--color-accent);
     }
 
     .impact-qualitative {
-      font-size: 1.125rem;
-      line-height: 1.7;
+      font-size: 0.9375rem;
+      line-height: 1.6;
       color: var(--color-text-secondary);
     }
 
     .case-study-content {
-      margin-top: 3rem;
-      font-size: 1.0625rem;
-      line-height: 1.7;
+      margin-top: 2rem;
+      font-size: 0.9375rem;
+      line-height: 1.6;
       color: var(--color-text-secondary);
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 640px) {
       .case-study {
         padding: 1.5rem 1rem;
       }
 
+      .two-col {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
       .case-study-header h1 {
-        font-size: 2rem;
-      }
-
-      .outcome-summary {
-        font-size: 1.125rem;
-      }
-
-      .case-study-section h2 {
-        font-size: 1.5rem;
-      }
-
-      .case-study-section p {
-        font-size: 1rem;
+        font-size: 1.75rem;
       }
 
       .decision-item {
-        padding: 1.25rem;
+        padding: 0.875rem 1rem;
       }
     }
   </style>
