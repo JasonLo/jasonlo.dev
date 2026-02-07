@@ -15,7 +15,7 @@ My portfolio: [JasonLo.dev](https://jasonlo.dev) based on [case-portfolio](https
 - [x] Color theme update: 000f08-1c3738-4d4847-f4fff8-8baaad
 - [ ] Improve favicon
 - [ ] Make content: Main page
-- [ ] Make content: Journey
+- [x] Make content: Journey
 - [ ] Make content: Projects
 - [ ] Make content: Uses
 - [ ] GHA deploy site

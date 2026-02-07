@@ -10,7 +10,6 @@
  * - journey: Career timeline entries
  * - publications: Blog posts and articles
  * - uses: Tools, stack, and environment documentation
- * - testimonials: Endorsements and recommendations
  * 
  * All collections use the glob loader to read MDX files from their respective directories.
  * Schemas enforce data structure and provide TypeScript types throughout the application.
@@ -221,46 +220,7 @@ const usesCollection = defineCollection({
   }),
 });
 
-/**
- * Testimonials Collection
- * 
- * Endorsements and recommendations from colleagues and clients.
- * 
- * Features:
- * - Person details (name, role, company)
- * - Relationship context
- * - Quote text
- * - Optional LinkedIn profile link
- * - Featured flag for homepage display
- */
-const testimonialsCollection = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content/testimonials' }),
-  schema: z.object({
-    /** Person's name */
-    name: z.string(),
-    
-    /** Person's role/title */
-    role: z.string(),
-    
-    /** Person's company */
-    company: z.string(),
-    
-    /** Relationship context (e.g., "Worked together at Company X") */
-    relationship: z.string(),
-    
-    /** Testimonial quote */
-    quote: z.string(),
-    
-    /** LinkedIn profile URL (optional) */
-    linkedin: z.string().url().optional(),
-    
-    /** Whether to feature on homepage */
-    featured: z.boolean().default(false),
-    
-    /** Date of the testimonial */
-    date: z.coerce.date(),
-  }),
-});
+
 
 /**
  * Export all collections
@@ -273,5 +233,4 @@ export const collections = {
   journey: journeyCollection,
   publications: publicationsCollection,
   uses: usesCollection,
-  testimonials: testimonialsCollection,
 };
