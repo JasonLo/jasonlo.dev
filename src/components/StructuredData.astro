@@ -49,7 +49,7 @@ function generateStructuredData(type: string, data: Record<string, any>) {
           '@type': 'SearchAction',
           target: {
             '@type': 'EntryPoint',
-            urlTemplate: `${siteURL}/writing?q={search_term_string}`,
+            urlTemplate: `${siteURL}/publications?q={search_term_string}`,
           },
           'query-input': 'required name=search_term_string',
         },

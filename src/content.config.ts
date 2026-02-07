@@ -8,9 +8,8 @@
  * - projects: Case studies with structured narrative format
  * - decisions: Architectural and technical decision records
  * - journey: Career timeline entries
- * - writing: Blog posts and articles
+ * - publications: Blog posts and articles
  * - uses: Tools, stack, and environment documentation
- * - speaking: Conference talks and presentations
  * - testimonials: Endorsements and recommendations
  * 
  * All collections use the glob loader to read MDX files from their respective directories.
@@ -105,57 +104,6 @@ const projectsCollection = defineCollection({
     /** Related project slugs for cross-referencing */
     relatedProjects: z.array(z.string()).optional(),
     
-    /** Related decision slugs for cross-referencing */
-    relatedDecisions: z.array(z.string()).optional(),
-  }),
-});
-
-/**
- * Decisions Collection
- * 
- * Architectural and technical decision records documenting the context,
- * decision made, alternatives considered, and reasoning.
- * 
- * Features:
- * - Context and decision documentation
- * - Alternatives with pros/cons analysis
- * - Reasoning explanation
- * - Optional tags for categorization
- * - Related project and decision slugs for cross-referencing
- */
-const decisionsCollection = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content/decisions' }),
-  schema: z.object({
-    /** Decision title */
-    title: z.string(),
-    
-    /** Date the decision was made */
-    date: z.coerce.date(),
-    
-    /** Context and background for the decision */
-    context: z.string(),
-    
-    /** The decision that was made */
-    decision: z.string(),
-    
-    /** Alternative options considered */
-    alternatives: z.array(z.object({
-      option: z.string(),
-      pros: z.array(z.string()).optional(),
-      cons: z.array(z.string()).optional(),
-    })),
-    
-    /** Reasoning behind the decision */
-    reasoning: z.string(),
-    
-    /** Optional tags for categorization */
-    tags: z.array(z.string()).optional(),
-    
-    /** Related project slugs for cross-referencing */
-    relatedProjects: z.array(z.string()).optional(),
-    
-    /** Related decision slugs for cross-referencing */
-    relatedDecisions: z.array(z.string()).optional(),
   }),
 });
 
@@ -191,17 +139,17 @@ const journeyCollection = defineCollection({
 });
 
 /**
- * Writing (Blog) Collection
- * 
+ * Publications Collection
+ *
  * Blog posts and technical articles with MDX support.
- * 
+ *
  * Features:
  * - Draft mode for unpublished content
  * - Publish and update dates
  * - Optional tags for categorization
  */
-const writingCollection = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content/writing' }),
+const publicationsCollection = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/publications' }),
   schema: z.object({
     /** Article title */
     title: z.string(),
@@ -248,59 +196,6 @@ const usesCollection = defineCollection({
     
     /** Sort order within category */
     order: z.number(),
-  }),
-});
-
-/**
- * Speaking/Talks Collection
- * 
- * Conference talks, meetup presentations, podcast appearances, and workshops.
- * 
- * Features:
- * - Five talk types (conference, meetup, podcast, workshop, webinar)
- * - Links to slides and video recordings
- * - Event information and location
- * - Optional topics and duration
- * - Featured flag for highlighting
- */
-const speakingCollection = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content/speaking' }),
-  schema: z.object({
-    /** Talk title */
-    title: z.string(),
-    
-    /** Talk description */
-    description: z.string(),
-    
-    /** Event name */
-    event: z.string(),
-    
-    /** Event website URL (optional) */
-    eventUrl: z.string().url().optional(),
-    
-    /** Date of the talk */
-    date: z.coerce.date(),
-    
-    /** Location (city, country, or "Online") */
-    location: z.string(),
-    
-    /** Type of speaking engagement */
-    type: z.enum(['conference', 'meetup', 'podcast', 'workshop', 'webinar']),
-    
-    /** Link to slides (optional) */
-    slides: z.string().url().optional(),
-    
-    /** Link to video recording (optional) */
-    video: z.string().url().optional(),
-    
-    /** Talk duration (e.g., "45 min", "1 hour") */
-    duration: z.string().optional(),
-    
-    /** Topics covered in the talk */
-    topics: z.array(z.string()).optional(),
-    
-    /** Whether to feature this talk */
-    featured: z.boolean().default(false),
   }),
 });
 
@@ -353,10 +248,8 @@ const testimonialsCollection = defineCollection({
  */
 export const collections = {
   projects: projectsCollection,
-  decisions: decisionsCollection,
   journey: journeyCollection,
-  writing: writingCollection,
+  publications: publicationsCollection,
   uses: usesCollection,
-  speaking: speakingCollection,
   testimonials: testimonialsCollection,
 };

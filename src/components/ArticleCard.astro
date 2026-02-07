@@ -27,7 +27,7 @@ interface Props {
   /** Article title (displayed as card heading) */
   title: string;
   
-  /** URL slug for the article (used to generate /writing/{slug} link) */
+  /** URL slug for the article (used to generate /publications/{slug} link) */
   slug: string;
   
   /** Brief description or excerpt of the article */
@@ -60,7 +60,7 @@ function formatDate(date: Date): string {
 }
 ---
 
-<BaseCard href={`/writing/${slug}`} class="article-card">
+<BaseCard href={`/publications/${slug}`} class="article-card">
   <Fragment slot="meta">{formatDate(publishDate)}</Fragment>
   <Fragment slot="title">{title}</Fragment>
   <Fragment slot="description">{description}</Fragment>

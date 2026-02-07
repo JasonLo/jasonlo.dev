@@ -31,10 +31,11 @@ const currentYear = new Date().getFullYear();
  * 
  * @returns Array of social link objects with platform name and URL
  */
+const displayNames: Record<string, string> = { orcid: 'ORCID' };
 const socialLinks = Object.entries(siteConfig.social)
   .filter(([_, url]) => url)
   .map(([platform, url]) => ({
-    platform: platform.charAt(0).toUpperCase() + platform.slice(1),
+    platform: displayNames[platform] ?? platform.charAt(0).toUpperCase() + platform.slice(1),
     url
   }));
 ---
@@ -45,6 +46,8 @@ const socialLinks = Object.entries(siteConfig.social)
     
     {socialLinks.length > 0 && (
       <div class="footer-social">
+        <a href={`mailto:${siteConfig.author.email}`}>Email</a>
+        <span class="separator">·</span>
         {socialLinks.map((link, index) => (
           <>
             <a href={link.url} target="_blank" rel="noopener noreferrer">

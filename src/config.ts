@@ -89,7 +89,7 @@ export const siteConfig = {
     bio: getEnv('SITE_AUTHOR_BIO', 'Engineering leader focused on solving complex technical challenges through thoughtful architecture and pragmatic trade-off analysis.'),
     
     /** Contact email address */
-    email: getEnv('SITE_AUTHOR_EMAIL', 'hello@example.com'),
+    email: getEnv('SITE_AUTHOR_EMAIL', 'lcmjlo@gmail.com'),
     
     /** Location (optional, empty string to hide) */
     location: getEnv('SITE_AUTHOR_LOCATION', ''),
@@ -116,6 +116,12 @@ export const siteConfig = {
     
     /** Bluesky profile URL */
     bluesky: getEnv('SOCIAL_BLUESKY', ''),
+
+    /** Google Scholar profile URL */
+    scholar: getEnv('SOCIAL_SCHOLAR', 'https://scholar.google.com/citations?hl=en&user=84y-HKEAAAAJ'),
+
+    /** ORCID profile URL */
+    orcid: getEnv('SOCIAL_ORCID', 'https://orcid.org/0000-0002-8428-1086'),
   },
   
   /**
@@ -126,12 +132,9 @@ export const siteConfig = {
    */
   nav: [
     { label: 'Projects', href: '/projects' },
-    { label: 'Decisions', href: '/decisions' },
     { label: 'Journey', href: '/journey' },
-    { label: 'Writing', href: '/writing' },
-    { label: 'Speaking', href: '/speaking' },
+    { label: 'Publications', href: '/publications' },
     { label: 'Uses', href: '/uses' },
-    { label: 'Contact', href: '/contact' },
   ],
 } as const;
 

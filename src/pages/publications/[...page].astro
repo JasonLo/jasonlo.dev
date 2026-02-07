@@ -4,7 +4,7 @@
  * 
  * Lists all published articles (excluding drafts) with pagination support. Displays
  * article cards with title, description, publish date, and tags. Uses a rest parameter
- * route to handle both the first page (/writing) and subsequent pages (/writing/2, etc.).
+ * route to handle both the first page (/publications) and subsequent pages (/publications/2, etc.).
  * 
  * Features:
  * - Filters out draft articles (only shows published content)
@@ -15,9 +15,9 @@
  * - Empty state handling
  * 
  * Routes:
- * - /writing (page 1)
- * - /writing/2 (page 2)
- * - /writing/3 (page 3)
+ * - /publications (page 1)
+ * - /publications/2 (page 2)
+ * - /publications/3 (page 3)
  * - etc.
  * 
  * @page
@@ -36,15 +36,15 @@ import type { GetStaticPaths } from 'astro';
  * Generates static paths for all paginated pages
  * 
  * Queries published articles (draft: false), sorts by date, and creates
- * pagination paths. Page 1 uses undefined param to match /writing route,
- * while subsequent pages use numeric params (/writing/2, /writing/3, etc.).
+ * pagination paths. Page 1 uses undefined param to match /publications route,
+ * while subsequent pages use numeric params (/publications/2, /publications/3, etc.).
  * 
  * @returns Array of path objects with params and props for each page
  */
 export const getStaticPaths: GetStaticPaths = async () => {
   const postsPerPage = 5;
   
-  const allArticles = await getCollection('writing', ({ data }) => {
+  const allArticles = await getCollection('publications', ({ data }) => {
     return data.draft === false;
   });
 
@@ -74,7 +74,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 interface Props {
   /** Articles for the current page */
-  articles: Awaited<ReturnType<typeof getCollection<'writing'>>>;
+  articles: Awaited<ReturnType<typeof getCollection<'publications'>>>;
   
   /** Current page number (1-indexed) */
   currentPage: number;
@@ -95,23 +95,23 @@ const postsPerPage = 5;
  * Page 1 shows the main title, subsequent pages include page number.
  */
 const pageTitle = currentPage === 1 
-  ? pagesConfig.writing.title
-  : `${pagesConfig.writing.title} - Page ${currentPage}`;
+  ? pagesConfig.publications.title
+  : `${pagesConfig.publications.title} - Page ${currentPage}`;
 ---
 
 <BaseLayout>
   <SEO 
     slot="head"
     title={pageTitle}
-    description={pagesConfig.writing.description}
+    description={pagesConfig.publications.description}
     type="website"
   />
 
   <main class="page-container">
     <header class="page-header">
-      <h1 class="page-title">{pagesConfig.writing.heading}</h1>
+      <h1 class="page-title">{pagesConfig.publications.heading}</h1>
       <p class="page-intro">
-        {pagesConfig.writing.intro}
+        {pagesConfig.publications.intro}
       </p>
       <PageStats text={totalPages > 1 
         ? `Showing ${(currentPage - 1) * postsPerPage + 1}–${Math.min(currentPage * postsPerPage, totalArticles)} of ${totalArticles} articles`
@@ -138,7 +138,7 @@ const pageTitle = currentPage === 1
     <Pagination 
       currentPage={currentPage} 
       totalPages={totalPages} 
-      baseUrl="/writing" 
+      baseUrl="/publications" 
     />
   </main>
 </BaseLayout>

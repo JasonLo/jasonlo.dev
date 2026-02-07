@@ -16,7 +16,7 @@
  * - Back navigation to articles list
  * - Responsive typography
  * 
- * Route: /writing/[slug]
+ * Route: /publications/[slug]
  * 
  * @page
  */
@@ -39,7 +39,7 @@ import { getReadingTime } from '../../utils/readingTime';
  * @returns Array of path objects with params
  */
 export async function getStaticPaths() {
-  const articles = await getCollection('writing', ({ data }) => {
+  const articles = await getCollection('publications', ({ data }) => {
     return data.draft === false;
   });
   return articles.map((article) => ({
@@ -54,7 +54,7 @@ const { slug } = Astro.params;
  * 
  * Redirects to 404 if the article is not found.
  */
-const article = await getEntry('writing', slug!);
+const article = await getEntry('publications', slug!);
 
 if (!article) {
   return Astro.redirect('/404');
@@ -104,7 +104,7 @@ function formatDate(date: Date): string {
 <BaseLayout>
   <SEO 
     slot="head"
-    title={`${title} - Writing`}
+    title={`${title} - Publications`}
     description={description}
     type="article"
     publishDate={publishDate}
@@ -159,7 +159,7 @@ function formatDate(date: Date): string {
       <Content />
     </article>
 
-    <BackLink href="/writing" text="All articles" />
+    <BackLink href="/publications" text="All articles" />
   </main>
 
   <ScrollToTop />
