@@ -132,8 +132,8 @@ export const siteConfig = {
    */
   nav: [
     { label: 'Projects', href: '/projects' },
-    { label: 'Journey', href: '/journey' },
     { label: 'Publications', href: '/publications' },
+    { label: 'Journey', href: '/journey' },
     { label: 'Uses', href: '/uses' },
   ],
 } as const;
