@@ -13,7 +13,7 @@ My portfolio: [JasonLo.dev](https://jasonlo.dev) based on [case-portfolio](https
 
 - [x] OpenAlex integrations
 - [x] Color theme update: 000f08-1c3738-4d4847-f4fff8-8baaad
-- [ ] Improve favicon
+- [x] Improve favicon
 - [ ] Make content: Main page
 - [x] Make content: Journey
 - [ ] Make content: Projects
