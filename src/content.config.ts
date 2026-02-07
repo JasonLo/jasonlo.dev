@@ -141,31 +141,44 @@ const journeyCollection = defineCollection({
 /**
  * Publications Collection
  *
- * Blog posts and technical articles with MDX support.
+ * Academic publications and research articles.
  *
  * Features:
- * - Draft mode for unpublished content
- * - Publish and update dates
- * - Optional tags for categorization
+ * - Author list and journal metadata
+ * - DOI links and open access URLs
+ * - Citation counts from OpenAlex
+ * - Tags for categorization
  */
 const publicationsCollection = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/publications' }),
   schema: z.object({
     /** Article title */
     title: z.string(),
-    
+
     /** Article description for SEO and previews */
     description: z.string(),
-    
+
+    /** List of authors in order */
+    authors: z.array(z.string()),
+
+    /** Journal or venue name */
+    journal: z.string(),
+
     /** Original publication date */
     publishDate: z.coerce.date(),
-    
-    /** Last updated date (optional) */
-    updatedDate: z.coerce.date().optional(),
-    
+
+    /** DOI URL */
+    doi: z.string().url().optional(),
+
+    /** Open access URL if available */
+    oaUrl: z.string().url().optional(),
+
+    /** Citation count */
+    citedByCount: z.number().default(0),
+
     /** Tags for categorization */
     tags: z.array(z.string()).optional(),
-    
+
     /** Whether the article is a draft (hidden from production) */
     draft: z.boolean().default(false),
   }),

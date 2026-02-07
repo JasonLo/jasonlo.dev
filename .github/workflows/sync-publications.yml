@@ -1,0 +1,37 @@
+name: Sync Publications from OpenAlex
+
+on:
+  schedule:
+    # Run weekly on Monday at 6:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Sync publications from OpenAlex
+        run: bun run scripts/sync-publications.ts
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet src/content/publications/ && echo "changed=false" >> $GITHUB_OUTPUT || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/content/publications/
+          git commit -m "chore: sync publications from OpenAlex"
+          git push

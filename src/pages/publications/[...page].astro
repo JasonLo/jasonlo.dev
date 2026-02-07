@@ -48,9 +48,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
     return data.draft === false;
   });
 
-  // Sort by publishDate (descending - most recent first)
+  // Sort by citation count (descending - most cited first)
   const sortedArticles = allArticles.sort((a, b) => {
-    return b.data.publishDate.getTime() - a.data.publishDate.getTime();
+    return b.data.citedByCount - a.data.citedByCount;
   });
 
   const totalPages = Math.ceil(sortedArticles.length / postsPerPage);
@@ -113,9 +113,9 @@ const pageTitle = currentPage === 1
       <p class="page-intro">
         {pagesConfig.publications.intro}
       </p>
-      <PageStats text={totalPages > 1 
-        ? `Showing ${(currentPage - 1) * postsPerPage + 1}–${Math.min(currentPage * postsPerPage, totalArticles)} of ${totalArticles} articles`
-        : `${totalArticles} articles`
+      <PageStats text={totalPages > 1
+        ? `Showing ${(currentPage - 1) * postsPerPage + 1}–${Math.min(currentPage * postsPerPage, totalArticles)} of ${totalArticles} publications`
+        : `${totalArticles} publications`
       } />
     </header>
 
@@ -125,9 +125,11 @@ const pageTitle = currentPage === 1
           <ArticleCard
             title={article.data.title}
             slug={article.id}
-            description={article.data.description}
+            authors={article.data.authors}
+            journal={article.data.journal}
             publishDate={article.data.publishDate}
-            tags={article.data.tags}
+            citedByCount={article.data.citedByCount}
+            doi={article.data.doi}
           />
         ))}
       </div>

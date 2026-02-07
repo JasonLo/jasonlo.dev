@@ -82,10 +82,10 @@ export const pagesConfig = {
    * Publications listing page (/publications)
    */
   publications: {
-    title: 'Publications - Technical Articles & Insights',
-    description: 'Technical articles, insights, and lessons learned from building software systems and solving engineering challenges.',
+    title: 'Publications - Academic Research',
+    description: 'Peer-reviewed research publications on reading development, literacy, morphological awareness, and educational psychology.',
     heading: 'Publications',
-    intro: 'Technical articles, insights, and lessons learned from building software systems. I write about architecture decisions, engineering practices, and the challenges of delivering reliable software at scale.',
+    intro: 'Peer-reviewed research publications sorted by citation count. Data sourced from OpenAlex.',
   },
 
   /**
