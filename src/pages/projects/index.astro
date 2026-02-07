@@ -1,74 +1,23 @@
 ---
-/**
- * Projects Index Page
- * 
- * Lists all projects as case studies with impact summaries. Projects are displayed
- * in a prioritized order: custom order (if specified) takes precedence, otherwise
- * sorted by year (most recent first). Featured projects are highlighted.
- * 
- * Features:
- * - Queries all projects from content collection
- * - Smart sorting: custom order → year (descending)
- * - Displays project and featured count statistics
- * - Uses ProjectCard component for consistent presentation
- * - SEO optimization
- * - Empty state handling
- * 
- * Route: /projects
- * 
- * @page
- */
-
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SEO from '../../components/SEO.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
 import PageStats from '../../components/PageStats.astro';
 import { getCollection } from 'astro:content';
 import { pagesConfig } from '../../pages.config';
 
-/**
- * Queries all projects from the content collection
- */
 const allProjects = await getCollection('projects', ({ data }) => {
   return data.draft !== true;
 });
 
-/**
- * Sorts projects with intelligent prioritization
- * 
- * Sorting logic:
- * 1. If both projects have an 'order' field, sort by order (ascending)
- * 2. Projects with 'order' field are prioritized over those without
- * 3. Projects without 'order' are sorted by year (descending - newest first)
- * 
- * This allows manual curation of featured projects while maintaining
- * chronological order for others.
- */
 const sortedProjects = allProjects.sort((a, b) => {
-  // If both have order field, sort by order
-  if (a.data.order !== undefined && b.data.order !== undefined) {
-    return a.data.order - b.data.order;
-  }
-  // If only one has order, prioritize it
-  if (a.data.order !== undefined) return -1;
-  if (b.data.order !== undefined) return 1;
-  // Otherwise sort by year (descending)
   return b.data.year - a.data.year;
 });
 
-/**
- * Total count of projects for statistics display
- */
-const totalProjects = sortedProjects.length;
-
-/**
- * Count of featured projects for statistics display
- */
-const featuredCount = sortedProjects.filter(p => p.data.featured).length;
+const displayTechMax = 3;
 ---
 
 <BaseLayout>
-  <SEO 
+  <SEO
     slot="head"
     title={pagesConfig.projects.title}
     description={pagesConfig.projects.description}
@@ -81,22 +30,56 @@ const featuredCount = sortedProjects.filter(p => p.data.featured).length;
       <p class="page-intro">
         {pagesConfig.projects.intro}
       </p>
-      <PageStats text={`${totalProjects} projects · ${featuredCount} featured`} />
+      <div class="page-controls">
+        <PageStats text={`${sortedProjects.length} projects`} />
+        <div class="sort-controls">
+          <span class="sort-label">Sort by</span>
+          <button class="sort-btn active" data-sort="recent">Recent</button>
+          <button class="sort-btn" data-sort="title">Title</button>
+        </div>
+      </div>
     </header>
 
     {sortedProjects.length > 0 ? (
-      <div class="card-list">
+      <div class="row-list" id="projects-list">
         {sortedProjects.map((project) => (
-          <ProjectCard
-            title={project.data.title}
-            slug={project.id}
-            outcomeSummary={project.data.outcomeSummary}
-            role={project.data.role}
-            year={project.data.year}
-            techStack={project.data.techStack}
-            featured={project.data.featured}
-            status={project.data.status}
-          />
+          <a
+            class="row-item"
+            href={`/projects/${project.id}`}
+            data-year={project.data.year}
+            data-title={project.data.title}
+          >
+            <div class="row-year">{project.data.year}</div>
+            <div class="row-body">
+              <div class="row-title-line">
+                <span class="row-title">{project.data.title}</span>
+                {project.data.featured && (
+                  <span class="row-featured">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                  </span>
+                )}
+              </div>
+              <span class="row-desc">{project.data.outcomeSummary}</span>
+              <div class="row-meta">
+                <span>{project.data.role}</span>
+                <div class="row-tech">
+                  {project.data.techStack.slice(0, displayTechMax).map((tech) => (
+                    <span class="tech-badge">{tech}</span>
+                  ))}
+                  {project.data.techStack.length > displayTechMax && (
+                    <span class="tech-badge tech-more">+{project.data.techStack.length - displayTechMax}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div class="row-arrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </a>
         ))}
       </div>
     ) : (
@@ -104,3 +87,63 @@ const featuredCount = sortedProjects.filter(p => p.data.featured).length;
     )}
   </main>
 </BaseLayout>
+
+<style>
+  .row-title-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .row-featured {
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .row-tech {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .tech-badge {
+    font-size: 0.6875rem;
+    padding: 0.0625rem 0.4375rem;
+    border-radius: 3px;
+    background: var(--color-accent-muted);
+    color: var(--color-text-secondary);
+  }
+
+  .tech-more {
+    color: var(--color-text-muted);
+  }
+</style>
+
+<script>
+  const list = document.getElementById('projects-list');
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.sort-btn');
+
+  function sortList(key: string) {
+    if (!list) return;
+    const items = [...list.querySelectorAll<HTMLElement>('.row-item')];
+
+    items.sort((a, b) => {
+      if (key === 'title') {
+        return (a.dataset.title ?? '').localeCompare(b.dataset.title ?? '');
+      }
+      // recent (default)
+      return Number(b.dataset.year) - Number(a.dataset.year);
+    });
+
+    for (const item of items) {
+      list.appendChild(item);
+    }
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      sortList(btn.dataset.sort ?? 'default');
+    });
+  });
+</script>

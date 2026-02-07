@@ -1,108 +1,28 @@
 ---
-/**
- * Writing Index Page with Pagination
- * 
- * Lists all published articles (excluding drafts) with pagination support. Displays
- * article cards with title, description, publish date, and tags. Uses a rest parameter
- * route to handle both the first page (/publications) and subsequent pages (/publications/2, etc.).
- * 
- * Features:
- * - Filters out draft articles (only shows published content)
- * - Sorts by publish date (descending - newest first)
- * - Pagination with 5 articles per page
- * - Dynamic page statistics showing current range
- * - SEO optimization per page
- * - Empty state handling
- * 
- * Routes:
- * - /publications (page 1)
- * - /publications/2 (page 2)
- * - /publications/3 (page 3)
- * - etc.
- * 
- * @page
- */
-
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SEO from '../../components/SEO.astro';
-import Pagination from '../../components/Pagination.astro';
-import ArticleCard from '../../components/ArticleCard.astro';
 import PageStats from '../../components/PageStats.astro';
 import { getCollection } from 'astro:content';
 import { pagesConfig } from '../../pages.config';
 import type { GetStaticPaths } from 'astro';
 
-/**
- * Generates static paths for all paginated pages
- * 
- * Queries published articles (draft: false), sorts by date, and creates
- * pagination paths. Page 1 uses undefined param to match /publications route,
- * while subsequent pages use numeric params (/publications/2, /publications/3, etc.).
- * 
- * @returns Array of path objects with params and props for each page
- */
 export const getStaticPaths: GetStaticPaths = async () => {
-  const postsPerPage = 5;
-  
-  const allArticles = await getCollection('publications', ({ data }) => {
-    return data.draft === false;
-  });
-
-  // Sort by citation count (descending - most cited first)
-  const sortedArticles = allArticles.sort((a, b) => {
-    return b.data.citedByCount - a.data.citedByCount;
-  });
-
-  const totalPages = Math.ceil(sortedArticles.length / postsPerPage);
-
-  return Array.from({ length: totalPages }, (_, i) => {
-    const page = i + 1;
-    const start = i * postsPerPage;
-    const end = start + postsPerPage;
-    
-    return {
-      params: { page: page === 1 ? undefined : String(page) },
-      props: {
-        articles: sortedArticles.slice(start, end),
-        currentPage: page,
-        totalPages,
-        totalArticles: sortedArticles.length,
-      },
-    };
-  });
+  return [{ params: { page: undefined } }];
 };
 
-interface Props {
-  /** Articles for the current page */
-  articles: Awaited<ReturnType<typeof getCollection<'publications'>>>;
-  
-  /** Current page number (1-indexed) */
-  currentPage: number;
-  
-  /** Total number of pages */
-  totalPages: number;
-  
-  /** Total count of all published articles */
-  totalArticles: number;
-}
+const allArticles = await getCollection('publications', ({ data }) => {
+  return data.draft === false;
+});
 
-const { articles, currentPage, totalPages, totalArticles } = Astro.props;
-const postsPerPage = 5;
-
-/**
- * Generates page title based on current page number
- * 
- * Page 1 shows the main title, subsequent pages include page number.
- */
-const pageTitle = currentPage === 1 
-  ? pagesConfig.publications.title
-  : `${pagesConfig.publications.title} - Page ${currentPage}`;
+const sortedArticles = allArticles.sort((a, b) => {
+  return b.data.publishDate.getTime() - a.data.publishDate.getTime();
+});
 ---
 
 <BaseLayout>
-  <SEO 
+  <SEO
     slot="head"
-    title={pageTitle}
+    title={pagesConfig.publications.title}
     description={pagesConfig.publications.description}
     type="website"
   />
@@ -113,34 +33,95 @@ const pageTitle = currentPage === 1
       <p class="page-intro">
         {pagesConfig.publications.intro}
       </p>
-      <PageStats text={totalPages > 1
-        ? `Showing ${(currentPage - 1) * postsPerPage + 1}–${Math.min(currentPage * postsPerPage, totalArticles)} of ${totalArticles} publications`
-        : `${totalArticles} publications`
-      } />
+      <div class="page-controls">
+        <PageStats text={`${sortedArticles.length} publications`} />
+        <div class="sort-controls">
+          <span class="sort-label">Sort by</span>
+          <button class="sort-btn active" data-sort="recent">Recent</button>
+          <button class="sort-btn" data-sort="citations">Citations</button>
+          <button class="sort-btn" data-sort="title">Title</button>
+        </div>
+      </div>
     </header>
 
-    {articles.length > 0 ? (
-      <div class="card-list">
-        {articles.map((article) => (
-          <ArticleCard
-            title={article.data.title}
-            slug={article.id}
-            authors={article.data.authors}
-            journal={article.data.journal}
-            publishDate={article.data.publishDate}
-            citedByCount={article.data.citedByCount}
-            doi={article.data.doi}
-          />
-        ))}
+    {sortedArticles.length > 0 ? (
+      <div class="row-list" id="publications-list">
+        {sortedArticles.map((article) => {
+          const year = article.data.publishDate.getFullYear();
+          const href = article.data.doi || `/publications/${article.id}`;
+          return (
+            <a
+              class="row-item"
+              href={href}
+              data-date={article.data.publishDate.getTime()}
+              data-citations={article.data.citedByCount}
+              data-title={article.data.title}
+            >
+              <div class="row-year">{year}</div>
+              <div class="row-body">
+                <span class="row-title">{article.data.title}</span>
+                <span class="row-desc">{article.data.authors.join(', ')}</span>
+                <div class="row-meta">
+                  <span>{article.data.journal}</span>
+                  {article.data.citedByCount > 0 && (
+                    <span class="pub-citations">{article.data.citedByCount} citations</span>
+                  )}
+                </div>
+              </div>
+              <div class="row-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </div>
+            </a>
+          );
+        })}
       </div>
     ) : (
       <p class="empty-state">No articles published yet.</p>
     )}
-
-    <Pagination 
-      currentPage={currentPage} 
-      totalPages={totalPages} 
-      baseUrl="/publications" 
-    />
   </main>
 </BaseLayout>
+
+<style>
+  .pub-citations {
+    padding: 0.0625rem 0.4375rem;
+    border-radius: 3px;
+    background: var(--color-accent-muted);
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+
+<script>
+  const list = document.getElementById('publications-list');
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.sort-btn');
+
+  function sortList(key: string) {
+    if (!list) return;
+    const items = [...list.querySelectorAll<HTMLElement>('.row-item')];
+
+    items.sort((a, b) => {
+      if (key === 'recent') {
+        return Number(b.dataset.date) - Number(a.dataset.date);
+      }
+      if (key === 'citations') {
+        return Number(b.dataset.citations) - Number(a.dataset.citations);
+      }
+      return (a.dataset.title ?? '').localeCompare(b.dataset.title ?? '');
+    });
+
+    for (const item of items) {
+      list.appendChild(item);
+    }
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      sortList(btn.dataset.sort ?? 'recent');
+    });
+  });
+</script>

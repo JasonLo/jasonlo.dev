@@ -62,10 +62,10 @@ export const pagesConfig = {
    * Projects listing page (/projects)
    */
   projects: {
-    title: 'Projects - Case Studies',
-    description: 'Detailed case studies showcasing problem-solving approach, technical decisions, and measurable impact across various engineering projects.',
+    title: 'Projects',
+    description: 'Detailed projects showcasing problem-solving approach, technical decisions, and measurable impact.',
     heading: 'Projects',
-    intro: 'Case studies that demonstrate how I approach complex problems, make technical decisions, and deliver measurable impact. Each project tells the story of the challenge, the constraints, the decisions made, and the outcomes achieved.',
+    intro: 'Projects that demonstrate how I approach complex problems, make technical decisions, and deliver measurable impact. Each project tells the story of the challenge, the constraints, the decisions made, and the outcomes achieved.',
   },
   
   /**
