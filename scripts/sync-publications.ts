@@ -8,7 +8,9 @@
  */
 
 const AUTHOR_ID = "a5021047469";
-const API_URL = `https://api.openalex.org/works?filter=authorships.author.id:${AUTHOR_ID}&sort=cited_by_count:desc&per_page=200&mailto=ui@openalex.org`;
+const API_KEY = process.env.OPENALEX_API_KEY;
+// The mailto is still recommended even with an API key for identification
+const API_URL = `https://api.openalex.org/works?filter=authorships.author.id:${AUTHOR_ID}&sort=cited_by_count:desc&per_page=200&api_key=${API_KEY}`;
 const OUTPUT_DIR = "src/content/publications";
 
 interface OpenAlexWork {
@@ -62,7 +64,6 @@ function generateMdx(work: OpenAlexWork): string {
   const oaUrl = work.open_access.oa_url;
   const citedByCount = work.cited_by_count;
 
-  // Use top 3 topics as tags
   const tags = work.topics
     .slice(0, 3)
     .map((t) => t.display_name.toLowerCase());
@@ -99,8 +100,9 @@ async function main() {
   console.log("Fetching publications from OpenAlex...");
 
   const response = await fetch(API_URL);
+
   if (!response.ok) {
-    throw new Error(`OpenAlex API error: ${response.status}`);
+    throw new Error(`OpenAlex API error: ${response.status} ${response.statusText}`);
   }
 
   const data: OpenAlexResponse = await response.json();
@@ -108,8 +110,7 @@ async function main() {
 
   console.log(`Found ${works.length} publications`);
 
-  // Read existing files to detect changes
-  const { readdir, readFile, writeFile, mkdir } = await import("fs/promises");
+  const { readdir, readFile, writeFile, mkdir, unlink } = await import("fs/promises");
   const { join } = await import("path");
 
   await mkdir(OUTPUT_DIR, { recursive: true });
@@ -144,8 +145,6 @@ async function main() {
     }
   }
 
-  // Remove files that no longer exist in OpenAlex
-  const { unlink } = await import("fs/promises");
   for (const orphan of existingFiles) {
     if (orphan.endsWith(".mdx")) {
       await unlink(join(OUTPUT_DIR, orphan));
