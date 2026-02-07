@@ -7,6 +7,7 @@ const projectsCollection = defineCollection({
     title: z.string(),
     role: z.string(),
     year: z.number(),
+    link: z.string().url().optional(),
     duration: z.string().optional(),
     teamSize: z.number().optional(),
     outcomeSummary: z.string(),
@@ -31,7 +32,6 @@ const projectsCollection = defineCollection({
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),
     status: z.enum(['completed', 'ongoing', 'archived']).default('completed'),
-    order: z.number().optional(),
     relatedProjects: z.array(z.string()).optional(),
   }),
 });

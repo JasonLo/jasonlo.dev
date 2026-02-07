@@ -1,0 +1,51 @@
+---
+title: "Personal Portfolio: jasonlo.dev"
+role: "Designer & Vibe Coder"
+year: 2026
+link: https://jasonlo.dev
+outcomeSummary: "Rebuilt my personal portfolio with a focus on engineering clarity and thoughtful design."
+overview: "A personal portfolio built around project narratives — documenting decisions, trade-offs, and outcomes."
+problem: "Most portfolios emphasize visual polish but rarely explain the reasoning, constraints, and trade-offs behind technical decisions."
+constraints:
+  - "Fast static site with zero client-side JavaScript by default"
+  - "Simple, Markdown-based content workflow"
+approach: "Built with Astro SSG and MDX content collections, structured as case studies following a problem → decisions → impact narrative."
+keyDecisions:
+  - decision: "OpenAlex integration"
+    reasoning: "Automatically sync publications using a reliable API with a permissive CC0 license."
+    alternatives:
+      - "arXiv"
+      - "ORCID"
+      - "Google Scholar"
+  - decision: "Case-study narrative structure"
+    reasoning: "A problem → decisions → impact format communicates engineering thinking more effectively than a gallery of screenshots."
+  - decision: "Astro"
+    reasoning: "Modern static-first architecture with zero JavaScript by default. Fast, maintainable, and visually polished."
+    alternatives:
+      - "Next.js"
+      - "Gatsby"
+      - "Hugo"
+      - "Jekyll"
+  - decision: "MDX content collections with Zod schemas"
+    reasoning: "Type-safe frontmatter validation catches errors at build time and enforces consistency across content types."
+    alternatives:
+      - "Markdown with manual validation"
+      - "CMS-backed content"
+techStack:
+  - "Claude Code"
+  - "Bun"
+  - "Astro"
+  - "MDX"
+  - "TypeScript"
+  - "GitHub Actions"
+impact:
+  metrics:
+    - label: "Build Time"
+      value: "<1s"
+  qualitative: "A reflection on my personal growth."
+learnings:
+  - "AI-assisted development can significantly accelerate frontend implementation."
+  - "Documenting personal growth is more rewarding than expected."
+featured: false
+status: ongoing
+---

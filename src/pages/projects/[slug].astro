@@ -79,6 +79,7 @@ const {
   title,
   role,
   year,
+  link,
   duration,
   teamSize,
   outcomeSummary,
@@ -170,6 +171,14 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
         )}
         <span class="meta-separator">·</span>
         <span class="meta-item">{readingTime}</span>
+        {link && (
+          <>
+            <span class="meta-separator">·</span>
+            <a href={link} class="project-link" target="_blank" rel="noopener noreferrer">
+              {new URL(link).hostname.replace('www.', '')} ↗
+            </a>
+          </>
+        )}
       </div>
       <p class="outcome-summary">{outcomeSummary}</p>
       <div class="tech-stack-badges">
@@ -444,6 +453,21 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
       border-radius: 3px;
       background: var(--color-accent-muted);
       color: var(--color-text-secondary);
+    }
+
+    .project-link {
+      display: inline;
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 0.125rem;
+      transition: all var(--transition-base);
+    }
+
+    .project-link:hover {
+      color: var(--color-accent-hover);
+      border-bottom-color: var(--color-accent-hover);
     }
 
     .impact-qualitative {

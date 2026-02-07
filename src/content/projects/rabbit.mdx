@@ -1,0 +1,36 @@
+---
+title: "Expert Discovery Platform: RABBIT"
+role: "Tech Lead"
+year: 2024
+link: https://rabbit.obe.wisc.edu
+outcomeSummary: "Led the development of an AI-powered semantic search platform that helps UW–Madison researchers, industry partners, and campus collaborators discover faculty expertise."
+overview: "RABBIT (Research and Business-Bridging Intelligence Tool) replaces keyword-based faculty search with semantic matching, enabling more accurate and comprehensive discovery of expertise across UW–Madison."
+problem: "At a large research institution, identifying faculty expertise often relied on manual Google searches and individual profile pages—an approach that was inefficient, incomplete, and limited in surfacing multidisciplinary connections."
+constraints:
+  - "Integrate with existing faculty data across multiple internal and external systems"
+  - "Restrict access to faculty, staff, and WARF employees via NetID authentication"
+  - "Surface relevant, contextual information to support rapid research-to-expert matching"
+approach: "Designed and implemented a semantic search system that matches user queries to faculty scholarship. Results are re-ranked based on multiple signals—including relevance, recency, and research impact—to provide more meaningful recommendations."
+keyDecisions:
+  - decision: "Custom-built platform instead of off-the-shelf marketplace solutions"
+    reasoning: "Commercial tools did not support the institution’s specific data sources, authentication model, and semantic matching requirements."
+    alternatives:
+      - "Commercial expertise marketplace platforms"
+  - decision: "Semantic search over keyword matching"
+    reasoning: "Grant proposals and industry challenges are written in natural language. Keyword search often misses relevant faculty using different terminology to describe similar concepts."
+techStack:
+  - "Milvus"
+  - "Academic Analytics"
+  - "Oracle DB"
+  - "OpenAlex"
+  - "Crossref"
+  - "Docker"
+  - "SSO (NetID)"
+impact:
+  qualitative: "Accelerates faculty discovery for industry partnerships and federal grant applications, particularly those requiring interdisciplinary and cross-sector collaboration."
+learnings:
+  - "Close collaboration between technical teams and business engagement stakeholders is critical to building tools that see sustained adoption."
+  - "There is significant demand for structured, institution-wide expert discovery in academia."
+featured: true
+status: completed
+---
