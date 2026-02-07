@@ -32,7 +32,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SEO from '../components/SEO.astro';
 import StructuredData from '../components/StructuredData.astro';
-import ForwardLink from '../components/ForwardLink.astro';
 import { getCollection } from 'astro:content';
 import { siteConfig } from '../config';
 
@@ -90,7 +89,7 @@ const caseSnapshots = featuredProjects.slice(0, 3);
             {siteConfig.author.name} · {siteConfig.author.title}
           </p>
           <div class="hero-cta">
-            <a href="/projects" class="btn-primary">Explore Projects</a>
+            <a href="/journey" class="btn-primary">Explore My Journey</a>
             <a href="/publications" class="btn-secondary">Read My Publications</a>
           </div>
         </div>
@@ -118,7 +117,6 @@ const caseSnapshots = featuredProjects.slice(0, 3);
       <p>
         Every major decision is documented—because great engineers don't just build things, they explain why.
       </p>
-      <ForwardLink href="/journey" text="Read my journey" variant="muted" />
     </section>
 
     <!-- What I Think About -->
@@ -136,7 +134,7 @@ const caseSnapshots = featuredProjects.slice(0, 3);
         Looking for technical leadership, architectural guidance, or someone who documents their thinking? Let's talk.
       </p>
       <div class="cta-buttons">
-        <a href="/projects" class="btn-primary">View My Work</a>
+        <a href="/projects" class="btn-primary">Explore My Projects</a>
         <a href={`mailto:${siteConfig.author.email}`} class="btn-secondary">Get in Touch</a>
       </div>
     </section>
@@ -146,19 +144,19 @@ const caseSnapshots = featuredProjects.slice(0, 3);
     .home-page {
       max-width: 1100px;
       margin: 0 auto;
-      padding: 0 1.5rem 4rem;
+      padding: 0 1.5rem 3.5rem;
     }
 
     .hero {
-      padding: 4rem 0 5rem;
+      padding: 3.5rem 0 4rem;
       border-bottom: 1px solid var(--color-border);
-      margin-bottom: 4rem;
+      margin-bottom: 3.5rem;
     }
 
     .hero-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 4rem;
+      gap: 3.5rem;
       align-items: start;
     }
 
@@ -284,9 +282,9 @@ const caseSnapshots = featuredProjects.slice(0, 3);
 
     .introduction {
       max-width: 600px;
-      margin-bottom: 5rem;
+      margin-bottom: 4rem;
       font-size: 1.125rem;
-      line-height: 1.7;
+      line-height: 1.6;
       color: var(--color-text-secondary);
     }
 
@@ -299,7 +297,7 @@ const caseSnapshots = featuredProjects.slice(0, 3);
     }
 
     .thinking {
-      margin-bottom: 5rem;
+      margin-bottom: 4rem;
     }
 
     .thinking h2 {
@@ -311,7 +309,7 @@ const caseSnapshots = featuredProjects.slice(0, 3);
 
     .thinking-list {
       font-size: 1.0625rem;
-      line-height: 1.9;
+      line-height: 1.75;
       color: var(--color-text-secondary);
       max-width: 680px;
     }
