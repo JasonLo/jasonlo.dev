@@ -1,0 +1,34 @@
+---
+title: "Code Template 2026"
+draft: false
+role: "Personal"
+year: 2026
+outcomeSummary: "Updated my personal code template for 2026"
+overview: "Setting up a new project often involves repetitive boilerplate. AI can help, but it rarely matches your preferences perfectly. This template uses a tried-and-true approach to save hours—or even days—of setup time."
+problem: "Technologies evolve quickly, requiring adaptation to new stacks while phasing out less-used tools."
+constraints:
+  - "Portable: works across different environments."
+  - "High performance"
+  - "Open source"
+approach: "Consolidated lessons from the past year into a reusable, flexible template."
+keyDecisions:
+  - decision: "Move away from .devcontainer"
+    reasoning: "Not all servers support it well, startup times are slow, and it's too heavy for most of my current projects."
+    alternatives:
+      - "uv"
+      - "pixi"
+      - "venv"
+  - decision: "Adopt uv"
+    reasoning: "Most projects are pure Python, and uv is optimized for that workflow."
+techStack:
+  - "cookiecutter"
+  - "uv"
+  - "docker"
+  - "GitHub Actions"
+learnings:
+  - "Traffic splitting is crucial for safe migrations at scale."
+  - "Investing in observability before migrations pays immediate dividends."
+  - "A plugin-based architecture simplifies adding new capabilities."
+featured: false
+order: 3
+---
