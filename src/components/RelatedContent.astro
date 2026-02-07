@@ -31,7 +31,9 @@ const {
 } = Astro.props;
 
 // Fetch all collections once
-const allProjects = await getCollection('projects');
+const allProjects = await getCollection('projects', ({ data }) => {
+  return data.draft !== true;
+});
 
 // Filter to get related items
 const projects = relatedProjects

@@ -94,6 +94,9 @@ const projectsCollection = defineCollection({
     
     /** Whether to feature on homepage */
     featured: z.boolean().default(false),
+
+    /** Whether the project is a draft (hidden from production) */
+    draft: z.boolean().default(false),
     
     /** Project status */
     status: z.enum(['completed', 'ongoing', 'archived']).default('completed'),
@@ -135,6 +138,9 @@ const journeyCollection = defineCollection({
     
     /** Skills or technologies associated with this entry */
     skills: z.array(z.string()).optional(),
+
+    /** Whether the entry is a draft (hidden from production) */
+    draft: z.boolean().default(false),
   }),
 });
 
@@ -206,6 +212,9 @@ const usesCollection = defineCollection({
       description: z.string(),
       url: z.string().url().optional(),
     })),
+
+    /** Whether the entry is a draft (hidden from production) */
+    draft: z.boolean().default(false),
     
     /** Sort order within category */
     order: z.number(),

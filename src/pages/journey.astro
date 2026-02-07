@@ -34,7 +34,9 @@ import { pagesConfig } from '../pages.config';
 /**
  * Queries all journey entries from the content collection
  */
-const allJourneyEntries = await getCollection('journey');
+const allJourneyEntries = await getCollection('journey', ({ data }) => {
+  return data.draft !== true;
+});
 
 /**
  * Sorts journey entries by date in descending order (most recent first)

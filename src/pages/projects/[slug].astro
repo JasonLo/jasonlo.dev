@@ -51,7 +51,9 @@ import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime
  * @returns Array of path objects with params
  */
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
+  const projects = await getCollection('projects', ({ data }) => {
+    return data.draft !== true;
+  });
   return projects.map((project) => ({
     params: { slug: project.id },
   }));

@@ -29,7 +29,9 @@ import { pagesConfig } from '../../pages.config';
 /**
  * Queries all projects from the content collection
  */
-const allProjects = await getCollection('projects');
+const allProjects = await getCollection('projects', ({ data }) => {
+  return data.draft !== true;
+});
 
 /**
  * Sorts projects with intelligent prioritization
