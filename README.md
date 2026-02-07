@@ -14,8 +14,8 @@ My portfolio: [JasonLo.dev](https://jasonlo.dev) based on [case-portfolio](https
 - [x] OpenAlex integrations
 - [x] Color theme update: 000f08-1c3738-4d4847-f4fff8-8baaad
 - [x] Improve favicon
-- [ ] Make content: Main page
+- [x] Make content: Main page
 - [x] Make content: Journey
-- [ ] Make content: Projects
+- [x] Make content: Projects
 - [ ] Make content: Uses
 - [x] GHA deploy site
