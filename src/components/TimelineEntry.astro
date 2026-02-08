@@ -176,7 +176,7 @@ const entryId = `journey-${date.getTime()}`;
     width: 1rem;
     height: 1rem;
     border-radius: 50%;
-    background: var(--color-accent);
+    background: var(--color-type-milestone);
     border: 3px solid var(--color-bg);
     position: relative;
     z-index: 2;
@@ -184,15 +184,15 @@ const entryId = `journey-${date.getTime()}`;
   }
 
   .timeline-dot[data-type="milestone"] {
-    background: var(--color-accent);
+    background: var(--color-type-milestone);
   }
 
   .timeline-dot[data-type="learning"] {
-    background: #10b981;
+    background: var(--color-type-learning);
   }
 
   .timeline-dot[data-type="transition"] {
-    background: #f59e0b;
+    background: var(--color-type-transition);
   }
 
   .timeline-line {
@@ -231,18 +231,18 @@ const entryId = `journey-${date.getTime()}`;
   }
 
   .timeline-type[data-type="milestone"] {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
+    color: var(--color-type-milestone);
+    border-color: var(--color-type-milestone);
   }
 
   .timeline-type[data-type="learning"] {
-    color: #10b981;
-    border-color: #10b981;
+    color: var(--color-type-learning);
+    border-color: var(--color-type-learning);
   }
 
   .timeline-type[data-type="transition"] {
-    color: #f59e0b;
-    border-color: #f59e0b;
+    color: var(--color-type-transition);
+    border-color: var(--color-type-transition);
   }
 
   .timeline-title {
