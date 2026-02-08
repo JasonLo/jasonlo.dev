@@ -166,9 +166,6 @@
   font-size: 0.9375rem;
   color: var(--color-text-secondary);
   line-height: 1.5;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .row-meta {
