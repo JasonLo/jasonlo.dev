@@ -1,0 +1,98 @@
+---
+/**
+ * ArrowLink Component
+ *
+ * Displays a link or text with an arrow icon. Supports two icon types:
+ * - "forward" (default): right-pointing arrow for internal navigation
+ * - "external": 45-degree arrow for outbound links
+ *
+ * Renders as <a> when href is provided, <span> otherwise (for use inside clickable cards).
+ *
+ * @component
+ *
+ * @example
+ * ```astro
+ * <ArrowLink text="View project" href="/projects/foo" />
+ * <ArrowLink text="Visit site" href="https://..." icon="external" />
+ * <a href="/article"><ArrowLink text="Read more" /></a>
+ * ```
+ */
+
+interface Props {
+  /** Text displayed next to the arrow icon */
+  text: string;
+
+  /** Optional URL - if provided, renders as <a>, otherwise renders as <span> */
+  href?: string;
+
+  /** Arrow direction: "forward" for right arrow, "external" for 45-degree arrow */
+  icon?: 'forward' | 'external';
+
+  /** Color variant (default: 'accent') */
+  variant?: 'accent' | 'muted';
+
+  /** Additional CSS classes to apply */
+  class?: string;
+}
+
+const { text, href, icon = 'forward', variant = 'accent', class: className } = Astro.props;
+const Tag = href ? 'a' : 'span';
+---
+
+<Tag
+  href={href}
+  class:list={['arrow-link', `arrow-link--${variant}`, `arrow-link--${icon}`, className]}
+>
+  {text}
+  {icon === 'forward' ? (
+    <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15.7071 5.29289C15.3166 4.90237 14.6834 4.90237 14.2929 5.29289C13.9024 5.68342 13.9024 6.31658 14.2929 6.70711L18.5858 11L3 11C2.44772 11 2 11.4477 2 12C2 12.5523 2.44772 13 3 13L18.5858 13L14.2929 17.2929C13.9024 17.6834 13.9024 18.3166 14.2929 18.7071C14.6834 19.0976 15.3166 19.0976 15.7071 18.7071L21.7071 12.7071C22.0976 12.3166 22.0976 11.6834 21.7071 11.2929L15.7071 5.29289Z"/>
+    </svg>
+  ) : (
+    <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5.63604 18.364C5.24552 17.9734 5.24552 17.3403 5.63604 16.9497L16.2426 6.34315L9 6.34315C8.44772 6.34315 8 5.89543 8 5.34315C8 4.79086 8.44772 4.34315 9 4.34315L18.6569 4.34315C19.2091 4.34315 19.6569 4.79086 19.6569 5.34315V15C19.6569 15.5523 19.2091 16 18.6569 16C18.1046 16 17.6569 15.5523 17.6569 15L17.6569 7.75736L7.05025 18.364C6.65973 18.7545 6.02656 18.7545 5.63604 18.364Z"/>
+    </svg>
+  )}
+</Tag>
+
+<style>
+  .arrow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease, opacity 0.2s ease;
+  }
+
+  .arrow-link--accent {
+    color: var(--color-accent);
+  }
+
+  .arrow-link--muted {
+    color: var(--color-text-muted);
+  }
+
+  .arrow-link--muted:hover {
+    color: var(--color-text);
+  }
+
+  .arrow-icon {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+  }
+
+  .arrow-link--forward:hover .arrow-icon,
+  :global(.card:hover) .arrow-link--forward .arrow-icon,
+  :global(a:hover) .arrow-link--forward .arrow-icon {
+    transform: translateX(3px);
+  }
+
+  .arrow-link--external:hover .arrow-icon,
+  :global(.card:hover) .arrow-link--external .arrow-icon,
+  :global(a:hover) .arrow-link--external .arrow-icon {
+    transform: translate(2px, -2px);
+  }
+</style>

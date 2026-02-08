@@ -1,5 +1,6 @@
 ---
 import ListLayout from '../../components/ListLayout.astro';
+import ArrowLink from '../../components/ArrowLink.astro';
 import { getCollection } from 'astro:content';
 import { pagesConfig } from '../../pages.config';
 import type { GetStaticPaths } from 'astro';
@@ -35,14 +36,14 @@ const sortedArticles = [...allArticles].sort(
 >
   {sortedArticles.map((article) => {
     const year = article.data.publishDate.getFullYear();
-    const href = article.data.doi || `/publications/${article.id}`;
+    const RowTag = article.data.doi ? 'a' : 'div';
     return (
-      <a
+      <RowTag
         class="row-item"
-        href={href}
         data-sort-recent={article.data.publishDate.getTime()}
         data-sort-citations={article.data.citedByCount}
         data-sort-title={article.data.title.toLowerCase()}
+        {...(article.data.doi && { href: article.data.doi, target: '_blank', rel: 'noopener noreferrer' })}
       >
         <div class="row-year">{year}</div>
         <div class="row-body">
@@ -55,14 +56,12 @@ const sortedArticles = [...allArticles].sort(
             )}
           </div>
         </div>
-        <div class="row-arrow">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <line x1="10" y1="14" x2="21" y2="3"></line>
-          </svg>
-        </div>
-      </a>
+        {article.data.doi && (
+          <div class="row-arrow">
+            <ArrowLink text="" icon="external" variant="muted" />
+          </div>
+        )}
+      </RowTag>
     );
   })}
 </ListLayout>

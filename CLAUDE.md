@@ -26,7 +26,7 @@ Astro v5 static site (SSG) using MDX content collections and vanilla CSS. Based 
 All content lives in `src/content/` as MDX files. Schemas are defined in `src/content.config.ts`:
 
 | Collection | Key frontmatter |
-|---|---|
+| --- | --- |
 | `projects` | title, role, year, duration, teamSize, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, featured, status |
 | `publications` | title, authors, journal, publishDate, doi, citedByCount, tags, draft |
 | `journey` | date, title, type (milestone/learning/transition), skills |
