@@ -3,9 +3,9 @@
 :root {
   /* Color System - Dark Mode (Grey-Blue & Teal Palette) */
   --color-bg: #0a1420;
-  --color-bg-content: #1d3d49;
+  --color-bg-content: #17323e;
   --color-bg-secondary: #0d1725;
-  --color-bg-elevated: #2a4556;
+  --color-bg-elevated: #1e3645;
   --color-text: #f1f5f8;
   --color-text-secondary: #7fa3ad;
   --color-text-muted: #6b8a96;
