@@ -30,14 +30,14 @@ All content lives in `src/content/` as MDX files. Schemas are defined in `src/co
 | `projects` | title, role, year, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, featured |
 | `publications` | title, description, publishDate, tags, draft |
 | `journey` | date, title, type (milestone/learning/transition), skills |
-| `uses` | category (tools/stack/environment), items[], order |
+| `tools` | name, description, url, date, is_favorite, best_for, not_for, personal_remarks, license, tags |
 | `testimonials` | name, role, company, quote, featured |
 
 Collections support cross-referencing via `relatedProjects` slug arrays.
 
 ### Routing
 
-File-based routing in `src/pages/`. Dynamic routes use `[slug].astro` for individual items and `[...page].astro` for paginated listings (publications). Static pages: index, journey, uses, 404.
+File-based routing in `src/pages/`. Dynamic routes use `[slug].astro` for individual items and `[...page].astro` for paginated listings (publications). Static pages: index, journey, tools, 404.
 
 ### Layouts
 

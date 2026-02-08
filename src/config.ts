@@ -134,7 +134,7 @@ export const siteConfig = {
     { label: 'Projects', href: '/projects' },
     { label: 'Publications', href: '/publications' },
     { label: 'Journey', href: '/journey' },
-    { label: 'Uses', href: '/uses' },
+    { label: 'Tools', href: '/tools' },
   ],
 } as const;
 

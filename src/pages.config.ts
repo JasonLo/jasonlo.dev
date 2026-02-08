@@ -89,15 +89,15 @@ export const pagesConfig = {
   },
 
   /**
-   * Uses/tools page (/uses)
+   * Tools page (/tools)
    */
-  uses: {
-    title: 'Uses - Tools, Stack & Environment',
-    description: 'A comprehensive list of the tools, technologies, and environment I use for development work.',
-    heading: 'Uses',
-    intro: 'A transparent look at the tools, technologies, and environment that power my development workflow. This page documents what I use and why, helping other engineers discover useful tools and understand my technical context.',
+  tools: {
+    title: 'Tools - Development Tools & Stack',
+    description: 'A comprehensive list of the tools and technologies I use for development work.',
+    heading: 'Tools',
+    intro: 'A transparent look at the tools and technologies that power my development workflow. This page documents what I use and why, helping other engineers discover useful tools and understand my technical context.',
   },
-  
+
 } as const;
 
 /**

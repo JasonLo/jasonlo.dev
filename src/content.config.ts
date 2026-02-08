@@ -64,17 +64,20 @@ const publicationsCollection = defineCollection({
   }),
 });
 
-const usesCollection = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content/uses' }),
+const toolsCollection = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/tools' }),
   schema: z.object({
-    category: z.enum(['tools', 'stack', 'environment']),
-    items: z.array(z.object({
-      name: z.string(),
-      description: z.string(),
-      url: z.string().url().optional(),
-    })),
+    name: z.string(),
+    description: z.string(),
+    url: z.string().url().optional(),
+    date: z.coerce.date(),
+    is_favorite: z.boolean().default(false),
+    best_for: z.string(),
+    not_for: z.string().optional(),
+    personal_remarks: z.string().optional(),
+    license: z.string().optional(),
+    tags: z.array(z.string()).optional(),
     draft: z.boolean().default(false),
-    order: z.number(),
   }),
 });
 
@@ -82,5 +85,5 @@ export const collections = {
   projects: projectsCollection,
   journey: journeyCollection,
   publications: publicationsCollection,
-  uses: usesCollection,
+  tools: toolsCollection,
 };
