@@ -1,0 +1,43 @@
+---
+title: "Ask-xDD: RAG for Academic Publications"
+role: "Data Scientist"
+year: 2024
+link: https://github.com/UW-Madison-DSI/ask-xDD
+duration: "15 months"
+teamSize: 7
+outcomeSummary: "Built a RAG-powered chat interface that makes 17M+ scholarly articles queryable in natural language, bridging the gap between academic research and public understanding."
+overview: "Ask-xDD is a conversational search system that lets users query a massive database of full-text scholarly articles through natural language. It combines dense passage retrieval with LLM reasoning to surface evidence-backed answers from academic literature."
+problem: "Scholarly articles are locked behind copyright restrictions and technical jargon, making them inaccessible to non-experts. Meanwhile, misinformation spreads freely on social media. There was no easy way for the public or researchers outside a field to get evidence-based answers from the academic literature."
+constraints:
+  - "Must handle 17M+ full-text articles across diverse domains"
+  - "Answers must be grounded in retrieved passages, not LLM knowledge"
+  - "System must scale across geoscience, climate change, and COVID-19 topics"
+approach: "Implemented a retrieval-augmented generation (RAG) architecture: Dense Passage Retriever finds relevant content from the xDD database, then ChatGPT with ReAct prompting generates contextual answers grounded in the retrieved passages."
+keyDecisions:
+  - decision: "RAG over fine-tuned LLM"
+    reasoning: "With 17M+ articles constantly growing, retrieval-augmented generation keeps answers grounded in source material without expensive retraining. It also provides transparent citations."
+    alternatives:
+      - "Fine-tuned domain-specific LLM"
+      - "Traditional keyword search with summarization"
+  - decision: "Dual retrieval backend with Weaviate and ElasticSearch"
+    reasoning: "Weaviate handles semantic vector search while ElasticSearch provides keyword matching. Combining both ensures recall across different query types."
+techStack:
+  - "Weaviate"
+  - "ElasticSearch"
+  - "Dense Passage Retriever"
+  - "OpenAI ChatGPT"
+  - "FastAPI"
+  - "Streamlit"
+  - "Python"
+  - "Kubernetes"
+impact:
+  metrics:
+    - label: "Articles indexed"
+      value: "17M+"
+  qualitative: "Made academic literature conversationally accessible to non-experts, with initial coverage spanning geoscience, climate change, and COVID-19. Funded by DARPA and USGS."
+learnings:
+  - "Hybrid retrieval (semantic + keyword) significantly outperforms either approach alone on diverse academic queries."
+  - "Grounding LLM responses in retrieved passages is essential for trust—users need to see where answers come from."
+featured: true
+status: completed
+---

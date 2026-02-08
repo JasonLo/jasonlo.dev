@@ -1,0 +1,35 @@
+---
+title: "Computational Model of Reading Development"
+role: "Data Scientist"
+year: 2023
+outcomeSummary: "Built a connectionist neural network that simulates how children learn to read, achieving 97% accuracy in phonological production and generalizing to novel non-words."
+overview: "Developed a temporal connectionist model that learns to map orthography (written words) to phonology (speech sounds), serving as a 'digital twin' of the human reading system to explore cognitive mechanisms underlying reading development."
+problem: "Understanding how children learn to read—and why some struggle—requires computational models that can capture the temporal dynamics of word recognition. Existing models were limited in handling words of varying lengths and generalizing to unseen inputs."
+constraints:
+  - "Model must handle words of arbitrary length, not just fixed-size inputs"
+  - "Must generalize to non-words to demonstrate learned reading rules rather than memorization"
+  - "Architecture must capture temporal processing dynamics of real reading behavior"
+approach: "Designed a connectionist model with temporal processing mechanisms that learns orthography-to-phonology mappings from a large word corpus. Trained the model to produce phonological output patterns from printed input, then evaluated on both seen words and novel non-words to test generalization."
+keyDecisions:
+  - decision: "Temporal processing architecture over static feed-forward network"
+    reasoning: "Reading is inherently sequential—letters are processed over time. A temporal architecture better captures the dynamics of how the reading system activates phonological representations."
+    alternatives:
+      - "Static feed-forward neural network"
+      - "Recurrent sequence-to-sequence model"
+  - decision: "Connectionist framework over symbolic rule-based model"
+    reasoning: "Connectionist models naturally capture graded effects like word frequency and spelling-sound consistency, which are well-documented in behavioral reading research."
+techStack:
+  - "Python"
+  - "Connectionist Neural Networks"
+  - "PostgreSQL"
+impact:
+  metrics:
+    - label: "Phonological accuracy"
+      value: "97%"
+  qualitative: "Successfully captured key behavioral effects including word frequency and spelling-sound consistency influences. Presented at the 2024 Society for the Scientific Study of Reading Annual Meeting in Copenhagen."
+learnings:
+  - "Temporal dynamics are critical for modeling reading—static snapshots miss important processing characteristics."
+  - "A model that reads non-words convincingly has likely learned generalizable orthographic-phonological rules, not just memorized training examples."
+featured: false
+status: completed
+---

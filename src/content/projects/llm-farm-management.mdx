@@ -1,0 +1,37 @@
+---
+title: "LLM-Assisted Farm Management Insights"
+role: "Data Scientist"
+year: 2025
+link: https://doi.org/10.1038/s41598-025-30991-6
+duration: "4 months"
+teamSize: 5
+outcomeSummary: "Built a human-in-the-loop LLM pipeline that converts agricultural research into actionable farm management recommendations, published in Scientific Reports."
+overview: "Developed a system that uses multiple large language models with expert oversight to systematically screen academic literature and generate evidence-based soybean farm management plans."
+problem: "Increasing food production sustainably requires translating a growing body of agricultural research into practical guidance for farmers—a process that is slow, labor-intensive, and difficult to scale manually."
+constraints:
+  - "Recommendations must be grounded in peer-reviewed research, not LLM hallucinations"
+  - "Multiple LLMs needed cross-validation to ensure screening accuracy"
+  - "Expert arbitration required at every stage to maintain scientific rigor"
+approach: "Designed a multi-stage pipeline: systematic literature search using the PICO framework on Web of Science, parallel screening by four LLMs with expert arbitration, extraction of evidence and relevance assessments by the two top-performing models, inconsistency detection, and final LLM-generated management plan synthesis."
+keyDecisions:
+  - decision: "Multi-LLM consensus screening instead of single-model extraction"
+    reasoning: "No single LLM was reliable enough on its own. Having four models independently screen studies with expert arbitration caught errors that any individual model would miss."
+    alternatives:
+      - "Single LLM with manual spot-checking"
+      - "Fully manual systematic review"
+  - decision: "Human-in-the-loop architecture over fully automated pipeline"
+    reasoning: "Farm management advice directly affects livelihoods. Expert validation at each stage was non-negotiable for producing trustworthy recommendations."
+techStack:
+  - "GPT-4.1-mini"
+  - "Gemini 2.5"
+  - "DeepSeek"
+  - "LLaMA 3.3"
+  - "Python"
+impact:
+  qualitative: "Demonstrated that LLM-assisted systematic review can accelerate the translation of agricultural research into practical farm management guidance, with findings published in Scientific Reports."
+learnings:
+  - "Multi-model consensus is more robust than relying on a single LLM for high-stakes information extraction."
+  - "Gemini's Deep Research tool produced stronger general recommendations, but structured extraction tasks favored GPT-4.1-mini."
+featured: true
+status: completed
+---
