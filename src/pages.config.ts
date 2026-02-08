@@ -62,7 +62,7 @@ export const pagesConfig = {
     title: 'Publications - Academic Research',
     description: 'Jason Lo\'s Research publications.',
     heading: 'Publications',
-    intro: 'My research publications, sourced automatically from OpenAlex.',
+    intro: 'My research publications, automatically aggregated and synchronized from ORCID and OpenAlex.',
   },
 
   tools: {

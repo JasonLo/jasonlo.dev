@@ -53,8 +53,12 @@ The site uses Astro's `ClientRouter` for client-side navigation. Inline scripts 
 
 ## TypeScript
 
-Strict mode (`astro/tsconfigs/strict`). No unused locals/parameters, no implicit returns or fallthrough cases.
+Strict mode (`astro/tsconfigs/strict`). No unused locals/parameters, no implicit returns or fallthrough cases. The `scripts/` directory is excluded from type checking (`tsconfig.json`) since scripts are standalone and share function names.
+
+## Scripts
+
+- **`scripts/sync-publications-fused.ts`** — Fused publication sync that fetches journal articles from ORCID (public, no auth) and OpenAlex (optional `OPENALEX_API_KEY`), deduplicates by DOI / title slug, merges best fields, and writes MDX to `src/content/publications/`. Run with `bun run scripts/sync-publications-fused.ts`.
 
 ## Deployment
 
-GitHub Pages via GitHub Actions. Custom domain `jasonlo.dev` configured. The `OPENALEX_API_KEY` secret is stored in GitHub Actions secrets for the publication sync workflow.
+GitHub Pages via GitHub Actions. Custom domain `jasonlo.dev` configured. The `OPENALEX_API_KEY` secret is stored in GitHub Actions secrets for the publication sync workflow (`sync-publications-fused.yml`).

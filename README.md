@@ -10,7 +10,7 @@ Source code for [jasonlo.dev](https://jasonlo.dev) — a personal portfolio buil
 - **Astro v5** — Static site generation with MDX content collections
 - **Vanilla CSS** — Dark/light theme, WCAG AA compliant
 - **Bun** — Package manager and runtime
-- **GitHub Actions** — Auto-deploy on push + weekly publication sync via OpenAlex
+- **GitHub Actions** — Auto-deploy on push + weekly publication sync via ORCID & OpenAlex
 
 ## Development
 
@@ -31,7 +31,7 @@ src/
   content/
     journey/         # Career timeline entries (MDX)
     projects/        # Project Retrospective (MDX)
-    publications/    # Academic publications (MDX, synced from OpenAlex)
+    publications/    # Academic publications (MDX, synced from ORCID + OpenAlex)
     tools/           # Tools and software (MDX)
   pages/             # File-based routing
   layouts/           # BaseLayout, ArticleLayout, CaseStudyLayout
@@ -42,4 +42,4 @@ src/
 ## Automation
 
 - **Publish workflow** — Builds and deploys to GitHub Pages on every push to `main`
-- **Publication sync** — Weekly GitHub Action pulls publication data from OpenAlex API and commits updates automatically
+- **Publication sync** — Weekly GitHub Action fetches journal articles from ORCID (public API, no auth) and OpenAlex (optional API key), deduplicates by DOI/title, merges the best fields from each source, and commits updates automatically (`scripts/sync-publications-fused.ts`)

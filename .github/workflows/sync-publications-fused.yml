@@ -1,4 +1,4 @@
-name: Sync Publications from OpenAlex
+name: Sync Publications (Fused)
 
 on:
   schedule:
@@ -19,8 +19,8 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Sync publications from OpenAlex
-        run: bun run scripts/sync-publications.ts
+      - name: Sync publications from ORCID + OpenAlex
+        run: bun run scripts/sync-publications-fused.ts
         env:
           OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
 
@@ -35,5 +35,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/content/publications/
-          git commit -m "chore: sync publications from OpenAlex"
+          git commit -m "chore: sync publications from ORCID + OpenAlex"
           git push
