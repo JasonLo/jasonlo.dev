@@ -8,7 +8,7 @@
   --color-bg-elevated: #1e3645;
   --color-text: #f1f5f8;
   --color-text-secondary: #7fa3ad;
-  --color-text-muted: #6b8a96;
+  --color-text-muted: #7eb5c2;
   --color-border: #335f76;
   --color-border-subtle: #2a5a6d;
   --color-accent: #7fa3ad;
@@ -86,7 +86,7 @@
   --color-bg-elevated: #f6f8fa;
   --color-text: #0d1725;
   --color-text-secondary: #4d5f69;
-  --color-text-muted: #6b8a96;
+  --color-text-muted: #506873;
   --color-border: #d4e0e6;
   --color-border-subtle: #e2ecf0;
   --color-accent: #1d4d5e;
@@ -199,4 +199,16 @@ pre code {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
