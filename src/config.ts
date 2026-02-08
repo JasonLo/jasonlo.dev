@@ -1,138 +1,44 @@
 /**
  * Site Configuration
- * 
- * Centralized configuration for the entire site, loaded from environment variables.
- * This approach keeps sensitive data and site-specific values out of the codebase
- * while providing type-safe access throughout the application.
- * 
- * Setup:
- * 1. Copy .env.example to .env
- * 2. Customize values for your site
- * 3. Import and use siteConfig throughout the application
- * 
- * Configuration Sections:
- * - Site metadata (URL, language, title, description)
- * - Author information (name, title, bio, email, location)
- * - Social links (GitHub, LinkedIn, Twitter, Mastodon, Bluesky)
- * - Navigation structure
- * 
+ *
+ * Centralized configuration for the entire site.
+ * All values are defined here — no environment variables needed for the site build.
+ *
  * @module config
  */
 
-/**
- * Helper function to get environment variable with fallback
- * 
- * Safely retrieves environment variables with a default fallback value.
- * Uses nullish coalescing to handle undefined values.
- * 
- * @param key - Environment variable key (e.g., 'SITE_URL')
- * @param fallback - Default value if environment variable is not set
- * @returns Environment variable value or fallback
- */
-const getEnv = (key: string, fallback: string = ''): string => {
-  return import.meta.env[key] ?? fallback;
-};
-
-/**
- * Site configuration object
- * 
- * Centralized configuration loaded from environment variables with sensible defaults.
- * All values are loaded at build time and are type-safe throughout the application.
- * 
- * @constant
- */
 export const siteConfig = {
-  /**
-   * Site URL (required for sitemap, canonical URLs, OG tags)
-   * 
-   * Should be the full production URL without trailing slash.
-   * Example: 'https://example.com'
-   */
-  url: getEnv('SITE_URL', 'https://example.com'),
-  
-  /**
-   * Site language (ISO 639-1 code)
-   * 
-   * Two-letter language code for HTML lang attribute and SEO.
-   * Examples: 'en', 'id', 'es', 'fr'
-   */
-  language: getEnv('SITE_LANGUAGE', 'en'),
-  
-  /**
-   * Site title
-   * 
-   * Used as fallback when page-specific title is not provided.
-   */
-  title: getEnv('SITE_TITLE', 'Professional Portfolio'),
-  
-  /**
-   * Site description
-   * 
-   * Default meta description for SEO and social sharing.
-   */
-  description: getEnv('SITE_DESCRIPTION', 'Engineering leader specializing in system architecture, technical decision-making, and delivering measurable business impact.'),
-  
-  /**
-   * Author information
-   * 
-   * Personal details used throughout the site for attribution,
-   * contact information, and structured data.
-   */
+  url: 'https://jasonlo.dev',
+  language: 'en',
+  title: 'Jason Lo Portfolio',
+  description: 'Data scientist specializing in AI-driven interdisciplinary research and engineering solutions.',
+
   author: {
-    name: getEnv('SITE_AUTHOR_NAME', 'Your Name'),
-    title: getEnv('SITE_AUTHOR_TITLE', 'Senior Software Engineer'),
-    bio: getEnv('SITE_AUTHOR_BIO', 'Engineering leader focused on solving complex technical challenges through thoughtful architecture and pragmatic trade-off analysis.'),
-    email: getEnv('SITE_AUTHOR_EMAIL', 'lcmjlo@gmail.com'),
-    location: getEnv('SITE_AUTHOR_LOCATION', ''),
+    name: 'Jason Lo',
+    title: 'Data Scientist',
+    bio: 'Bringing AI to interdisciplinary research.',
+    email: 'lcmjlo@gmail.com',
+    location: 'Madison, WI',
   },
-  
-  /**
-   * Social media links
-   * 
-   * Set to empty string to hide a specific platform.
-   * Only configured (non-empty) links will be displayed.
-   */
+
   social: {
-    github: getEnv('SOCIAL_GITHUB', ''),
-    linkedin: getEnv('SOCIAL_LINKEDIN', ''),
-    twitter: getEnv('SOCIAL_TWITTER', ''),
-    mastodon: getEnv('SOCIAL_MASTODON', ''),
-    bluesky: getEnv('SOCIAL_BLUESKY', ''),
-    scholar: getEnv('SOCIAL_SCHOLAR', 'https://scholar.google.com/citations?hl=en&user=84y-HKEAAAAJ'),
-    orcid: getEnv('SOCIAL_ORCID', 'https://orcid.org/0000-0002-8428-1086'),
+    github: 'https://github.com/jasonlo',
+    linkedin: 'https://linkedin.com/in/jasonlcm',
+    twitter: '',
+    mastodon: '',
+    bluesky: '',
+    scholar: 'https://scholar.google.com/citations?hl=en&user=84y-HKEAAAAJ',
+    orcid: 'https://orcid.org/0000-0002-8428-1086',
   },
-  
-  /**
-   * Navigation links
-   * 
-   * Main site navigation structure. Order determines display order in the nav bar.
-   * Add or remove items to customize navigation.
-   */
+
   nav: [
     { label: 'Journey', href: '/journey' },
     { label: 'Projects', href: '/projects' },
     { label: 'Publications', href: '/publications' },
     { label: 'Tools', href: '/tools' },
   ],
-} as const;
+};
 
-/**
- * Type export for the entire site configuration
- * 
- * Use this type when you need to reference the full config structure.
- */
 export type SiteConfig = typeof siteConfig;
-
-/**
- * Type export for social links object
- * 
- * Use this type when working specifically with social media links.
- */
 export type SocialLinks = typeof siteConfig.social;
-
-/**
- * Type export for a single navigation item
- * 
- * Use this type when working with individual nav items.
- */
 export type NavItem = typeof siteConfig.nav[number];

@@ -21,6 +21,8 @@ jobs:
 
       - name: Sync publications from OpenAlex
         run: bun run scripts/sync-publications.ts
+        env:
+          OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
 
       - name: Check for changes
         id: changes

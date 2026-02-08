@@ -40,8 +40,6 @@ jobs:
 
       - name: Build
         run: bun run build
-        env:
-          SITE: ${{ steps.pages.outputs.base_url }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
