@@ -1,0 +1,55 @@
+---
+title: "LLM-Assisted Meta-Analysis in Agriscience"
+role: "Data Scientist & Developer"
+year: 2026
+duration: "6 months"
+teamSize: 7
+outcomeSummary: "Built a multi-agent LLM pipeline to replicate an agronomic meta-analysis, achieving >99% screening accuracy while revealing fundamental limitations in automated quantitative data extraction."
+overview: "Developed a five-agent LLM pipeline that automates key steps of systematic review and meta-analysis—from study screening to effect-size extraction—using GPT-5.1 and Gemini 3 Pro Preview with structured human-in-the-loop verification."
+problem: "Systematic reviews and meta-analyses in agriscience are labor-intensive, requiring manual screening, data extraction, and synthesis across dozens of studies with non-standardized reporting of statistics, yield data, and experimental designs."
+constraints:
+  - "Extracted data must match human expert quality—errors in effect sizes directly affect downstream inference"
+  - "Non-standardized reporting across agriscience journals makes automated extraction unreliable for variance components and sample sizes"
+  - "Human-in-the-loop verification required at every pipeline stage to prevent hallucination propagation"
+  - "Pipeline must reproduce a published meta-analysis as ground truth benchmark"
+approach: "Designed a modular five-agent pipeline: metadata extraction, study design analysis, statistical mining, effect-size calculation, and model-specific filtering. Each agent was run in parallel on two LLMs (GPT-5.1 and Gemini 3 Pro Preview), with outputs compared and discrepancies flagged for expert review. PDFs were converted to structured Markdown using Landing.ai's document extraction. Final meta-analysis was conducted in R using the metafor package."
+keyDecisions:
+  - decision: "Five specialized agents instead of a single monolithic prompt"
+    reasoning: "Modular design lets each agent focus on a well-defined role—analogous to a research team—reducing prompt complexity and making errors easier to trace and fix."
+    alternatives:
+      - "Single-agent extraction with one large prompt"
+      - "Two-stage pipeline (screening + extraction only)"
+  - decision: "Dual-LLM consensus with human arbitration"
+    reasoning: "Running GPT and Gemini in parallel on identical tasks surfaces disagreements automatically. Cases with >1% divergence are flagged for human review, catching hallucinations that either model alone would miss."
+    alternatives:
+      - "Single LLM with manual spot-checking"
+      - "Three-model voting without human review"
+  - decision: "Structured Markdown intermediary format instead of raw PDF parsing"
+    reasoning: "Landing.ai's document extraction preserves table structures, figure annotations, and statistical groupings in Markdown, enabling more reliable downstream extraction than raw text."
+    alternatives:
+      - "Direct PDF-to-text with pdftotext"
+      - "OCR-based extraction"
+techStack:
+  - "GPT-5.1"
+  - "Gemini 3 Pro Preview"
+  - "Python"
+  - "R"
+  - "metafor"
+  - "Landing.ai"
+impact:
+  metrics:
+    - label: "Screening Recall"
+      value: ">99%"
+    - label: "Manual Effort Reduction"
+      value: "28.5%"
+    - label: "Effect Sizes Recovered (HITL)"
+      value: "293 of 671"
+  qualitative: "Demonstrated that LLMs can reliably automate study screening but struggle with quantitative data extraction in agriscience due to non-standardized reporting. Findings advocate for 'AI-Ready' reporting formats in agricultural publications."
+learnings:
+  - "LLMs excel at structured screening tasks but struggle with quantitative extraction when primary studies report statistics inconsistently—missing SDs accounted for 57% of extraction failures."
+  - "A multi-agent architecture with dual-LLM consensus catches errors that single-model pipelines miss, but 71.5% of extraction cases still required human review."
+  - "The bottleneck isn't the model—it's the source material. Standardized, machine-readable reporting in primary studies would unlock far greater automation gains."
+featured: false
+draft: false
+status: ongoing
+---
