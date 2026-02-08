@@ -17,5 +17,5 @@ My portfolio: [JasonLo.dev](https://jasonlo.dev) based on [case-portfolio](https
 - [x] Make content: Main page
 - [x] Make content: Journey
 - [x] Make content: Projects
-- [ ] Make content: Uses
+- [x] Make content: Uses
 - [x] GHA deploy site

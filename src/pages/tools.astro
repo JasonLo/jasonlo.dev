@@ -1,7 +1,5 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import SEO from '../components/SEO.astro';
-import PageStats from '../components/PageStats.astro';
+import ListLayout from '../components/ListLayout.astro';
 import { getCollection } from 'astro:content';
 import { pagesConfig } from '../pages.config';
 
@@ -17,104 +15,85 @@ const sortedTools = allTools.sort((a, b) => {
 });
 ---
 
-<BaseLayout>
-  <SEO
-    slot="head"
-    title={pagesConfig.tools.title}
-    description={pagesConfig.tools.description}
-    type="website"
-  />
-
-  <main class="page-container">
-    <header class="page-header">
-      <h1 class="page-title">{pagesConfig.tools.heading}</h1>
-      <p class="page-intro">
-        {pagesConfig.tools.intro}
-      </p>
-      <div class="page-controls">
-        <PageStats text={`${sortedTools.length} items`} />
-        <div class="sort-controls">
-          <span class="sort-label">Sort by</span>
-          <button class="sort-btn active" data-sort="favorite">Favorite</button>
-          <button class="sort-btn" data-sort="recent">Recent</button>
-          <button class="sort-btn" data-sort="name">Name</button>
-        </div>
-      </div>
-    </header>
-
-    {sortedTools.length > 0 ? (
-      <div class="row-list" id="tools-list">
-        {sortedTools.map((item) => (
-          <div
-            class="row-item"
-            data-date={item.data.date.getTime()}
-            data-name={item.data.name}
-            data-favorite={item.data.is_favorite ? "true" : "false"}
-          >
-            <div class="row-date">{item.data.date.getFullYear()}</div>
-            <div class="row-body">
-              <div class="row-title-line">
-                {item.data.url ? (
-                  <a href={item.data.url} class="row-title" target="_blank" rel="noopener noreferrer">
-                    {item.data.name}
-                    <span class="external-icon">↗</span>
-                  </a>
-                ) : (
-                  <span class="row-title">{item.data.name}</span>
-                )}
-                {item.data.is_favorite && (
-                  <span class="best-badge">Favorite</span>
-                )}
-              </div>
-              <span class="row-desc">{item.data.description}</span>
-              {(item.data.license || (item.data.tags && item.data.tags.length > 0)) && (
-                <div class="tags-list">
-                  {item.data.license && (
-                    <span class="license-badge">{item.data.license}</span>
-                  )}
-                  {item.data.tags && item.data.tags.map((tag) => (
-                    <span class="tag">{tag}</span>
-                  ))}
-                </div>
-              )}
-              <div class="row-details">
-                <div class="detail-item">
-                  <span class="detail-label">Best for:</span>
-                  <span class="detail-text">{item.data.best_for}</span>
-                </div>
-                {item.data.not_for && (
-                  <div class="detail-item">
-                    <span class="detail-label">Not for:</span>
-                    <span class="detail-text">{item.data.not_for}</span>
-                  </div>
-                )}
-                {item.data.personal_remarks && (
-                  <div class="detail-item">
-                    <span class="detail-label">Notes:</span>
-                    <span class="detail-text">{item.data.personal_remarks}</span>
-                  </div>
-                )}
-              </div>
-            </div>
+<ListLayout
+  title={pagesConfig.tools.heading}
+  intro={pagesConfig.tools.intro}
+  description={pagesConfig.tools.description}
+  itemCount={sortedTools.length}
+  itemLabel="items"
+  sortOptions={[
+    { key: 'favorite', label: 'Favorite' },
+    { key: 'recent', label: 'Recent' },
+    { key: 'name', label: 'Name' }
+  ]}
+  defaultSortKey="favorite"
+  listId="tools-list"
+  emptyMessage="No tools documented yet."
+>
+  {sortedTools.map((item) => {
+    const RowTag = item.data.url ? 'a' : 'div';
+    return (
+      <RowTag
+        class="row-item"
+        {...(item.data.url && { href: item.data.url, target: '_blank', rel: 'noopener noreferrer' })}
+        data-date={item.data.date.getTime()}
+        data-name={item.data.name}
+        data-favorite={item.data.is_favorite ? "true" : "false"}
+      >
+        <div class="row-date">{item.data.date.getFullYear()}</div>
+        <div class="row-body">
+          <div class="row-title-line">
+            <span class="row-title">{item.data.name}</span>
+            {item.data.is_favorite && (
+              <span class="best-badge">Favorite</span>
+            )}
           </div>
-        ))}
-      </div>
-    ) : (
-      <p class="empty-state">No tools documented yet.</p>
-    )}
-  </main>
-</BaseLayout>
+          <span class="row-desc">{item.data.description}</span>
+          {(item.data.license || (item.data.tags && item.data.tags.length > 0)) && (
+            <div class="tags-list">
+              {item.data.license && (
+                <span class="license-badge">{item.data.license}</span>
+              )}
+              {item.data.tags && item.data.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          )}
+          <div class="row-details">
+            <div class="detail-item">
+              <span class="detail-label">Best for:</span>
+              <span class="detail-text">{item.data.best_for}</span>
+            </div>
+            {item.data.not_for && (
+              <div class="detail-item">
+                <span class="detail-label">Not for:</span>
+                <span class="detail-text">{item.data.not_for}</span>
+              </div>
+            )}
+            {item.data.personal_remarks && (
+              <div class="detail-item">
+                <span class="detail-label">Notes:</span>
+                <span class="detail-text">{item.data.personal_remarks}</span>
+              </div>
+            )}
+          </div>
+        </div>
+        <div class="row-arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </div>
+      </RowTag>
+    );
+  })}
+</ListLayout>
 
 <style>
-  .page-controls {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
   .row-item {
-    grid-template-columns: 3.5rem 1fr;
+    grid-template-columns: 3.5rem 1fr 1.5rem;
+    align-items: start;
   }
 
   .row-date {
@@ -130,22 +109,6 @@ const sortedTools = allTools.sort((a, b) => {
     gap: 0.5rem;
   }
 
-  .row-title a {
-    color: var(--color-text);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
-
-  .row-title a:hover {
-    color: var(--color-accent);
-  }
-
-  .external-icon {
-    font-size: 0.75rem;
-    opacity: 0.6;
-  }
 
   .best-badge {
     font-size: 0.6875rem;
@@ -203,21 +166,6 @@ const sortedTools = allTools.sort((a, b) => {
 
   .detail-text {
     color: var(--color-text-muted);
-  }
-
-  .sort-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .sort-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    white-space: nowrap;
   }
 
   @media (max-width: 640px) {

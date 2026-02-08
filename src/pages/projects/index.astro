@@ -1,7 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import SEO from '../../components/SEO.astro';
-import PageStats from '../../components/PageStats.astro';
+import ListLayout from '../../components/ListLayout.astro';
 import { getCollection } from 'astro:content';
 import { pagesConfig } from '../../pages.config';
 
@@ -16,77 +14,58 @@ const sortedProjects = allProjects.sort((a, b) => {
 const displayTechMax = 3;
 ---
 
-<BaseLayout>
-  <SEO
-    slot="head"
-    title={pagesConfig.projects.title}
-    description={pagesConfig.projects.description}
-    type="website"
-  />
-
-  <main class="page-container">
-    <header class="page-header">
-      <h1 class="page-title">{pagesConfig.projects.heading}</h1>
-      <p class="page-intro">
-        {pagesConfig.projects.intro}
-      </p>
-      <div class="page-controls">
-        <PageStats text={`${sortedProjects.length} projects`} />
-        <div class="sort-controls">
-          <span class="sort-label">Sort by</span>
-          <button class="sort-btn active" data-sort="recent">Recent</button>
-          <button class="sort-btn" data-sort="title">Title</button>
+<ListLayout
+  title={pagesConfig.projects.heading}
+  intro={pagesConfig.projects.intro}
+  description={pagesConfig.projects.description}
+  itemCount={sortedProjects.length}
+  itemLabel="projects"
+  sortOptions={[
+    { key: 'recent', label: 'Recent' },
+    { key: 'title', label: 'Title' }
+  ]}
+  defaultSortKey="recent"
+  listId="projects-list"
+  emptyMessage="No projects available yet."
+>
+  {sortedProjects.map((project) => (
+    <a
+      class="row-item"
+      href={`/projects/${project.id}`}
+      data-year={project.data.year}
+      data-title={project.data.title}
+    >
+      <div class="row-year">{project.data.year}</div>
+      <div class="row-body">
+        <div class="row-title-line">
+          <span class="row-title">{project.data.title}</span>
+          {project.data.featured && (
+            <span class="row-featured">Featured</span>
+          )}
+        </div>
+        <span class="row-desc">{project.data.outcomeSummary}</span>
+        <div class="row-meta">
+          <span>{project.data.role}</span>
+          <div class="row-tech">
+            {project.data.techStack.slice(0, displayTechMax).map((tech) => (
+              <span class="tech-badge">{tech}</span>
+            ))}
+            {project.data.techStack.length > displayTechMax && (
+              <span class="tech-badge tech-more">+{project.data.techStack.length - displayTechMax}</span>
+            )}
+          </div>
         </div>
       </div>
-    </header>
-
-    {sortedProjects.length > 0 ? (
-      <div class="row-list" id="projects-list">
-        {sortedProjects.map((project) => (
-          <a
-            class="row-item"
-            href={`/projects/${project.id}`}
-            data-year={project.data.year}
-            data-title={project.data.title}
-          >
-            <div class="row-year">{project.data.year}</div>
-            <div class="row-body">
-              <div class="row-title-line">
-                <span class="row-title">{project.data.title}</span>
-                {project.data.featured && (
-                  <span class="row-featured">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                    </svg>
-                  </span>
-                )}
-              </div>
-              <span class="row-desc">{project.data.outcomeSummary}</span>
-              <div class="row-meta">
-                <span>{project.data.role}</span>
-                <div class="row-tech">
-                  {project.data.techStack.slice(0, displayTechMax).map((tech) => (
-                    <span class="tech-badge">{tech}</span>
-                  ))}
-                  {project.data.techStack.length > displayTechMax && (
-                    <span class="tech-badge tech-more">+{project.data.techStack.length - displayTechMax}</span>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div class="row-arrow">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </div>
-          </a>
-        ))}
+      <div class="row-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
       </div>
-    ) : (
-      <p class="empty-state">No projects available yet.</p>
-    )}
-  </main>
-</BaseLayout>
+    </a>
+  ))}
+</ListLayout>
 
 <style>
   .row-title-line {
@@ -96,7 +75,12 @@ const displayTechMax = 3;
   }
 
   .row-featured {
-    color: var(--color-accent);
+    font-size: 0.6875rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 3px;
+    background: var(--color-accent);
+    color: var(--color-bg);
+    font-weight: 600;
     flex-shrink: 0;
   }
 

@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SEO from './SEO.astro';
+import PageStats from './PageStats.astro';
+
+interface SortOption {
+  key: string;
+  label: string;
+}
+
+interface Props {
+  title: string;
+  intro: string;
+  itemCount: number;
+  itemLabel: string;
+  sortOptions: SortOption[];
+  defaultSortKey?: string;
+  listId: string;
+  emptyMessage: string;
+  description: string;
+}
+
+const { title, intro, itemCount, itemLabel, sortOptions, defaultSortKey, listId, emptyMessage, description } = Astro.props;
+const defaultSort = defaultSortKey || sortOptions[0]?.key || 'recent';
+---
+
+<BaseLayout>
+  <SEO
+    slot="head"
+    title={title}
+    description={description}
+    type="website"
+  />
+
+  <main class="page-container">
+    <header class="page-header">
+      <h1 class="page-title">{title}</h1>
+      <p class="page-intro">
+        {intro}
+      </p>
+      <div class="page-controls">
+        <PageStats text={`${itemCount} ${itemLabel}`} />
+        <div class="sort-controls">
+          <span class="sort-label">Sort by</span>
+          {sortOptions.map((option) => (
+            <button
+              class={option.key === defaultSort ? 'sort-btn active' : 'sort-btn'}
+              data-sort={option.key}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </header>
+
+    {itemCount > 0 ? (
+      <div class="row-list" id={listId}>
+        <slot />
+      </div>
+    ) : (
+      <p class="empty-state">{emptyMessage}</p>
+    )}
+  </main>
+</BaseLayout>

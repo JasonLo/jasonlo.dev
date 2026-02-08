@@ -1,7 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import SEO from '../../components/SEO.astro';
-import PageStats from '../../components/PageStats.astro';
+import ListLayout from '../../components/ListLayout.astro';
 import { getCollection } from 'astro:content';
 import { pagesConfig } from '../../pages.config';
 import type { GetStaticPaths } from 'astro';
@@ -19,71 +17,54 @@ const sortedArticles = allArticles.sort((a, b) => {
 });
 ---
 
-<BaseLayout>
-  <SEO
-    slot="head"
-    title={pagesConfig.publications.title}
-    description={pagesConfig.publications.description}
-    type="website"
-  />
-
-  <main class="page-container">
-    <header class="page-header">
-      <h1 class="page-title">{pagesConfig.publications.heading}</h1>
-      <p class="page-intro">
-        {pagesConfig.publications.intro}
-      </p>
-      <div class="page-controls">
-        <PageStats text={`${sortedArticles.length} publications`} />
-        <div class="sort-controls">
-          <span class="sort-label">Sort by</span>
-          <button class="sort-btn active" data-sort="recent">Recent</button>
-          <button class="sort-btn" data-sort="citations">Citations</button>
-          <button class="sort-btn" data-sort="title">Title</button>
+<ListLayout
+  title={pagesConfig.publications.heading}
+  intro={pagesConfig.publications.intro}
+  description={pagesConfig.publications.description}
+  itemCount={sortedArticles.length}
+  itemLabel="publications"
+  sortOptions={[
+    { key: 'recent', label: 'Recent' },
+    { key: 'citations', label: 'Citations' },
+    { key: 'title', label: 'Title' }
+  ]}
+  defaultSortKey="recent"
+  listId="publications-list"
+  emptyMessage="No articles published yet."
+>
+  {sortedArticles.map((article) => {
+    const year = article.data.publishDate.getFullYear();
+    const href = article.data.doi || `/publications/${article.id}`;
+    return (
+      <a
+        class="row-item"
+        href={href}
+        data-date={article.data.publishDate.getTime()}
+        data-citations={article.data.citedByCount}
+        data-title={article.data.title}
+      >
+        <div class="row-year">{year}</div>
+        <div class="row-body">
+          <span class="row-title">{article.data.title}</span>
+          <span class="row-desc">{article.data.authors.join(', ')}</span>
+          <div class="row-meta">
+            <span>{article.data.journal}</span>
+            {article.data.citedByCount > 0 && (
+              <span class="pub-citations">{article.data.citedByCount} citations</span>
+            )}
+          </div>
         </div>
-      </div>
-    </header>
-
-    {sortedArticles.length > 0 ? (
-      <div class="row-list" id="publications-list">
-        {sortedArticles.map((article) => {
-          const year = article.data.publishDate.getFullYear();
-          const href = article.data.doi || `/publications/${article.id}`;
-          return (
-            <a
-              class="row-item"
-              href={href}
-              data-date={article.data.publishDate.getTime()}
-              data-citations={article.data.citedByCount}
-              data-title={article.data.title}
-            >
-              <div class="row-year">{year}</div>
-              <div class="row-body">
-                <span class="row-title">{article.data.title}</span>
-                <span class="row-desc">{article.data.authors.join(', ')}</span>
-                <div class="row-meta">
-                  <span>{article.data.journal}</span>
-                  {article.data.citedByCount > 0 && (
-                    <span class="pub-citations">{article.data.citedByCount} citations</span>
-                  )}
-                </div>
-              </div>
-              <div class="row-arrow">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-              </div>
-            </a>
-          );
-        })}
-      </div>
-    ) : (
-      <p class="empty-state">No articles published yet.</p>
-    )}
-  </main>
-</BaseLayout>
+        <div class="row-arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </div>
+      </a>
+    );
+  })}
+</ListLayout>
 
 <style>
   .pub-citations {
