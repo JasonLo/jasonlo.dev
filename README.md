@@ -1,21 +1,45 @@
-# JasonLo.dev
+# jasonlo.dev
 
 [![Built with Astro](https://astro.badg.es/v2/built-with-astro/tiny.svg)](https://astro.build)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-My portfolio: [JasonLo.dev](https://jasonlo.dev) based on [case-portfolio](https://astro.build/themes/details/case-portfolio-theme-for-astro/).
+Source code for [jasonlo.dev](https://jasonlo.dev) — a personal portfolio built around project case studies, documenting decisions, trade-offs, and outcomes.
 
-## Features
+## Stack
 
-- OpenAlex data sync: Pull publication data to populate website content via GitHub action
+- **Astro v5** — Static site generation with MDX content collections
+- **Vanilla CSS** — Dark/light theme, WCAG AA compliant
+- **Bun** — Package manager and runtime
+- **GitHub Actions** — Auto-deploy on push + weekly publication sync via OpenAlex
 
-## Todos
+## Development
 
-- [x] OpenAlex integrations
-- [x] Color theme update: 000f08-1c3738-4d4847-f4fff8-8baaad
-- [x] Improve favicon
-- [x] Make content: Main page
-- [x] Make content: Journey
-- [x] Make content: Projects
-- [x] Make content: Uses
-- [x] GHA deploy site
+```sh
+bun install
+bun run dev       # Start dev server
+bun run build     # Type-check + build
+bun run preview   # Preview production build
+```
+
+## Project Structure
+
+```txt
+src/
+  config.ts          # Site metadata, author info, social links, nav
+  content.config.ts  # Zod schemas for all content collections
+  pages.config.ts    # Per-page SEO metadata
+  content/
+    journey/         # Career timeline entries (MDX)
+    projects/        # Project Retrospective (MDX)
+    publications/    # Academic publications (MDX, synced from OpenAlex)
+    tools/           # Tools and software (MDX)
+  pages/             # File-based routing
+  layouts/           # BaseLayout, ArticleLayout, CaseStudyLayout
+  components/        # Astro components (ListLayout, SEO, etc.)
+  styles/            # global.css, typography.css, utilities.css
+```
+
+## Automation
+
+- **Publish workflow** — Builds and deploys to GitHub Pages on every push to `main`
+- **Publication sync** — Weekly GitHub Action pulls publication data from OpenAlex API and commits updates automatically

@@ -14,12 +14,12 @@ There are no test or lint commands configured.
 
 Astro v5 static site (SSG) using MDX content collections and vanilla CSS. Based on the "Case" portfolio theme — a case-study-first portfolio for engineers.
 
-### Configuration Layers
+### Configuration
 
-- **`astro.config.mjs`** — Build config, integrations (MDX, Sitemap), env var schema, Sharp image optimization, Shiki syntax highlighting (GitHub Dark theme)
-- **`src/config.ts`** — Runtime site config: `siteConfig` object with author info, social links, navigation structure. Uses `getEnv()` helper for env var access with fallbacks
+- **`astro.config.mjs`** — Build config, integrations (MDX, Sitemap), Sharp image optimization, Shiki syntax highlighting (GitHub Dark theme)
+- **`src/config.ts`** — Site config: `siteConfig` object with author info, social links, navigation. All values hardcoded (no env vars needed for build)
 - **`src/pages.config.ts`** — SEO metadata per page (title, description, heading, intro)
-- **`src/content.config.ts`** — Five content collection schemas with Zod validation
+- **`src/content.config.ts`** — Content collection schemas with Zod validation
 
 ### Content Collections
 
@@ -27,13 +27,10 @@ All content lives in `src/content/` as MDX files. Schemas are defined in `src/co
 
 | Collection | Key frontmatter |
 |---|---|
-| `projects` | title, role, year, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, featured |
-| `publications` | title, description, publishDate, tags, draft |
+| `projects` | title, role, year, duration, teamSize, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, featured, status |
+| `publications` | title, authors, journal, publishDate, doi, citedByCount, tags, draft |
 | `journey` | date, title, type (milestone/learning/transition), skills |
 | `tools` | name, description, url, date, is_favorite, best_for, not_for, personal_remarks, license, tags |
-| `testimonials` | name, role, company, quote, featured |
-
-Collections support cross-referencing via `relatedProjects` slug arrays.
 
 ### Routing
 
@@ -41,19 +38,23 @@ File-based routing in `src/pages/`. Dynamic routes use `[slug].astro` for indivi
 
 ### Layouts
 
-- `BaseLayout.astro` — HTML wrapper with SEO, nav, footer, theme toggle
-- `PageLayout.astro` — Static pages
+- `BaseLayout.astro` — HTML wrapper with SEO, nav, footer, theme toggle, ClientRouter (View Transitions)
 - `ArticleLayout.astro` — Blog articles (includes reading time via `src/utils/readingTime.ts` at 200 WPM)
 - `CaseStudyLayout.astro` — Project case studies
+- `ListLayout.astro` — Reusable list pages with client-side sort-by (tools, publications, projects)
 
 ### Styling
 
 Custom vanilla CSS in `src/styles/` (global.css, typography.css, utilities.css). No Tailwind or CSS framework. Dark/light theme toggle supported. Dark mode uses a slate-blue palette; light mode uses blue-tinted greys. Nav/footer use `--color-bg`, main content uses `--color-bg-content` for subtle contrast.
 
-### Environment Variables
+### Important: View Transitions
 
-Copy `.env.example` to `.env`. All vars are public/client-side. Key vars: `SITE_URL` (required for sitemap/canonical URLs), `SITE_AUTHOR_*`, `SOCIAL_*` (empty string hides the link).
+The site uses Astro's `ClientRouter` for client-side navigation. Inline scripts must use `astro:page-load` event (not `DOMContentLoaded`) to re-initialize on navigation.
 
 ## TypeScript
 
 Strict mode (`astro/tsconfigs/strict`). No unused locals/parameters, no implicit returns or fallthrough cases.
+
+## Deployment
+
+GitHub Pages via GitHub Actions. Custom domain `jasonlo.dev` configured. The `OPENALEX_API_KEY` secret is stored in GitHub Actions secrets for the publication sync workflow.
