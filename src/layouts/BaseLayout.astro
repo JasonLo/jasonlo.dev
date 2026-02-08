@@ -108,16 +108,30 @@ import '../styles/utilities.css';
         left: -9999px;
         top: 0;
         padding: var(--space-md) var(--space-lg);
-        background: var(--color-accent);
-        color: var(--color-bg);
+        background: var(--color-bg-elevated);
+        color: var(--color-text);
         text-decoration: none;
         z-index: 1000;
         font-weight: 600;
+        font-size: 0.9375rem;
+        border: 2px solid var(--color-accent);
+        border-radius: var(--border-radius-md);
+        box-shadow: var(--shadow-lg);
+        transition: all var(--transition-fast);
       }
       
       .skip-link:focus {
         left: var(--space-md);
         top: var(--space-md);
+        outline: 2px solid var(--color-accent);
+        outline-offset: 2px;
+      }
+      
+      .skip-link:hover {
+        background: var(--color-accent);
+        color: var(--color-bg);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-lg), 0 0 0 3px var(--color-accent-muted);
       }
     </style>
   </head>
