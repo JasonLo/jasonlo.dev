@@ -65,28 +65,30 @@ const { title, intro, itemCount, itemLabel, sortOptions, defaultSort, listId, em
   </main>
 </BaseLayout>
 
-<script>
-  document.querySelectorAll('.sort-controls').forEach((controls) => {
-    const list = controls.closest('.page-container')?.querySelector('.row-list');
-    if (!list) return;
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll('.sort-controls').forEach((controls) => {
+      const list = controls.closest('.page-container')?.querySelector('.row-list');
+      if (!list) return;
 
-    controls.querySelectorAll<HTMLButtonElement>('.sort-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const key = btn.dataset.sortKey;
-        if (!key) return;
+      controls.querySelectorAll('.sort-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const key = btn.getAttribute('data-sort-key');
+          if (!key) return;
 
-        controls.querySelectorAll('.sort-btn').forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
+          controls.querySelectorAll('.sort-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
 
-        const items = [...list.querySelectorAll<HTMLElement>('.row-item')];
-        const vals = items.map((el) => el.getAttribute(`data-sort-${key}`) ?? '');
-        const numeric = vals.every((v) => v !== '' && !isNaN(Number(v)));
+          const items = [...list.querySelectorAll('.row-item')];
+          const vals = items.map((el) => el.getAttribute('data-sort-' + key) || '');
+          const numeric = vals.every((v) => v !== '' && !isNaN(Number(v)));
 
-        const indices = items.map((_, i) => i);
-        indices.sort((a, b) =>
-          numeric ? Number(vals[b]) - Number(vals[a]) : vals[a].localeCompare(vals[b])
-        );
-        indices.forEach((i) => list.appendChild(items[i]));
+          const indices = items.map((_, i) => i);
+          indices.sort((a, b) =>
+            numeric ? Number(vals[b]) - Number(vals[a]) : vals[a].localeCompare(vals[b])
+          );
+          indices.forEach((i) => list.appendChild(items[i]));
+        });
       });
     });
   });
