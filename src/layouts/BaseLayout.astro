@@ -102,13 +102,31 @@ import '../styles/utilities.css';
         top: 0;
         z-index: 100;
       }
+      
+      .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        padding: var(--space-md) var(--space-lg);
+        background: var(--color-accent);
+        color: var(--color-bg);
+        text-decoration: none;
+        z-index: 1000;
+        font-weight: 600;
+      }
+      
+      .skip-link:focus {
+        left: var(--space-md);
+        top: var(--space-md);
+      }
     </style>
   </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <header class="site-header" transition:persist>
       <Navigation />
     </header>
-    <main>
+    <main id="main-content">
       <slot />
     </main>
     <Footer />
