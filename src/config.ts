@@ -79,19 +79,10 @@ export const siteConfig = {
    * contact information, and structured data.
    */
   author: {
-    /** Full name */
     name: getEnv('SITE_AUTHOR_NAME', 'Your Name'),
-    
-    /** Professional title or role */
     title: getEnv('SITE_AUTHOR_TITLE', 'Senior Software Engineer'),
-    
-    /** Short biography or professional summary */
     bio: getEnv('SITE_AUTHOR_BIO', 'Engineering leader focused on solving complex technical challenges through thoughtful architecture and pragmatic trade-off analysis.'),
-    
-    /** Contact email address */
     email: getEnv('SITE_AUTHOR_EMAIL', 'lcmjlo@gmail.com'),
-    
-    /** Location (optional, empty string to hide) */
     location: getEnv('SITE_AUTHOR_LOCATION', ''),
   },
   
@@ -102,25 +93,12 @@ export const siteConfig = {
    * Only configured (non-empty) links will be displayed.
    */
   social: {
-    /** GitHub profile URL */
     github: getEnv('SOCIAL_GITHUB', ''),
-    
-    /** LinkedIn profile URL */
     linkedin: getEnv('SOCIAL_LINKEDIN', ''),
-    
-    /** Twitter/X profile URL */
     twitter: getEnv('SOCIAL_TWITTER', ''),
-    
-    /** Mastodon profile URL */
     mastodon: getEnv('SOCIAL_MASTODON', ''),
-    
-    /** Bluesky profile URL */
     bluesky: getEnv('SOCIAL_BLUESKY', ''),
-
-    /** Google Scholar profile URL */
     scholar: getEnv('SOCIAL_SCHOLAR', 'https://scholar.google.com/citations?hl=en&user=84y-HKEAAAAJ'),
-
-    /** ORCID profile URL */
     orcid: getEnv('SOCIAL_ORCID', 'https://orcid.org/0000-0002-8428-1086'),
   },
   
@@ -131,9 +109,9 @@ export const siteConfig = {
    * Add or remove items to customize navigation.
    */
   nav: [
+    { label: 'Journey', href: '/journey' },
     { label: 'Projects', href: '/projects' },
     { label: 'Publications', href: '/publications' },
-    { label: 'Journey', href: '/journey' },
     { label: 'Tools', href: '/tools' },
   ],
 } as const;

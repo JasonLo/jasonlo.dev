@@ -2,20 +2,18 @@
   "name": "jasonlo-dev",
   "type": "module",
   "version": "1.1.0",
-  "description": "A case-study-first portfolio theme for Astro",
+  "description": "Personal portfolio",
   "keywords": [
     "astro",
-    "theme",
-    "portfolio",
-    "case-study",
-    "professional"
+    "personal",
+    "portfolio"
   ],
-  "author": "Erland <hello@erland.me>",
+  "author": "Jason Lo <lcmjlo@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/erlandv/case.git"
+    "url": "https://github.com/jasonlo/jasonlo.dev.git"
   },
-  "homepage": "https://case.erland.me",
+  "homepage": "https://jasonlo.dev",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",

@@ -25,20 +25,10 @@
  * @module pages.config
  */
 
-/**
- * Page metadata interface
- */
 interface PageMeta {
-  /** Page title (used in browser tab and SEO) */
   title: string;
-  
-  /** Page description (used in meta tags and SEO) */
   description: string;
-  
-  /** Page heading (displayed as h1, optional - defaults to title) */
   heading?: string;
-  
-  /** Page intro text (displayed below heading, optional) */
   intro?: string;
 }
 
@@ -49,63 +39,40 @@ interface PageMeta {
  * project or article pages) generate their own metadata from content.
  */
 export const pagesConfig = {
-  /**
-   * Home page (/)
-   * Note: Home page uses siteConfig for title/description as it represents the site itself
-   */
   home: {
     title: 'Home',
-    description: 'Engineering leader specializing in system architecture, technical decision-making, and delivering measurable business impact.',
-  },
-  
-  /**
-   * Projects listing page (/projects)
-   */
-  projects: {
-    title: 'Projects',
-    description: 'Detailed projects showcasing problem-solving approach, technical decisions, and measurable impact.',
-    heading: 'Projects',
-    intro: 'Projects that demonstrate how I approach complex problems, make technical decisions, and deliver measurable impact. Each project tells the story of the challenge, the constraints, the decisions made, and the outcomes achieved.',
-  },
-  
-  /**
-   * Journey timeline page (/journey)
-   */
-  journey: {
-    title: 'Journey - Career Growth & Learning Timeline',
-    description: 'A chronological timeline of my professional journey, highlighting key milestones, learning moments, and career transitions that shaped my growth as an engineer.',
-    heading: 'Journey',
-    intro: 'A timeline of my professional growth and learning progression. This isn\'t a resume—it\'s a story of how I\'ve evolved as an engineer, the pivotal moments that shaped my thinking, and the skills I\'ve developed along the way.',
-  },
-  
-  /**
-   * Publications listing page (/publications)
-   */
-  publications: {
-    title: 'Publications - Academic Research',
-    description: 'Peer-reviewed research publications on reading development, literacy, morphological awareness, and educational psychology.',
-    heading: 'Publications',
-    intro: 'Peer-reviewed research publications sorted by citation count. Data sourced from OpenAlex.',
+    description: 'I\'m Jason Lo, a builder and repairer of systems, driven by the belief that real efficiency comes from rapid iteration and adaptation. My work is an ongoing experiment in applying cutting-edge AI, spanning neuroimaging, literacy, agriculture, and geoscience, to find the simplest and most robust path to discovery.',
   },
 
-  /**
-   * Tools page (/tools)
-   */
+  journey: {
+    title: 'Journey - Career Growth & Learning Timeline',
+    heading: 'Journey',
+    description: 'A chronological timeline of my professional journey, highlighting key milestones, learning moments, and career transitions.',
+    intro: 'A timeline of my professional growth and learning progression.',
+  },
+
+  projects: {
+    title: 'Projects',
+    heading: 'Projects',
+    description: 'Detailed projects showcasing problem-solving approach, technical decisions, and measurable impact.',
+    intro: 'Projects that demonstrate how I approach problems.',
+  },
+
+  publications: {
+    title: 'Publications - Academic Research',
+    description: 'Jason Lo\'s Research publications.',
+    heading: 'Publications',
+    intro: 'My research publications, sourced automatically from OpenAlex.',
+  },
+
   tools: {
     title: 'Tools - Development Tools & Stack',
-    description: 'A comprehensive list of the tools and technologies I use for development work.',
+    description: 'Tools that I tried.',
     heading: 'Tools',
-    intro: 'A transparent look at the tools and technologies that power my development workflow. This page documents what I use and why, helping other engineers discover useful tools and understand my technical context.',
+    intro: 'Who doesn’t love playing with new toys?',
   },
 
 } as const;
 
-/**
- * Type export for the pages configuration
- */
 export type PagesConfig = typeof pagesConfig;
-
-/**
- * Type export for a single page metadata
- */
 export type PageConfig = PageMeta;
