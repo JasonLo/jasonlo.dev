@@ -69,7 +69,7 @@ export const pagesConfig = {
     title: 'Tools - Development Tools & Stack',
     description: 'Tools that I tried.',
     heading: 'Tools',
-    intro: 'Who doesn’t love playing with new toys?',
+    intro: 'A curated collection of tools I have explored and worked with over time.',
   },
 
 } as const;
