@@ -9,8 +9,8 @@
   --color-text: #f1f5f8;
   --color-text-secondary: #7fa3ad;
   --color-text-muted: #6b8a96;
-  --color-border: #1d3d49;
-  --color-border-subtle: #164452;
+  --color-border: #335f76;
+  --color-border-subtle: #2a5a6d;
   --color-accent: #7fa3ad;
   --color-accent-hover: #93b2bc;
   --color-accent-muted: rgba(127, 163, 173, 0.12);
@@ -175,14 +175,6 @@ pre code {
 }
 
 /* Utility Classes */
-.container {
-  max-width: var(--max-width-content);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--space-lg);
-  padding-right: var(--space-lg);
-}
-
 .prose {
   max-width: var(--max-width-prose);
 }
