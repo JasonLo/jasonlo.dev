@@ -7,7 +7,9 @@ const allProjects = await getCollection('projects', ({ data }) => {
   return data.draft !== true;
 });
 
-const sortedProjects = allProjects.sort((a, b) => {
+// Default sort: featured first, then by year descending
+const sortedProjects = [...allProjects].sort((a, b) => {
+  if (a.data.featured !== b.data.featured) return b.data.featured ? 1 : -1;
   return b.data.year - a.data.year;
 });
 
@@ -21,10 +23,11 @@ const displayTechMax = 3;
   itemCount={sortedProjects.length}
   itemLabel="projects"
   sortOptions={[
+    { key: 'featured', label: 'Featured' },
     { key: 'recent', label: 'Recent' },
     { key: 'title', label: 'Title' }
   ]}
-  defaultSortKey="recent"
+  defaultSort="featured"
   listId="projects-list"
   emptyMessage="No projects available yet."
 >
@@ -32,8 +35,9 @@ const displayTechMax = 3;
     <a
       class="row-item"
       href={`/projects/${project.id}`}
-      data-year={project.data.year}
-      data-title={project.data.title}
+      data-sort-featured={(project.data.featured ? 1e4 : 0) + project.data.year}
+      data-sort-recent={project.data.year}
+      data-sort-title={project.data.title.toLowerCase()}
     >
       <div class="row-year">{project.data.year}</div>
       <div class="row-body">
@@ -101,33 +105,3 @@ const displayTechMax = 3;
     color: var(--color-text-muted);
   }
 </style>
-
-<script>
-  const list = document.getElementById('projects-list');
-  const buttons = document.querySelectorAll<HTMLButtonElement>('.sort-btn');
-
-  function sortList(key: string) {
-    if (!list) return;
-    const items = [...list.querySelectorAll<HTMLElement>('.row-item')];
-
-    items.sort((a, b) => {
-      if (key === 'title') {
-        return (a.dataset.title ?? '').localeCompare(b.dataset.title ?? '');
-      }
-      // recent (default)
-      return Number(b.dataset.year) - Number(a.dataset.year);
-    });
-
-    for (const item of items) {
-      list.appendChild(item);
-    }
-  }
-
-  buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      buttons.forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
-      sortList(btn.dataset.sort ?? 'default');
-    });
-  });
-</script>

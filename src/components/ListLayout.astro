@@ -13,15 +13,14 @@ interface Props {
   intro: string;
   itemCount: number;
   itemLabel: string;
-  sortOptions: SortOption[];
-  defaultSortKey?: string;
+  sortOptions?: SortOption[];
+  defaultSort?: string;
   listId: string;
   emptyMessage: string;
   description: string;
 }
 
-const { title, intro, itemCount, itemLabel, sortOptions, defaultSortKey, listId, emptyMessage, description } = Astro.props;
-const defaultSort = defaultSortKey || sortOptions[0]?.key || 'recent';
+const { title, intro, itemCount, itemLabel, sortOptions, defaultSort, listId, emptyMessage, description } = Astro.props;
 ---
 
 <BaseLayout>
@@ -40,17 +39,19 @@ const defaultSort = defaultSortKey || sortOptions[0]?.key || 'recent';
       </p>
       <div class="page-controls">
         <PageStats text={`${itemCount} ${itemLabel}`} />
-        <div class="sort-controls">
-          <span class="sort-label">Sort by</span>
-          {sortOptions.map((option) => (
-            <button
-              class={option.key === defaultSort ? 'sort-btn active' : 'sort-btn'}
-              data-sort={option.key}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+        {sortOptions && sortOptions.length > 0 && (
+          <div class="sort-controls">
+            <span class="sort-label">Sort by</span>
+            {sortOptions.map((option) => (
+              <button
+                class={`sort-btn${option.key === defaultSort ? ' active' : ''}`}
+                data-sort-key={option.key}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </header>
 
@@ -63,3 +64,30 @@ const defaultSort = defaultSortKey || sortOptions[0]?.key || 'recent';
     )}
   </main>
 </BaseLayout>
+
+<script>
+  document.querySelectorAll('.sort-controls').forEach((controls) => {
+    const list = controls.closest('.page-container')?.querySelector('.row-list');
+    if (!list) return;
+
+    controls.querySelectorAll<HTMLButtonElement>('.sort-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.sortKey;
+        if (!key) return;
+
+        controls.querySelectorAll('.sort-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const items = [...list.querySelectorAll<HTMLElement>('.row-item')];
+        const vals = items.map((el) => el.getAttribute(`data-sort-${key}`) ?? '');
+        const numeric = vals.every((v) => v !== '' && !isNaN(Number(v)));
+
+        const indices = items.map((_, i) => i);
+        indices.sort((a, b) =>
+          numeric ? Number(vals[b]) - Number(vals[a]) : vals[a].localeCompare(vals[b])
+        );
+        indices.forEach((i) => list.appendChild(items[i]));
+      });
+    });
+  });
+</script>

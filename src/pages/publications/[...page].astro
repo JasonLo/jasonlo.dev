@@ -12,9 +12,10 @@ const allArticles = await getCollection('publications', ({ data }) => {
   return data.draft === false;
 });
 
-const sortedArticles = allArticles.sort((a, b) => {
-  return b.data.publishDate.getTime() - a.data.publishDate.getTime();
-});
+// Default sort: most recent first
+const sortedArticles = [...allArticles].sort(
+  (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime()
+);
 ---
 
 <ListLayout
@@ -28,7 +29,7 @@ const sortedArticles = allArticles.sort((a, b) => {
     { key: 'citations', label: 'Citations' },
     { key: 'title', label: 'Title' }
   ]}
-  defaultSortKey="recent"
+  defaultSort="recent"
   listId="publications-list"
   emptyMessage="No articles published yet."
 >
@@ -39,9 +40,9 @@ const sortedArticles = allArticles.sort((a, b) => {
       <a
         class="row-item"
         href={href}
-        data-date={article.data.publishDate.getTime()}
-        data-citations={article.data.citedByCount}
-        data-title={article.data.title}
+        data-sort-recent={article.data.publishDate.getTime()}
+        data-sort-citations={article.data.citedByCount}
+        data-sort-title={article.data.title.toLowerCase()}
       >
         <div class="row-year">{year}</div>
         <div class="row-body">
@@ -74,35 +75,3 @@ const sortedArticles = allArticles.sort((a, b) => {
     font-variant-numeric: tabular-nums;
   }
 </style>
-
-<script>
-  const list = document.getElementById('publications-list');
-  const buttons = document.querySelectorAll<HTMLButtonElement>('.sort-btn');
-
-  function sortList(key: string) {
-    if (!list) return;
-    const items = [...list.querySelectorAll<HTMLElement>('.row-item')];
-
-    items.sort((a, b) => {
-      if (key === 'recent') {
-        return Number(b.dataset.date) - Number(a.dataset.date);
-      }
-      if (key === 'citations') {
-        return Number(b.dataset.citations) - Number(a.dataset.citations);
-      }
-      return (a.dataset.title ?? '').localeCompare(b.dataset.title ?? '');
-    });
-
-    for (const item of items) {
-      list.appendChild(item);
-    }
-  }
-
-  buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      buttons.forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
-      sortList(btn.dataset.sort ?? 'recent');
-    });
-  });
-</script>

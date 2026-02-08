@@ -7,10 +7,9 @@ const allTools = await getCollection('tools', ({ data }) => {
   return data.draft !== true;
 });
 
-const sortedTools = allTools.sort((a, b) => {
-  if (a.data.is_favorite !== b.data.is_favorite) {
-    return a.data.is_favorite ? -1 : 1;
-  }
+// Default sort: favorites first, then by date descending
+const sortedTools = [...allTools].sort((a, b) => {
+  if (a.data.is_favorite !== b.data.is_favorite) return a.data.is_favorite ? -1 : 1;
   return b.data.date.getTime() - a.data.date.getTime();
 });
 ---
@@ -26,7 +25,7 @@ const sortedTools = allTools.sort((a, b) => {
     { key: 'recent', label: 'Recent' },
     { key: 'name', label: 'Name' }
   ]}
-  defaultSortKey="favorite"
+  defaultSort="favorite"
   listId="tools-list"
   emptyMessage="No tools documented yet."
 >
@@ -35,10 +34,10 @@ const sortedTools = allTools.sort((a, b) => {
     return (
       <RowTag
         class="row-item"
+        data-sort-favorite={(item.data.is_favorite ? 1e13 : 0) + item.data.date.getTime()}
+        data-sort-recent={item.data.date.getTime()}
+        data-sort-name={item.data.name.toLowerCase()}
         {...(item.data.url && { href: item.data.url, target: '_blank', rel: 'noopener noreferrer' })}
-        data-date={item.data.date.getTime()}
-        data-name={item.data.name}
-        data-favorite={item.data.is_favorite ? "true" : "false"}
       >
         <div class="row-date">{item.data.date.getFullYear()}</div>
         <div class="row-body">
@@ -178,43 +177,3 @@ const sortedTools = allTools.sort((a, b) => {
     }
   }
 </style>
-
-<script>
-  const list = document.getElementById('tools-list');
-  const buttons = document.querySelectorAll<HTMLButtonElement>('.sort-btn');
-
-  function sortList(key: string) {
-    if (!list) return;
-    const items = [...list.querySelectorAll<HTMLElement>('.row-item')];
-
-    items.sort((a, b) => {
-      if (key === 'name') {
-        return (a.dataset.name ?? '').localeCompare(b.dataset.name ?? '');
-      }
-      if (key === 'favorite') {
-        const aFav = a.dataset.favorite === 'true';
-        const bFav = b.dataset.favorite === 'true';
-        if (aFav !== bFav) {
-          return aFav ? -1 : 1;
-        }
-        return Number(b.dataset.date) - Number(a.dataset.date);
-      }
-      return Number(b.dataset.date) - Number(a.dataset.date);
-    });
-
-    for (const item of items) {
-      list.appendChild(item);
-    }
-  }
-
-  buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      buttons.forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
-      sortList(btn.dataset.sort ?? 'recent');
-    });
-  });
-
-  // Initialize with favorite sort
-  sortList('favorite');
-</script>
