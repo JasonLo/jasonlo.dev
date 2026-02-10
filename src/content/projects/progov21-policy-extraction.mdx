@@ -1,0 +1,48 @@
+---
+title: "ProGov21: Automated Policy Data Extraction Using AI"
+role: "ML Engineer"
+year: 2024
+link: https://progov21.org/
+duration: "4 months"
+teamSize: 8
+outcomeSummary: "Built an AI-powered pipeline that automates policy document extraction and labeling for ProGov21.org, replacing a fully manual workflow with a semi-automated, human-in-the-loop system."
+overview: "An automated data pipeline that crawls, extracts, labels, and publishes policy documents on ProGov21.org. The system uses LLMs to extract structured metadata from policy PDFs, with human review for quality assurance before publication through a RESTful API."
+problem: "ProGov21.org hosts a digital library of local, state, and federal policy documents. Each document had to be manually reviewed and labeled with structured metadata—a time-consuming bottleneck that limited how quickly new policy information could reach the public."
+constraints:
+  - "Policy PDFs come from diverse sources with inconsistent formatting"
+  - "Extracted metadata must map to a pre-defined schema (title, date, jurisdiction, issue area, summary)"
+  - "Automated labeling must be accurate enough for human reviewers to validate efficiently"
+  - "System must run as a scheduled job with minimal manual intervention"
+approach: "Built a multi-stage pipeline: a web crawler discovers and downloads policy PDFs from partner sites, an LLM-powered labeling step extracts structured metadata, a human-in-the-loop review interface enables quality assurance, and a RESTful API serves validated data to the ProGov21.org frontend."
+keyDecisions:
+  - decision: "LLM-based extraction over rule-based parsing"
+    reasoning: "Policy documents vary widely in format and structure. LLMs handle this diversity far better than brittle rule-based parsers, and can extract semantic fields like summaries that rules cannot."
+    alternatives:
+      - "Regex/template-based PDF parsing"
+      - "Traditional NLP entity extraction"
+  - decision: "Human-in-the-loop review before publication"
+    reasoning: "Policy data accuracy is critical for public trust. Automated labeling reduces workload but a human validation step ensures quality and catches edge cases the model misses."
+    alternatives:
+      - "Fully automated pipeline with confidence thresholds"
+      - "Manual review of all documents (status quo)"
+  - decision: "RESTful API for frontend integration"
+    reasoning: "Decoupling the data layer from the frontend allows the policy library to support faceted search and flexible querying without tight coupling to the crawl/label pipeline."
+techStack:
+  - "Python"
+  - "OpenAI API"
+  - "cron"
+  - "REST API"
+  - "PDF processing"
+impact:
+  qualitative: "Drastically reduced the manual workload for processing policy documents while maintaining data quality. Policy information on ProGov21.org is now easier to find and browse by issue area, state, and year, helping the public stay informed on local, state, and federal policies."
+learnings:
+  - "Human-in-the-loop design is worth the overhead when data accuracy directly affects public trust."
+  - "LLMs excel at extracting structured data from messy, inconsistent document formats where rule-based approaches would be brittle."
+  - "Scheduling crawlers as cron jobs keeps the system simple and maintainable for a small team."
+featured: false
+draft: false
+status: completed
+---
+
+> "The DSI team were excellent collaborators. Their help with designing an interface capable of scraping data with LLM-assistance for our digital policy library was a huge service. Their team was responsive, creative, and thoughtful in managing the project and its development. I'd recommend their work to anyone looking to implement similar cutting-edge tools."
+> — Project collaborator, High Road Strategy Center
