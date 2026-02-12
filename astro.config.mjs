@@ -23,5 +23,8 @@ export default defineConfig({
       theme: 'github-dark',
       wrap: true
     }
-  }
+  },
+  experimental: {
+    contentIntellisense: true,
+  },
 });
