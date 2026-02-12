@@ -31,6 +31,10 @@ export const siteConfig = {
     orcid: 'https://orcid.org/0000-0002-8428-1086',
   },
 
+  apis: {
+    openalex: 'https://api.openalex.org/a5021047469',
+  },
+
   nav: [
     { label: 'Journey', href: '/journey' },
     { label: 'Projects', href: '/projects' },

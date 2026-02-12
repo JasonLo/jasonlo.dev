@@ -3,6 +3,7 @@ import ListLayout from '../../components/ListLayout.astro';
 import ArrowLink from '../../components/ArrowLink.astro';
 import { getCollection } from 'astro:content';
 import { pagesConfig } from '../../pages.config';
+import { siteConfig } from '../../config';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -17,6 +18,16 @@ const allArticles = await getCollection('publications', ({ data }) => {
 const sortedArticles = [...allArticles].sort(
   (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime()
 );
+
+// Fetch h-index from OpenAlex
+let hIndex: number | null = null;
+try {
+  const res = await fetch(siteConfig.apis.openalex);
+  if (res.ok) {
+    const data = await res.json();
+    hIndex = data.summary_stats?.h_index ?? null;
+  }
+} catch { /* skip on failure */ }
 ---
 
 <ListLayout
@@ -25,6 +36,7 @@ const sortedArticles = [...allArticles].sort(
   description={pagesConfig.publications.description}
   itemCount={sortedArticles.length}
   itemLabel="publications"
+  statsExtra={hIndex !== null ? `h-index: ${hIndex}` : undefined}
   sortOptions={[
     { key: 'recent', label: 'Recent' },
     { key: 'citations', label: 'Citations' },

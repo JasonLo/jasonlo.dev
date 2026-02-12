@@ -13,6 +13,7 @@ interface Props {
   intro: string;
   itemCount: number;
   itemLabel: string;
+  statsExtra?: string;
   sortOptions?: SortOption[];
   defaultSort?: string;
   listId: string;
@@ -20,7 +21,7 @@ interface Props {
   description: string;
 }
 
-const { title, intro, itemCount, itemLabel, sortOptions, defaultSort, listId, emptyMessage, description } = Astro.props;
+const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort, listId, emptyMessage, description } = Astro.props;
 ---
 
 <BaseLayout>
@@ -38,7 +39,7 @@ const { title, intro, itemCount, itemLabel, sortOptions, defaultSort, listId, em
         {intro}
       </p>
       <div class="page-controls">
-        <PageStats text={`${itemCount} ${itemLabel}`} />
+        <PageStats text={`${itemCount} ${itemLabel}${statsExtra ? ` · ${statsExtra}` : ''}`} />
         {sortOptions && sortOptions.length > 0 && (
           <div class="sort-controls">
             <span class="sort-label">Sort by</span>
