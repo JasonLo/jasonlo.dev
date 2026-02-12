@@ -1,14 +1,4 @@
 ---
-/**
- * StructuredData Component
- * 
- * Generates JSON-LD structured data for enhanced search engine understanding.
- * Supports WebSite, Project, Article, Person, and BreadcrumbList schema types.
- * Uses centralized configuration from src/config.ts
- * 
- * @param type - Schema.org type
- * @param data - Data object containing the structured data fields
- */
 import { siteConfig } from '../config';
 
 interface Props {
@@ -18,15 +8,9 @@ interface Props {
 
 const { type, data = {} } = Astro.props;
 
-// Get site URL from config
 const siteURL = siteConfig.url.endsWith('/') ? siteConfig.url.slice(0, -1) : siteConfig.url;
-
-// Build social links array from config
 const socialLinks = Object.values(siteConfig.social).filter(Boolean);
 
-/**
- * Generate JSON-LD structured data based on type
- */
 function generateStructuredData(type: string, data: Record<string, any>) {
   const baseContext = 'https://schema.org';
   
@@ -131,7 +115,6 @@ function generateStructuredData(type: string, data: Record<string, any>) {
 
 const structuredData = generateStructuredData(type, data);
 
-// Remove undefined values from the structured data
 function cleanObject(obj: any): any {
   if (obj === null || obj === undefined) return null;
   if (typeof obj !== 'object') return obj;

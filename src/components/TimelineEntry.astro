@@ -1,105 +1,32 @@
 ---
-/**
- * TimelineEntry Component
- * 
- * Displays a single entry in a journey/career timeline with visual indicators, metadata,
- * and optional expandable content. Features a vertical timeline design with color-coded
- * dots and type badges to distinguish between milestones, learning experiences, and transitions.
- * 
- * Each entry can include:
- * - Date and type indicator
- * - Title and description
- * - Skills/technologies list
- * - Expandable detailed content (via slot)
- * 
- * @component
- * 
- * @slot default - Optional detailed content shown when expanded (supports markdown/prose)
- * 
- * @example
- * ```astro
- * <!-- Simple timeline entry without expandable content -->
- * <TimelineEntry
- *   date={new Date('2024-01-15')}
- *   title="Launched New Product"
- *   type="milestone"
- *   description="Successfully launched the redesigned platform to 10k users"
- *   skills={['React', 'TypeScript', 'AWS']}
- * />
- * 
- * <!-- Timeline entry with expandable content -->
- * <TimelineEntry
- *   date={new Date('2023-06-01')}
- *   title="Joined Tech Company"
- *   type="transition"
- *   description="Started as Senior Frontend Developer"
- *   skills={['Vue.js', 'Node.js']}
- *   hasContent={true}
- * >
- *   <p>Detailed information about the role and achievements...</p>
- * </TimelineEntry>
- * ```
- */
-
 interface Props {
-  /** Date of the timeline event (formatted as "Month Year") */
   date: Date;
-  
-  /** Title/heading of the timeline entry */
   title: string;
-  
-  /** Type of entry (determines color coding and badge label) */
   type: 'milestone' | 'learning' | 'transition';
-  
-  /** Brief description of the event or achievement */
   description: string;
-  
-  /** Optional array of skills or technologies associated with this entry */
   skills?: string[];
-  
-  /** Whether this entry has expandable content in the slot (default: false) */
   hasContent?: boolean;
 }
 
 const { date, title, type, description, skills, hasContent = false } = Astro.props;
 
-/**
- * Formats the date to show month and year only
- * 
- * Uses US English locale with long month format.
- * Example output: "January 2024"
- */
 const formattedDate = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
   month: 'long'
 }).format(date);
 
-/**
- * Human-readable labels for timeline entry types
- * 
- * Maps internal type values to display labels shown in the badge.
- * Each type has a distinct color in the UI:
- * - milestone: accent color (achievements, launches)
- * - learning: green (education, skill development)
- * - transition: orange (job changes, career moves)
- */
 const typeLabels = {
   milestone: 'Milestone',
   learning: 'Learning',
   transition: 'Transition'
 };
 
-/**
- * Generates a unique ID for ARIA accessibility
- * 
- * Uses timestamp to ensure uniqueness for expand/collapse functionality.
- */
 const entryId = `journey-${date.getTime()}`;
 ---
 
-<article class="timeline-entry">
+<article class="timeline-entry" data-type={type}>
   <div class="timeline-marker">
-    <div class="timeline-dot" data-type={type}></div>
+    <div class="timeline-dot"></div>
     <div class="timeline-line"></div>
   </div>
   
@@ -108,7 +35,7 @@ const entryId = `journey-${date.getTime()}`;
       <time class="timeline-date" datetime={date.toISOString()}>
         {formattedDate}
       </time>
-      <span class="timeline-type" data-type={type}>
+      <span class="timeline-type">
         {typeLabels[type]}
       </span>
     </div>
@@ -172,27 +99,19 @@ const entryId = `journey-${date.getTime()}`;
     position: relative;
   }
 
+  .timeline-entry[data-type="milestone"] { --type-color: var(--color-type-milestone); }
+  .timeline-entry[data-type="learning"] { --type-color: var(--color-type-learning); }
+  .timeline-entry[data-type="transition"] { --type-color: var(--color-type-transition); }
+
   .timeline-dot {
     width: 1rem;
     height: 1rem;
     border-radius: 50%;
-    background: var(--color-type-milestone);
+    background: var(--type-color);
     border: 3px solid var(--color-bg);
     position: relative;
     z-index: 2;
     flex-shrink: 0;
-  }
-
-  .timeline-dot[data-type="milestone"] {
-    background: var(--color-type-milestone);
-  }
-
-  .timeline-dot[data-type="learning"] {
-    background: var(--color-type-learning);
-  }
-
-  .timeline-dot[data-type="transition"] {
-    background: var(--color-type-transition);
   }
 
   .timeline-line {
@@ -227,22 +146,8 @@ const entryId = `journey-${date.getTime()}`;
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
     background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-  }
-
-  .timeline-type[data-type="milestone"] {
-    color: var(--color-type-milestone);
-    border-color: var(--color-type-milestone);
-  }
-
-  .timeline-type[data-type="learning"] {
-    color: var(--color-type-learning);
-    border-color: var(--color-type-learning);
-  }
-
-  .timeline-type[data-type="transition"] {
-    color: var(--color-type-transition);
-    border-color: var(--color-type-transition);
+    color: var(--type-color);
+    border: 1px solid var(--type-color);
   }
 
   .timeline-title {
@@ -442,9 +347,5 @@ const entryId = `journey-${date.getTime()}`;
     });
   }
 
-  // Initialize on page load
-  initExpandToggles();
-
-  // Re-initialize after Astro page transitions
-  document.addEventListener('astro:after-swap', initExpandToggles);
+  document.addEventListener('astro:page-load', initExpandToggles);
 </script>

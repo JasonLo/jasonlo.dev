@@ -1,36 +1,8 @@
 ---
-/**
- * Footer Component
- * 
- * Site-wide footer displaying copyright information and social media links.
- * Automatically filters and displays only configured social links from site config.
- * Responsive layout that stacks vertically on mobile devices.
- * 
- * Social links are pulled from siteConfig.social and only displayed if they have
- * a URL value configured. Links open in new tabs with proper security attributes.
- * 
- * @component
- * 
- * @example
- * ```astro
- * <Footer />
- * ```
- */
 import { siteConfig } from '../config';
 
-/**
- * Gets the current year for copyright display
- */
 const currentYear = new Date().getFullYear();
 
-/**
- * Filters and formats social links from site configuration
- * 
- * Only includes platforms that have a URL configured (non-empty values).
- * Capitalizes platform names for display (e.g., "github" becomes "Github").
- * 
- * @returns Array of social link objects with platform name and URL
- */
 const displayNames: Record<string, string> = { orcid: 'ORCID' };
 const socialLinks = Object.entries(siteConfig.social)
   .filter(([_, url]) => url)

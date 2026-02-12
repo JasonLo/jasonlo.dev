@@ -1,25 +1,4 @@
 ---
-/**
- * ThemeToggle Component
- * 
- * Interactive button that toggles between light and dark color themes. Persists user
- * preference to localStorage and respects system color scheme preference as the default.
- * Displays sun icon in light mode and moon icon in dark mode.
- * 
- * Features:
- * - Persists theme preference to localStorage
- * - Respects system color scheme preference (prefers-color-scheme)
- * - Automatically updates when system preference changes (if no manual preference set)
- * - Works with Astro View Transitions via event delegation
- * - Accessible with keyboard focus and ARIA labels
- * 
- * @component
- * 
- * @example
- * ```astro
- * <ThemeToggle />
- * ```
- */
 ---
 
 <button 
@@ -89,41 +68,26 @@
 </style>
 
 <script>
-  // Get theme from storage or system preference
-  const getTheme = (): 'light' | 'dark' => {
-    const stored = localStorage.getItem('theme');
-    if (stored === 'light' || stored === 'dark') return stored;
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-  };
-
-  // Apply theme to document
+  // Toggle theme and persist to localStorage
   const setTheme = (theme: 'light' | 'dark') => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
   };
 
-  // Toggle theme
-  const toggleTheme = () => {
-    const current = document.documentElement.getAttribute('data-theme');
-    setTheme(current === 'dark' ? 'light' : 'dark');
-  };
-
   // Use event delegation on document to handle clicks
-  // This works reliably with transition:persist
+  // This works reliably with View Transitions
   document.addEventListener('click', (e) => {
     const toggle = (e.target as Element).closest('.theme-toggle');
     if (toggle) {
-      toggleTheme();
+      const current = document.documentElement.getAttribute('data-theme');
+      setTheme(current === 'dark' ? 'light' : 'dark');
     }
   });
 
-  // Listen for system preference changes (only once)
+  // Follow system preference changes when user hasn't manually chosen
   window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
     if (!localStorage.getItem('theme')) {
       setTheme(e.matches ? 'light' : 'dark');
     }
   });
-
-  // Set initial theme
-  setTheme(getTheme());
 </script>

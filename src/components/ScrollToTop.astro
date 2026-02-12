@@ -1,24 +1,4 @@
 ---
-/**
- * ScrollToTop Component
- * 
- * Floating button that appears in the bottom-right corner when the user scrolls down
- * past a threshold (300px). Clicking the button smoothly scrolls back to the top of
- * the page. The button fades in/out with a slide animation for a polished UX.
- * 
- * Features:
- * - Auto-shows/hides based on scroll position
- * - Smooth scroll animation
- * - Accessible with keyboard focus and ARIA labels
- * - Works with Astro View Transitions
- * 
- * @component
- * 
- * @example
- * ```astro
- * <ScrollToTop />
- * ```
- */
 ---
 
 <button 
@@ -88,38 +68,40 @@
 </style>
 
 <script>
+  let cleanup: (() => void) | null = null;
+
   function initScrollToTop() {
+    if (cleanup) cleanup();
+
     const button = document.querySelector('.scroll-to-top');
-    if (!button) return;
+    if (!button) {
+      cleanup = null;
+      return;
+    }
 
     const SCROLL_THRESHOLD = 300;
 
     function toggleVisibility() {
-      if (!button) return;
       if (window.scrollY > SCROLL_THRESHOLD) {
-        button.classList.add('is-visible');
+        button!.classList.add('is-visible');
       } else {
-        button.classList.remove('is-visible');
+        button!.classList.remove('is-visible');
       }
     }
 
     function scrollToTop() {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     window.addEventListener('scroll', toggleVisibility, { passive: true });
     button.addEventListener('click', scrollToTop);
-
-    // Initial check
     toggleVisibility();
+
+    cleanup = () => {
+      window.removeEventListener('scroll', toggleVisibility);
+      button.removeEventListener('click', scrollToTop);
+    };
   }
 
-  // Run on initial load
-  initScrollToTop();
-
-  // Re-run on Astro page transitions
-  document.addEventListener('astro:after-swap', initScrollToTop);
+  document.addEventListener('astro:page-load', initScrollToTop);
 </script>

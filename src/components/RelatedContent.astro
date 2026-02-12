@@ -1,27 +1,8 @@
 ---
-/**
- * RelatedContent Component
- *
- * Displays related projects for cross-referencing content.
- * Fetches actual content data from slugs and renders compact cards.
- *
- * @component
- *
- * @example
- * ```astro
- * <RelatedContent
- *   relatedProjects={['project-slug-1', 'project-slug-2']}
- * />
- * ```
- */
-
 import { getCollection } from 'astro:content';
 
 interface Props {
-  /** Array of project slugs to display */
   relatedProjects?: string[];
-
-  /** Section title (default: "Related") */
   title?: string;
 }
 
@@ -47,28 +28,23 @@ const hasRelated = projects.length > 0;
   <aside class="related-content">
     <h2 class="related-title">{title}</h2>
     
-    <div class="related-grid">
-      {projects.length > 0 && (
-        <div class="related-section">
-          <h3 class="related-section-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-            </svg>
-            Related Projects
-          </h3>
-          <ul class="related-list">
-            {projects.map((project) => (
-              <li>
-                <a href={`/projects/${project.id}`} class="related-item">
-                  <span class="related-item-meta">{project.data.role} · {project.data.year}</span>
-                  <span class="related-item-title">{project.data.title}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      
+    <div class="related-section">
+      <h3 class="related-section-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+        </svg>
+        Related Projects
+      </h3>
+      <ul class="related-list">
+        {projects.map((project) => (
+          <li>
+            <a href={`/projects/${project.id}`} class="related-item">
+              <span class="related-item-meta">{project.data.role} · {project.data.year}</span>
+              <span class="related-item-title">{project.data.title}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   </aside>
 )}
@@ -85,12 +61,6 @@ const hasRelated = projects.length > 0;
     font-weight: 600;
     margin-bottom: 1.5rem;
     letter-spacing: -0.01em;
-  }
-
-  .related-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
   }
 
   .related-section-title {
@@ -152,11 +122,6 @@ const hasRelated = projects.length > 0;
   }
 
   @media (max-width: 640px) {
-    .related-grid {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-
     .related-item {
       padding: 0.875rem 1rem;
     }

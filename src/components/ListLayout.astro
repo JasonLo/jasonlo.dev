@@ -44,7 +44,7 @@ const { title, intro, itemCount, itemLabel, sortOptions, defaultSort, listId, em
             <span class="sort-label">Sort by</span>
             {sortOptions.map((option) => (
               <button
-                class={`sort-btn${option.key === defaultSort ? ' active' : ''}`}
+                class:list={['sort-btn', { active: option.key === defaultSort }]}
                 data-sort-key={option.key}
               >
                 {option.label}
@@ -65,7 +65,7 @@ const { title, intro, itemCount, itemLabel, sortOptions, defaultSort, listId, em
   </main>
 </BaseLayout>
 
-<script is:inline>
+<script>
   document.addEventListener('astro:page-load', () => {
     document.querySelectorAll('.sort-controls').forEach((controls) => {
       const list = controls.closest('.page-container')?.querySelector('.row-list');

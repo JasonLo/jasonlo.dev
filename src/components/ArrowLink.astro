@@ -1,37 +1,9 @@
 ---
-/**
- * ArrowLink Component
- *
- * Displays a link or text with an arrow icon. Supports two icon types:
- * - "forward" (default): right-pointing arrow for internal navigation
- * - "external": 45-degree arrow for outbound links
- *
- * Renders as <a> when href is provided, <span> otherwise (for use inside clickable cards).
- *
- * @component
- *
- * @example
- * ```astro
- * <ArrowLink text="View project" href="/projects/foo" />
- * <ArrowLink text="Visit site" href="https://..." icon="external" />
- * <a href="/article"><ArrowLink text="Read more" /></a>
- * ```
- */
-
 interface Props {
-  /** Text displayed next to the arrow icon */
   text: string;
-
-  /** Optional URL - if provided, renders as <a>, otherwise renders as <span> */
   href?: string;
-
-  /** Arrow direction: "forward" for right arrow, "external" for 45-degree arrow */
   icon?: 'forward' | 'external';
-
-  /** Color variant (default: 'accent') */
   variant?: 'accent' | 'muted';
-
-  /** Additional CSS classes to apply */
   class?: string;
 }
 
