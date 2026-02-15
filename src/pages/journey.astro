@@ -89,6 +89,7 @@ const entriesWithContent = await Promise.all(
       <div class="journey-timeline">
         {entriesWithContent.map(({ entry, Content, hasContent }) => (
           <TimelineEntry
+            id={entry.id}
             date={entry.data.date}
             title={entry.data.title}
             type={entry.data.type}

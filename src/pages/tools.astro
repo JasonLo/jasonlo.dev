@@ -34,6 +34,7 @@ const sortedTools = [...allTools].sort((a, b) => {
     const RowTag = item.data.url ? 'a' : 'div';
     return (
       <RowTag
+        id={item.id}
         class="row-item"
         data-sort-favorite={(item.data.is_favorite ? 1e13 : 0) + item.data.date.getTime()}
         data-sort-recent={item.data.date.getTime()}
@@ -90,6 +91,12 @@ const sortedTools = [...allTools].sort((a, b) => {
   .row-item {
     grid-template-columns: 3.5rem 1fr 1.5rem;
     align-items: start;
+    scroll-margin-top: 10vh;
+  }
+
+  .row-item:target {
+    background: var(--color-bg-elevated);
+    border-color: var(--color-accent);
   }
 
   .row-date {

@@ -6,9 +6,10 @@ interface Props {
   description: string;
   skills?: string[];
   hasContent?: boolean;
+  id?: string;
 }
 
-const { date, title, type, description, skills, hasContent = false } = Astro.props;
+const { date, title, type, description, skills, hasContent = false, id } = Astro.props;
 
 const formattedDate = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
@@ -24,7 +25,7 @@ const typeLabels = {
 const entryId = `journey-${date.getTime()}`;
 ---
 
-<article class="timeline-entry" data-type={type}>
+<article class="timeline-entry" data-type={type} id={id}>
   <div class="timeline-marker">
     <div class="timeline-dot"></div>
     <div class="timeline-line"></div>
@@ -86,6 +87,15 @@ const entryId = `journey-${date.getTime()}`;
     grid-template-columns: 2rem 1fr;
     gap: 1.5rem;
     position: relative;
+    scroll-margin-top: 10vh;
+  }
+
+  .timeline-entry:target .timeline-content {
+    background: var(--color-bg-elevated);
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1rem;
+    margin-left: -1rem;
+    border-radius: 0.5rem;
   }
 
   .timeline-entry:last-child .timeline-line {
