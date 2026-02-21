@@ -1,0 +1,94 @@
+---
+title: "Three Levels of Environment Control"
+description: "Reproducible environments prevent works-on-my-machine problems. The right level of control depends on project complexity — here are three practical tiers."
+publishDate: 2026-02-20
+tags:
+  - python
+  - reproducibility
+  - environment
+draft: false
+---
+
+## 1) uv for pure Python
+
+Use **uv** when the project is Python-only and depends on PyPI packages.
+
+**When to use**
+
+* Standard Python libraries
+* No system-level dependencies
+* Lightweight services, scripts, notebooks
+
+**Why**
+
+* Extremely fast dependency resolution and install
+* Lockfile support for reproducibility
+* Simple workflow
+
+```bash
+uv init
+uv add fastapi pandas
+uv run python app.py
+```
+
+This covers most data science utilities, APIs, and internal tools.
+
+## 2) Pixi for complex dependencies
+
+Use **Pixi** when you need Python plus non-Python dependencies such as CUDA, system libraries, or compiled packages.
+
+**When to use**
+
+* Mixed language stacks
+* GPU or scientific libraries
+* Reproducible cross-platform environments
+* Teams working across macOS and Linux
+
+**Why**
+
+* Conda-forge ecosystem
+* Lockfiles per platform
+* Clean isolation of system-level dependencies
+
+```bash
+pixi init
+pixi add python=3.11 pytorch cuda
+pixi run python train.py
+```
+
+Pixi handles cases where pip alone becomes fragile.
+
+## 3) .devcontainer for tricky setup
+
+Use a **.devcontainer** when setup requires OS-level configuration, services, or strict parity across machines.
+
+**When to use**
+
+* Dockerized microservices
+* Databases, message queues, proxies
+* GPU drivers or custom OS tooling
+* Onboarding-heavy repositories
+
+**Why**
+
+* Full OS-level reproducibility
+* Identical development experience
+* Works well with Visual Studio Code and GitHub Codespaces
+
+```
+.devcontainer/
+  devcontainer.json
+  Dockerfile
+```
+
+This ensures every contributor runs inside the same containerized environment.
+
+## Choosing the Right Level
+
+| Project Type | Tool |
+| --- | --- |
+| Pure Python | uv |
+| Python + system deps | Pixi |
+| Full stack or complex OS setup | .devcontainer |
+
+Start simple. Move up only when necessary. Over-engineering environments slows teams down, but under-specifying them causes long-term friction.
