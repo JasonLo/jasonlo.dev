@@ -34,7 +34,7 @@ src/
     publications/    # Academic publications (MDX, synced from ORCID + OpenAlex)
     tools/           # Tools and software (MDX)
   pages/             # File-based routing
-  layouts/           # BaseLayout, ArticleLayout, CaseStudyLayout
+  layouts/           # BaseLayout
   components/        # Astro components (ListLayout, SEO, etc.)
   styles/            # global.css, typography.css, utilities.css
 ```

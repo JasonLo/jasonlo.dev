@@ -27,21 +27,20 @@ All content lives in `src/content/` as MDX files. Schemas are defined in `src/co
 
 | Collection | Key frontmatter |
 | --- | --- |
-| `projects` | title, role, year, duration, teamSize, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, featured, status |
-| `publications` | title, authors, journal, publishDate, doi, citedByCount, tags, draft |
-| `journey` | date, title, type (milestone/learning/transition), skills |
-| `tools` | name, description, url, date, is_favorite, best_for, not_for, personal_remarks, license, tags |
+| `projects` | title, role, year, outcomeSummary, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, featured, status, draft |
+| `publications` | title, description, authors, journal, publishDate, doi, oaUrl, citedByCount, tags, draft |
+| `journey` | date, title, description, type (milestone/learning/transition), skills, draft |
+| `tools` | name, description, url, date, is_favorite, best_for, not_for, personal_remarks, license, tags, draft |
+| `blog` | title, description, publishDate, tags, draft |
 
 ### Routing
 
-File-based routing in `src/pages/`. Dynamic routes use `[slug].astro` for individual items and `[...page].astro` for paginated listings (publications). Static pages: index, journey, tools, 404.
+File-based routing in `src/pages/`. Dynamic routes use `[slug].astro` for individual items and `[...page].astro` for paginated listings (publications). Static pages: index, journey, tools, blog, 404. Generated files: `llms.txt.ts`, `robots.txt.ts`.
 
 ### Layouts
 
-- `BaseLayout.astro` — HTML wrapper with SEO, nav, footer, theme toggle, ClientRouter (View Transitions)
-- `ArticleLayout.astro` — Blog articles (includes reading time via `src/utils/readingTime.ts` at 200 WPM)
-- `CaseStudyLayout.astro` — Project case studies
-- `ListLayout.astro` — Reusable list pages with client-side sort-by (tools, publications, projects)
+- `BaseLayout.astro` (`src/layouts/`) — HTML wrapper with SEO, nav, footer, theme toggle, ClientRouter (View Transitions). Used directly by all pages including blog posts and project case studies.
+- `ListLayout.astro` (`src/components/`) — Reusable list layout with client-side sort-by (tools, publications, projects, blog)
 
 ### Styling
 
