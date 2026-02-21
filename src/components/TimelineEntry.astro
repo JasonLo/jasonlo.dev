@@ -65,7 +65,7 @@ const entryId = `journey-${date.getTime()}`;
           type="button"
         >
           <span class="expand-text">Read more</span>
-          <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="expand-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
@@ -242,18 +242,6 @@ const entryId = `journey-${date.getTime()}`;
     transform: rotate(180deg);
   }
 
-  .expand-toggle[aria-expanded="true"] .expand-text::before {
-    content: "Show less";
-  }
-
-  .expand-toggle[aria-expanded="true"] .expand-text {
-    font-size: 0;
-  }
-
-  .expand-toggle[aria-expanded="true"] .expand-text::before {
-    font-size: 0.875rem;
-  }
-
   .timeline-body {
     display: grid;
     grid-template-rows: 0fr;
@@ -352,6 +340,8 @@ const entryId = `journey-${date.getTime()}`;
         if (target) {
           toggle.setAttribute('aria-expanded', String(!expanded));
           target.setAttribute('aria-hidden', String(expanded));
+          const textEl = toggle.querySelector('.expand-text');
+          if (textEl) textEl.textContent = expanded ? 'Read more' : 'Show less';
         }
       });
     });

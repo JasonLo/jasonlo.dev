@@ -81,6 +81,7 @@ const sortedTools = [...allTools].sort((a, b) => {
         </div>
         <div class="row-arrow">
           <ArrowLink text="" icon="external" variant="muted" />
+          {item.data.url && <span class="visually-hidden"> (opens in new tab)</span>}
         </div>
       </RowTag>
     );

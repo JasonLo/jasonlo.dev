@@ -20,6 +20,8 @@
   --color-type-milestone: #fbbf24;
   --color-type-learning: #22d3ee;
   --color-type-transition: #c084fc;
+  --color-type-blog: #fb923c;
+  --color-type-tool: #10b981;
 
   /* Gradient Colors */
   --gradient-text: linear-gradient(135deg, #f1f5f8 0%, #7fa3ad 100%);
@@ -98,6 +100,8 @@
   --color-type-milestone: #aa5500;
   --color-type-learning: #0e7490;
   --color-type-transition: #7c3aed;
+  --color-type-blog: #c2410c;
+  --color-type-tool: #047857;
 
   /* Light mode gradients */
   --gradient-text: linear-gradient(135deg, #0d1725 0%, #4d5f69 100%);

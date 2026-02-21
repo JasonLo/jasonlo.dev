@@ -32,7 +32,7 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
     type="website"
   />
 
-  <main class="page-container">
+  <div class="page-container">
     <header class="page-header">
       <h1 class="page-title">{title}</h1>
       <p class="page-intro">
@@ -45,8 +45,10 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
             <span class="sort-label">Sort by</span>
             {sortOptions.map((option) => (
               <button
+                type="button"
                 class:list={['sort-btn', { active: option.key === defaultSort }]}
                 data-sort-key={option.key}
+                aria-pressed={option.key === defaultSort}
               >
                 {option.label}
               </button>
@@ -63,7 +65,7 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
     ) : (
       <p class="empty-state">{emptyMessage}</p>
     )}
-  </main>
+  </div>
 </BaseLayout>
 
 <script>
@@ -77,8 +79,12 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
           const key = btn.getAttribute('data-sort-key');
           if (!key) return;
 
-          controls.querySelectorAll('.sort-btn').forEach((b) => b.classList.remove('active'));
+          controls.querySelectorAll('.sort-btn').forEach((b) => {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+          });
           btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
 
           const items = [...list.querySelectorAll('.row-item')];
           const vals = items.map((el) => el.getAttribute('data-sort-' + key) || '');

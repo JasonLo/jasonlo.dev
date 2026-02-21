@@ -72,7 +72,21 @@
   const setTheme = (theme: 'light' | 'dark') => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
+    const btn = document.querySelector<HTMLButtonElement>('.theme-toggle');
+    if (btn) {
+      btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
   };
+
+  // Sync aria-label with the actual current theme on each page load
+  function syncLabel() {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const btn = document.querySelector<HTMLButtonElement>('.theme-toggle');
+    if (btn) {
+      btn.setAttribute('aria-label', current === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+  }
+  document.addEventListener('astro:page-load', syncLabel);
 
   // Use event delegation on document to handle clicks
   // This works reliably with View Transitions

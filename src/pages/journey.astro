@@ -77,7 +77,7 @@ const entriesWithContent = await Promise.all(
     type="website"
   />
 
-  <main class="page-container">
+  <div class="page-container">
     <header class="page-header">
       <h1 class="page-title">{pagesConfig.journey.heading}</h1>
       <p class="page-intro">
@@ -104,7 +104,7 @@ const entriesWithContent = await Promise.all(
     ) : (
       <p class="empty-state">No journey entries yet.</p>
     )}
-  </main>
+  </div>
 
   <style>
     .journey-timeline {

@@ -142,7 +142,7 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
     }}
   />
 
-  <main class="case-study">
+  <div class="case-study">
     <!-- Case Study Header -->
     <header class="case-study-header">
       <div class="header-badges">
@@ -175,7 +175,7 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
           <>
             <span class="meta-separator">·</span>
             <a href={link} class="project-link" target="_blank" rel="noopener noreferrer">
-              {new URL(link).hostname.replace('www.', '')} ↗
+              {new URL(link).hostname.replace('www.', '')} ↗<span class="visually-hidden"> (opens in new tab)</span>
             </a>
           </>
         )}
@@ -265,7 +265,7 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
     />
 
     <BackLink href="/projects" text="All projects" />
-  </main>
+  </div>
 
   <ScrollToTop />
 
@@ -304,6 +304,11 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
     .status--ongoing {
       background: rgba(34, 197, 94, 0.15);
       color: #22c55e;
+    }
+
+    :global([data-theme="light"]) .status--ongoing {
+      color: #166534;
+      background: rgba(22, 101, 52, 0.12);
     }
 
     .status--archived {

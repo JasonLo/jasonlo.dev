@@ -23,7 +23,7 @@ const socialLinks = Object.entries(siteConfig.social)
         {socialLinks.map((link, index) => (
           <>
             <a href={link.url} target="_blank" rel="noopener noreferrer">
-              {link.platform}
+              {link.platform}<span class="visually-hidden"> (opens in new tab)</span>
             </a>
             {index < socialLinks.length - 1 && <span class="separator">·</span>}
           </>

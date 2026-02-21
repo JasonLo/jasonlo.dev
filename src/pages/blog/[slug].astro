@@ -42,7 +42,7 @@ const readingTime = formatReadingTime(calculateReadingTime(post.body ?? ''));
     type="article"
   />
 
-  <main class="blog-post">
+  <div class="blog-post">
     <header class="post-header">
       <div class="post-meta">
         <time datetime={publishDate.toISOString()}>{formattedDate}</time>
@@ -63,7 +63,7 @@ const readingTime = formatReadingTime(calculateReadingTime(post.body ?? ''));
     </div>
 
     <BackLink href="/blog" text="All posts" />
-  </main>
+  </div>
 
   <ScrollToTop />
 

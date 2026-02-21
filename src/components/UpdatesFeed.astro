@@ -107,6 +107,7 @@ if (mode === 'random') {
         ? words.slice(0, 10).join(' ') + '...'
         : post.description;
       
+      const showNewTabNotice = isExternal && post.link !== '#';
       return (
         <a href={post.link} class="latest-card" {...linkProps}>
           <div class="latest-meta">
@@ -124,6 +125,7 @@ if (mode === 'random') {
               ))}
             </div>
           )}
+          {showNewTabNotice && <span class="visually-hidden"> (opens in new tab)</span>}
         </a>
       );
     })}
@@ -189,44 +191,36 @@ if (mode === 'random') {
     text-transform: capitalize;
   }
 
-  .latest-type[data-type="journey"] {
-    background: rgba(139, 92, 246, 0.1);
-    color: rgb(139, 92, 246);
+  .latest-type[data-type="journey"],
+  .latest-type[data-type="transition"] {
+    background: color-mix(in srgb, var(--color-type-transition) 12%, transparent);
+    color: var(--color-type-transition);
   }
 
-  .latest-type[data-type="project"] {
-    background: var(--color-accent-muted);
-    color: var(--color-accent);
-  }
-
-  .latest-type[data-type="publication"] {
-    background: rgba(34, 139, 230, 0.1);
-    color: rgb(34, 139, 230);
-  }
-
-  .latest-type[data-type="tool"] {
-    background: rgba(16, 185, 129, 0.1);
-    color: rgb(16, 185, 129);
-  }
-
-  .latest-type[data-type="blog"] {
-    background: rgba(251, 146, 60, 0.1);
-    color: rgb(251, 146, 60);
-  }
-
+  .latest-type[data-type="project"],
   .latest-type[data-type="milestone"] {
     background: var(--color-accent-muted);
     color: var(--color-accent);
   }
 
+  .latest-type[data-type="publication"],
   .latest-type[data-type="learning"] {
-    background: rgba(34, 139, 230, 0.1);
-    color: rgb(34, 139, 230);
+    background: color-mix(in srgb, var(--color-type-learning) 12%, transparent);
+    color: var(--color-type-learning);
   }
 
-  .latest-type[data-type="transition"] {
-    background: rgba(139, 92, 246, 0.1);
-    color: rgb(139, 92, 246);
+  .latest-type[data-type="tool"] {
+    background: color-mix(in srgb, var(--color-type-tool) 12%, transparent);
+    color: var(--color-type-tool);
+  }
+
+  .latest-type[data-type="blog"] {
+    background: color-mix(in srgb, var(--color-type-blog) 12%, transparent);
+    color: var(--color-type-blog);
+  }
+
+  :global([data-theme="light"]) .latest-type {
+    background: var(--color-bg);
   }
 
   .latest-title {
