@@ -25,8 +25,8 @@ const hasRelated = projects.length > 0;
 ---
 
 {hasRelated && (
-  <aside class="related-content">
-    <h2 class="related-title">{title}</h2>
+  <aside class="related-content" aria-labelledby="related-content-heading">
+    <h2 class="related-title" id="related-content-heading">{title}</h2>
     
     <div class="related-section">
       <h3 class="related-section-title">
