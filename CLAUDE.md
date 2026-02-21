@@ -35,7 +35,7 @@ All content lives in `src/content/` as MDX files. Schemas are defined in `src/co
 
 ### Routing
 
-File-based routing in `src/pages/`. Dynamic routes use `[slug].astro` for individual items and `[...page].astro` for paginated listings (publications). Static pages: index, journey, tools, blog, 404. Generated files: `llms.txt.ts`, `robots.txt.ts`.
+File-based routing in `src/pages/`. Dynamic routes use `[slug].astro` for individual items and `[...page].astro` for paginated listings (publications). Static pages: index, projects (listing), journey, tools, blog, 404. Generated files: `llms.txt.ts`, `robots.txt.ts`.
 
 ### Layouts
 
