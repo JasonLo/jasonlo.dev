@@ -72,6 +72,13 @@ export const pagesConfig = {
     intro: 'A curated collection of tools I have explored and worked with over time.',
   },
 
+  blog: {
+    title: 'Blog',
+    heading: 'Blog',
+    description: 'Thoughts, notes, and write-ups on AI, data science, and engineering.',
+    intro: 'Thoughts, notes, and write-ups on AI, data science, and engineering.',
+  },
+
 } as const;
 
 export type PagesConfig = typeof pagesConfig;

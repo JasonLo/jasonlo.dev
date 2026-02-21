@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SEO from '../../components/SEO.astro';
+import { getCollection } from 'astro:content';
+import { pagesConfig } from '../../pages.config';
+
+const allPosts = await getCollection('blog', ({ data }) => data.draft !== true);
+
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime()
+);
+---
+
+<BaseLayout>
+  <SEO
+    slot="head"
+    title={pagesConfig.blog.title}
+    description={pagesConfig.blog.description}
+    type="website"
+  />
+
+  <main class="page-container">
+    <header class="page-header">
+      <h1 class="page-title">{pagesConfig.blog.heading}</h1>
+      <p class="page-intro">{pagesConfig.blog.intro}</p>
+    </header>
+
+    {sortedPosts.length > 0 ? (
+      <ul class="post-list">
+        {sortedPosts.map((post) => {
+          const formattedDate = post.data.publishDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          });
+          return (
+            <li class="post-item">
+              <a href={`/blog/${post.id}`} class="post-link">
+                <div class="post-meta">
+                  <time datetime={post.data.publishDate.toISOString()}>{formattedDate}</time>
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <div class="post-tags">
+                      {post.data.tags.slice(0, 3).map((tag) => (
+                        <span class="tag">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <h2 class="post-title">{post.data.title}</h2>
+                <p class="post-description">{post.data.description}</p>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    ) : (
+      <p class="empty-state">No posts yet.</p>
+    )}
+  </main>
+
+  <style>
+    .post-list {
+      list-style: none;
+      padding: 0;
+      margin: 2rem 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .post-item {
+      border-top: 1px solid var(--color-border);
+    }
+
+    .post-item:last-child {
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .post-link {
+      display: block;
+      padding: 1.5rem 0;
+      text-decoration: none;
+      transition: none;
+    }
+
+    .post-link:hover .post-title {
+      color: var(--color-accent);
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .post-meta time {
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .post-tags {
+      display: flex;
+      gap: 0.375rem;
+    }
+
+    .tag {
+      font-size: 0.6875rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 3px;
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-muted);
+    }
+
+    .post-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 0.375rem;
+      line-height: 1.4;
+      transition: color 0.15s ease;
+    }
+
+    .post-description {
+      font-size: 0.9375rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+
+    .empty-state {
+      margin-top: 3rem;
+      color: var(--color-text-muted);
+      font-size: 0.9375rem;
+    }
+  </style>
+</BaseLayout>

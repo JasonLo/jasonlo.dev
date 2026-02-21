@@ -1,0 +1,29 @@
+---
+title: "Where Should a Coding Agent Live?"
+description: "AI coding agents are moving from synchronous IDE plugins to asynchronous infrastructure. Each placement changes what the agent can do — and what it costs you."
+publishDate: 2026-02-20
+tags:
+  - Opinion
+  - Coding Agent
+draft: false
+---
+
+AI coding agent placement is moving from synchronous to asynchronous, and that shift makes sense. Where an agent lives determines its latency, its authority, and how much friction it introduces into the workflow.
+
+## IDE
+
+The most intuitive home, but also the most constrained. In the editor, latency is visible and blocking. If an agent takes minutes to refactor or traverse a large repository, the developer’s flow collapses. IDE agents must be fast, incremental, and easily interruptible. They are assistants, not batch processors.
+
+## Issues and PRs
+
+A stronger boundary. Work begins with human intent in an issue. The agent can draft specs, propose implementations, open PRs, and review diffs with reasoning attached. This fits existing collaboration models and preserves an audit trail. Because it is asynchronous, the agent can spend more time thinking without interrupting anyone.
+
+## Actions
+
+Here the agent becomes infrastructure. It behaves like an adaptive test suite. Beyond unit tests, it can enforce architectural constraints, validate accessibility compliance, detect stale documentation, flag risky migrations, and check API contracts. No one waits. It runs on every push and acts as an automated guardrail.
+
+## Monitoring and Alerting
+
+Another high leverage layer. Instead of static thresholds, an agent in the monitoring system can correlate logs, traces, and metrics, suppress noise, cluster related failures, and suggest likely root causes. Alerts become contextual summaries rather than raw signals. This shifts the agent from code generation to operational intelligence.
+
+The trajectory is a redistribution of authority. In the IDE, the agent assists. In PRs, it collaborates. In Actions, it enforces. In monitoring, it diagnoses. Each layer works best when it respects its latency budget and scope of control rather than trying to dominate the entire stack.

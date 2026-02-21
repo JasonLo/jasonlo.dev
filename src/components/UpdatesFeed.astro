@@ -14,6 +14,7 @@ const allJourney = await getCollection('journey', ({ data }) => data.draft !== t
 const allProjects = await getCollection('projects', ({ data }) => data.draft !== true);
 const allPublications = await getCollection('publications', ({ data }) => data.draft === false);
 const allTools = await getCollection('tools', ({ data }) => data.draft !== true);
+const allBlog = await getCollection('blog', ({ data }) => data.draft !== true);
 
 // Unify all posts with a common structure
 const allPosts = [
@@ -54,6 +55,15 @@ const allPosts = [
     link: `/tools#${tool.id}`,
     meta: tool.data.best_for,
     tags: tool.data.tags?.slice(0, 3),
+  })),
+  ...allBlog.map(post => ({
+    type: 'blog' as const,
+    date: post.data.publishDate,
+    title: post.data.title,
+    description: post.data.description,
+    link: `/blog/${post.id}`,
+    meta: 'blog',
+    tags: post.data.tags?.slice(0, 3),
   })),
 ];
 
@@ -197,6 +207,11 @@ if (mode === 'random') {
   .latest-type[data-type="tool"] {
     background: rgba(16, 185, 129, 0.1);
     color: rgb(16, 185, 129);
+  }
+
+  .latest-type[data-type="blog"] {
+    background: rgba(251, 146, 60, 0.1);
+    color: rgb(251, 146, 60);
   }
 
   .latest-type[data-type="milestone"] {

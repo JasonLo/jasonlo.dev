@@ -81,9 +81,21 @@ const toolsCollection = defineCollection({
   }),
 });
 
+const blogCollection = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/blog' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    publishDate: z.coerce.date(),
+    tags: z.array(z.string()).optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
 export const collections = {
   projects: projectsCollection,
   journey: journeyCollection,
   publications: publicationsCollection,
   tools: toolsCollection,
+  blog: blogCollection,
 };

@@ -40,6 +40,7 @@ export const siteConfig = {
     { label: 'Projects', href: '/projects' },
     { label: 'Publications', href: '/publications' },
     { label: 'Tools', href: '/tools' },
+    { label: 'Blog', href: '/blog' },
   ],
 };
 
