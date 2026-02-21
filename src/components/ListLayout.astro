@@ -41,8 +41,8 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
       <div class="page-controls">
         <PageStats text={`${itemCount} ${itemLabel}${statsExtra ? ` · ${statsExtra}` : ''}`} />
         {sortOptions && sortOptions.length > 0 && (
-          <div class="sort-controls">
-            <span class="sort-label">Sort by</span>
+          <div class="sort-controls" role="group" aria-labelledby="sort-label">
+            <span class="sort-label" id="sort-label">Sort by</span>
             {sortOptions.map((option) => (
               <button
                 type="button"
@@ -55,6 +55,7 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
             ))}
           </div>
         )}
+        <div role="status" class="sort-status visually-hidden" aria-live="polite" aria-atomic="true"></div>
       </div>
     </header>
 
@@ -85,6 +86,9 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
           });
           btn.classList.add('active');
           btn.setAttribute('aria-pressed', 'true');
+
+          const statusEl = controls.closest('.page-container')?.querySelector('.sort-status');
+          if (statusEl) statusEl.textContent = `Sorted by ${btn.textContent?.trim() ?? key}`;
 
           const items = [...list.querySelectorAll('.row-item')];
           const vals = items.map((el) => el.getAttribute('data-sort-' + key) || '');

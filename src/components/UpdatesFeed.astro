@@ -85,9 +85,9 @@ if (mode === 'random') {
 }
 ---
 
-<section class="latest-updates">
+<section class="latest-updates" aria-labelledby="updates-feed-heading">
   <div class="latest-header">
-    <h2>{mode === 'random' ? 'Random Updates' : 'Latest Updates'}</h2>
+    <h2 id="updates-feed-heading">{mode === 'random' ? 'Random Updates' : 'Latest Updates'}</h2>
   </div>
   <div class="latest-grid">
     {selectedPosts.map((post) => {

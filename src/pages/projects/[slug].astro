@@ -175,7 +175,7 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
           <>
             <span class="meta-separator">·</span>
             <a href={link} class="project-link" target="_blank" rel="noopener noreferrer">
-              {new URL(link).hostname.replace('www.', '')} ↗<span class="visually-hidden"> (opens in new tab)</span>
+              {new URL(link).hostname.replace('www.', '')} <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in new tab)</span>
             </a>
           </>
         )}
