@@ -23,31 +23,24 @@
 #
 # Audits documentation files against the current codebase on every push to main and opens a PR with corrections if any discrepancies are found.
 #
-# gh-aw-metadata: {"schema_version":"v1","frontmatter_hash":"31cff5f4a997e66717046d5de36a1017d53a6e9ae0385c9db66cf9b45719fc58","compiler_version":"v0.48.0"}
+# gh-aw-metadata: {"schema_version":"v1","frontmatter_hash":"1c4580f75bc6bd5fecd4e2feeb928546d0bd84aa0e2a96d1bbc79302291c48ee","compiler_version":"v0.48.0"}
 
 name: "Documentation Cleaner"
 "on":
-  push:
-    branches:
-    - main
-    paths:
-    - src/**
-    - astro.config.mjs
-    - package.json
-    - tsconfig.json
-    - scripts/**
+  schedule:
+  - cron: "23 1 * * 0"
+    # Friendly format: weekly on sunday (scattered)
+  workflow_dispatch:
 
 permissions: {}
 
 concurrency:
-  group: "gh-aw-${{ github.workflow }}-${{ github.ref }}"
+  group: "gh-aw-${{ github.workflow }}"
 
 run-name: "Documentation Cleaner"
 
 jobs:
   activation:
-    needs: pre_activation
-    if: needs.pre_activation.outputs.activated == 'true'
     runs-on: ubuntu-slim
     permissions:
       contents: read
@@ -260,6 +253,8 @@ jobs:
     needs: activation
     runs-on: ubuntu-latest
     permissions: read-all
+    concurrency:
+      group: "gh-aw-copilot-${{ github.workflow }}"
     env:
       DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
       GH_AW_ASSETS_ALLOWED_EXTS: ""
@@ -975,6 +970,8 @@ jobs:
     if: needs.agent.outputs.output_types != '' || needs.agent.outputs.has_patch == 'true'
     runs-on: ubuntu-latest
     permissions: {}
+    concurrency:
+      group: "gh-aw-copilot-${{ github.workflow }}"
     timeout-minutes: 10
     outputs:
       success: ${{ steps.parse_results.outputs.success }}
@@ -1068,28 +1065,6 @@ jobs:
           name: threat-detection.log
           path: /tmp/gh-aw/threat-detection/detection.log
           if-no-files-found: ignore
-
-  pre_activation:
-    runs-on: ubuntu-slim
-    outputs:
-      activated: ${{ steps.check_membership.outputs.is_team_member == 'true' }}
-    steps:
-      - name: Setup Scripts
-        uses: github/gh-aw/actions/setup@8a0dfa2e1bb2cf9526676ba0c2ae78cd7a56ea1c # v0.48.0
-        with:
-          destination: /opt/gh-aw/actions
-      - name: Check team membership for workflow
-        id: check_membership
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
-        env:
-          GH_AW_REQUIRED_ROLES: admin,maintainer,write
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { setupGlobals } = require('/opt/gh-aw/actions/setup_globals.cjs');
-            setupGlobals(core, github, context, exec, io);
-            const { main } = require('/opt/gh-aw/actions/check_membership.cjs');
-            await main();
 
   safe_outputs:
     needs:

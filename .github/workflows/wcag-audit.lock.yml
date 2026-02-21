@@ -23,45 +23,30 @@
 #
 # Audits Astro pages, layouts, and CSS for WCAG 2.2 (A and AA) violations on every push to main and opens a PR with fixes. Reports issues that require design decisions in the PR body.
 #
-# gh-aw-metadata: {"schema_version":"v1","frontmatter_hash":"f34a8d3d7a6dbe3d770cd03a4c53987ce15bf497f4eaea29c202ca8574150096","compiler_version":"v0.48.0"}
+# gh-aw-metadata: {"schema_version":"v1","frontmatter_hash":"2f9fb1b2c8d6abc28866066c061d19a239147587170491d7b186c48b6fa79b4f","compiler_version":"v0.48.0"}
 
 name: "WCAG Compliance Auditor"
 "on":
-  pull_request:
-    paths:
-    - src/**/*.astro
-    - src/**/*.css
-    - src/**/*.mdx
-  push:
-    branches:
-    - main
-    paths:
-    - src/**/*.astro
-    - src/**/*.css
-    - src/**/*.mdx
+  schedule:
+  - cron: "42 19 * * 0"
+    # Friendly format: weekly on sunday (scattered)
+  workflow_dispatch:
 
 permissions: {}
 
 concurrency:
-  group: "gh-aw-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
-  cancel-in-progress: true
+  group: "gh-aw-${{ github.workflow }}"
 
 run-name: "WCAG Compliance Auditor"
 
 jobs:
   activation:
-    needs: pre_activation
-    if: >
-      (needs.pre_activation.outputs.activated == 'true') && ((github.event_name != 'pull_request') || (github.event.pull_request.head.repo.id == github.repository_id))
     runs-on: ubuntu-slim
     permissions:
       contents: read
     outputs:
-      body: ${{ steps.sanitized.outputs.body }}
       comment_id: ""
       comment_repo: ""
-      text: ${{ steps.sanitized.outputs.text }}
-      title: ${{ steps.sanitized.outputs.title }}
     steps:
       - name: Setup Scripts
         uses: github/gh-aw/actions/setup@8a0dfa2e1bb2cf9526676ba0c2ae78cd7a56ea1c # v0.48.0
@@ -92,15 +77,6 @@ jobs:
             const { setupGlobals } = require('/opt/gh-aw/actions/setup_globals.cjs');
             setupGlobals(core, github, context, exec, io);
             const { main } = require('/opt/gh-aw/actions/check_workflow_timestamp_api.cjs');
-            await main();
-      - name: Compute current body text
-        id: sanitized
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
-        with:
-          script: |
-            const { setupGlobals } = require('/opt/gh-aw/actions/setup_globals.cjs');
-            setupGlobals(core, github, context, exec, io);
-            const { main } = require('/opt/gh-aw/actions/compute_text.cjs');
             await main();
       - name: Create prompt with built-in context
         env:
@@ -277,6 +253,8 @@ jobs:
     needs: activation
     runs-on: ubuntu-latest
     permissions: read-all
+    concurrency:
+      group: "gh-aw-copilot-${{ github.workflow }}"
     env:
       DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
       GH_AW_ASSETS_ALLOWED_EXTS: ""
@@ -992,6 +970,8 @@ jobs:
     if: needs.agent.outputs.output_types != '' || needs.agent.outputs.has_patch == 'true'
     runs-on: ubuntu-latest
     permissions: {}
+    concurrency:
+      group: "gh-aw-copilot-${{ github.workflow }}"
     timeout-minutes: 10
     outputs:
       success: ${{ steps.parse_results.outputs.success }}
@@ -1085,29 +1065,6 @@ jobs:
           name: threat-detection.log
           path: /tmp/gh-aw/threat-detection/detection.log
           if-no-files-found: ignore
-
-  pre_activation:
-    if: (github.event_name != 'pull_request') || (github.event.pull_request.head.repo.id == github.repository_id)
-    runs-on: ubuntu-slim
-    outputs:
-      activated: ${{ steps.check_membership.outputs.is_team_member == 'true' }}
-    steps:
-      - name: Setup Scripts
-        uses: github/gh-aw/actions/setup@8a0dfa2e1bb2cf9526676ba0c2ae78cd7a56ea1c # v0.48.0
-        with:
-          destination: /opt/gh-aw/actions
-      - name: Check team membership for workflow
-        id: check_membership
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
-        env:
-          GH_AW_REQUIRED_ROLES: admin,maintainer,write
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { setupGlobals } = require('/opt/gh-aw/actions/setup_globals.cjs');
-            setupGlobals(core, github, context, exec, io);
-            const { main } = require('/opt/gh-aw/actions/check_membership.cjs');
-            await main();
 
   safe_outputs:
     needs:

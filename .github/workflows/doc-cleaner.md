@@ -1,14 +1,8 @@
 ---
 description: Audits documentation files against the current codebase on every push to main and opens a PR with corrections if any discrepancies are found.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'src/**'
-      - 'astro.config.mjs'
-      - 'package.json'
-      - 'tsconfig.json'
-      - 'scripts/**'
+  schedule: "weekly on sunday"
+  workflow_dispatch: # Allow manual trigger
 permissions: read-all
 tools:
   github:
@@ -71,5 +65,6 @@ Check each of the following files for accuracy (skip any that do not exist):
 ## Safe Outputs
 
 When finished:
+
 - If you made one or more edits: use `create-pull-request` with a concise title (e.g. "docs: sync documentation with current codebase") and a body listing each file changed and what was corrected.
 - If all documentation is already accurate: call `noop` with a brief message explaining no changes were needed.
