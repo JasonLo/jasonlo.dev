@@ -33,6 +33,7 @@ src/
     projects/        # Project Retrospective (MDX)
     publications/    # Academic publications (MDX, synced from ORCID + OpenAlex)
     tools/           # Tools and software (MDX)
+    blog/            # Blog posts (MDX)
   pages/             # File-based routing
   layouts/           # BaseLayout
   components/        # Astro components (ListLayout, SEO, etc.)

@@ -27,7 +27,7 @@ All content lives in `src/content/` as MDX files. Schemas are defined in `src/co
 
 | Collection | Key frontmatter |
 | --- | --- |
-| `projects` | title, role, year, outcomeSummary, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, featured, status, draft |
+| `projects` | title, role, year, link, duration, teamSize, outcomeSummary, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, featured, status, relatedProjects, draft |
 | `publications` | title, description, authors, journal, publishDate, doi, oaUrl, citedByCount, tags, draft |
 | `journey` | date, title, description, type (milestone/learning/transition), skills, draft |
 | `tools` | name, description, url, date, is_favorite, best_for, not_for, personal_remarks, license, tags, draft |
