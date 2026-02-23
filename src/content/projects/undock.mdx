@@ -1,0 +1,33 @@
+---
+title: "undock"
+role: "Creator"
+year: 2026
+link: https://github.com/jasonlo/undock
+status: ongoing
+outcomeSummary: "A terminal UI that compresses daily Docker and Docker Compose workflows into a single interactive panel, built to replace the VS Code Docker extension for editors like Zed that lack one."
+overview: "undock is a terminal-first Docker control panel. It provides a terminal UI for the most common container tasks — rebuild, logs, exec, restart — without requiring a GUI or IDE extension."
+problem: "Zed has no Docker extension. In VS Code, the Docker extension compresses rebuild, log-streaming, exec, and cleanup into a structured UI with single clicks. Without an equivalent, container-heavy development in Zed requires verbose CLI commands, lowering discoverability and raising cognitive load across the inner loop of rebuild-check-restart-repeat."
+constraints:
+  - "Must be editor-agnostic and not tied to any IDE extension API"
+  - "Must work over SSH and in headless environments — no UI"
+  - "Must surface command hints in-UI — too many shortcuts to memorize"
+keyDecisions:
+  - decision: "Build a CLI rather than wait for a native Zed Docker extension"
+    reasoning: "Vibe coding a first version is fast enough to validate the idea without a large time investment."
+    alternatives:
+      - "Wait for an official Zed Docker extension"
+      - "Use shell aliases in .zshrc or .bashrc"
+  - decision: "Workflow compression over feature parity"
+    reasoning: "The goal is not to replicate the full Docker API. The goal is to cover the 20% of extension features used 80% of the time — rebuild, logs — and make them fast to invoke."
+approach: "Built a Textual-based terminal UI that surfaces the most-used Docker and Compose commands in an interactive panel with visible key bindings, so nothing needs to be memorized."
+techStack:
+  - "Textual"
+  - "Docker"
+impact:
+  qualitative: "Reduces friction for container-heavy development outside VS Code, enabling migration to faster editors without losing the Docker control surface. Editor-agnostic by design, so it survives future IDE migrations."
+learnings:
+  - "Workflow compression delivers more value than feature parity. Covering the most common actions well beats covering all actions adequately."
+  - "Editor-agnostic tooling has a durability advantage: it works regardless of which editor you are currently using."
+featured: false
+draft: false
+---
