@@ -29,6 +29,7 @@ const sortedTools = [...allTools].sort((a, b) => {
   defaultSort="favorite"
   listId="tools-list"
   emptyMessage="No tools documented yet."
+  pageSize={15}
 >
   {sortedTools.map((item) => {
     const RowTag = item.data.url ? 'a' : 'div';

@@ -45,6 +45,7 @@ try {
   defaultSort="recent"
   listId="publications-list"
   emptyMessage="No articles published yet."
+  pageSize={15}
 >
   {sortedArticles.map((article) => {
     const year = article.data.publishDate.getFullYear();
