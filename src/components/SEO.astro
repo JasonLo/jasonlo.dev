@@ -29,9 +29,7 @@ const siteURL = siteConfig.url.endsWith('/') ? siteConfig.url : `${siteConfig.ur
 const defaultImage = `${siteURL}og-image.png`;
 const ogImage = image || defaultImage;
 const absoluteImageURL = ogImage.startsWith('http') ? ogImage : `${siteURL}${ogImage.replace(/^\//, '')}`;
-const twitterHandle = siteConfig.social.twitter
-  ? `@${siteConfig.social.twitter.split('/').pop()}`
-  : undefined;
+const twitterHandle = undefined;
 ---
 
 <!-- Page Title -->

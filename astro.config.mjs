@@ -13,7 +13,7 @@ export default defineConfig({
     service: {
       entrypoint: 'astro/assets/services/sharp',
       config: {
-        limitInputPixels: 268402689,
+        limitInputPixels: 33177600,
       }
     },
     remotePatterns: [],

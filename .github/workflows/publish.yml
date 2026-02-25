@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - 'src/**'
+      - 'astro.config.mjs'
+      - 'package.json'
+      - 'public/**'
   workflow_dispatch:
 
 permissions:

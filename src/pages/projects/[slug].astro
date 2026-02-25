@@ -123,11 +123,12 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
 ---
 
 <BaseLayout>
-  <SEO 
+  <SEO
     slot="head"
     title={`${title} - Project`}
     description={outcomeSummary}
     type="article"
+    publishDate={new Date(year, 0, 1)}
   />
 
   <StructuredData
