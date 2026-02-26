@@ -10,10 +10,6 @@ interface SearchItem {
   external?: boolean;
 }
 
-function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
-}
-
 export async function GET() {
   const [projects, blog, tools, publications, journey] = await Promise.all([
     getCollection('projects', ({ data }) => !data.draft),
@@ -52,10 +48,9 @@ export async function GET() {
       type: 'publication' as const,
       title: p.data.title,
       description: p.data.journal,
-      url: p.data.doi ?? '/publications',
+      url: `/publications#${p.id}`,
       tags: p.data.tags ?? [],
       meta: String(p.data.publishDate.getFullYear()),
-      external: !!p.data.doi,
     })),
     ...journey.map((j) => ({
       type: 'journey' as const,

@@ -52,6 +52,7 @@ try {
     const RowTag = article.data.doi ? 'a' : 'div';
     return (
       <RowTag
+        id={article.id}
         class="row-item"
         data-sort-recent={article.data.publishDate.getTime()}
         data-sort-citations={article.data.citedByCount}
@@ -81,6 +82,15 @@ try {
 </ListLayout>
 
 <style>
+  .row-item {
+    scroll-margin-top: 10vh;
+  }
+
+  .row-item:target {
+    background: var(--color-bg-elevated);
+    border-color: var(--color-accent);
+  }
+
   .pub-citations {
     padding: 0.0625rem 0.4375rem;
     border-radius: 3px;

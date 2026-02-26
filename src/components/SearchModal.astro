@@ -16,12 +16,17 @@
         placeholder="Search projects, blog, tools..."
         autocomplete="off"
         aria-label="Search"
+        role="combobox"
+        aria-expanded="false"
+        aria-controls="search-listbox"
+        aria-autocomplete="list"
       />
       <kbd class="search-kbd">ESC</kbd>
     </div>
-    <div id="search-results" class="search-results" aria-live="polite">
+    <div id="search-results" class="search-results">
       <div class="search-empty">Start typing to search&hellip;</div>
     </div>
+    <div id="search-status" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
     <div class="search-footer">
       <span class="search-hint"><kbd>&uarr;</kbd><kbd>&darr;</kbd> Navigate</span>
       <span class="search-hint"><kbd>&crarr;</kbd> Open</span>
@@ -56,6 +61,7 @@
   let fuse: Fuse<SearchItem> | null = null;
   let indexPromise: Promise<SearchItem[]> | null = null;
   let activeIndex = -1;
+  let triggerElement: HTMLElement | null = null;
 
   function loadIndex(): Promise<SearchItem[]> {
     if (!indexPromise) {
@@ -90,18 +96,87 @@
     return document.getElementById('search-results');
   }
 
+  function getStatusRegion() {
+    return document.getElementById('search-status');
+  }
+
+  function setInert(value: boolean) {
+    const header = document.querySelector('.site-header');
+    const main = document.getElementById('main-content');
+    const footer = document.querySelector('footer');
+    [header, main, footer].forEach((el) => {
+      if (!el) return;
+      if (value) {
+        el.setAttribute('inert', '');
+      } else {
+        el.removeAttribute('inert');
+      }
+    });
+  }
+
+  function updateComboboxState(expanded: boolean) {
+    const input = getInput();
+    if (input) {
+      input.setAttribute('aria-expanded', String(expanded));
+      if (!expanded) {
+        input.removeAttribute('aria-activedescendant');
+      }
+    }
+  }
+
+  function announceStatus(message: string) {
+    const status = getStatusRegion();
+    if (status) {
+      status.textContent = message;
+    }
+  }
+
+  // Focus trap: keep Tab/Shift+Tab within the modal container
+  function handleFocusTrap(e: KeyboardEvent) {
+    if (e.key !== 'Tab') return;
+    const container = document.querySelector('.search-container');
+    if (!container) return;
+
+    const focusable = container.querySelectorAll<HTMLElement>(
+      'input, a[href], button, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  }
+
   function openModal() {
     const modal = getModal();
     if (!modal) return;
+
+    // Store trigger for focus restoration
+    triggerElement = document.activeElement as HTMLElement | null;
+
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
+    setInert(true);
     loadIndex();
+
     const input = getInput();
     if (input) {
       input.value = '';
       input.focus();
     }
     renderEmpty();
+    updateComboboxState(false);
     activeIndex = -1;
   }
 
@@ -110,7 +185,15 @@
     if (!modal) return;
     modal.hidden = true;
     document.body.style.overflow = '';
+    setInert(false);
+    updateComboboxState(false);
     activeIndex = -1;
+
+    // Restore focus to the element that opened the modal
+    if (triggerElement && typeof triggerElement.focus === 'function') {
+      triggerElement.focus();
+      triggerElement = null;
+    }
   }
 
   function isOpen() {
@@ -122,12 +205,16 @@
     const container = getResultsContainer();
     if (!container) return;
     container.innerHTML = '<div class="search-empty">Start typing to search&hellip;</div>';
+    updateComboboxState(false);
+    announceStatus('');
   }
 
   function renderNoResults() {
     const container = getResultsContainer();
     if (!container) return;
     container.innerHTML = '<div class="search-empty">No results found</div>';
+    updateComboboxState(false);
+    announceStatus('No results found');
   }
 
   function highlightMatches(text: string, indices: readonly [number, number][] | undefined, maxLen?: number): string {
@@ -187,19 +274,21 @@
 
     let html = '';
     let idx = 0;
+    let groupIdx = 0;
     for (const [type, items] of grouped) {
-      html += `<div class="search-group"><div class="search-group-label">${TYPE_LABELS[type]}s</div>`;
+      const groupId = `search-group-${groupIdx}`;
+      html += `<div class="search-group" role="group" aria-labelledby="${groupId}"><div class="search-group-label" id="${groupId}">${TYPE_LABELS[type]}s</div><div role="listbox" aria-label="${TYPE_LABELS[type]}s">`;
       for (const r of items) {
         const titleHtml = highlightMatches(r.item.title, getMatchIndices(r, 'title'));
         const descHtml = highlightMatches(r.item.description, getMatchIndices(r, 'description'), 120);
         const metaHtml = highlightMatches(r.item.meta, getMatchIndices(r, 'meta'));
-        // Show up to 3 matched tags
         const matchedTags = r.item.tags.slice(0, 3);
         const tagsHtml = matchedTags.length > 0
           ? `<div class="search-result-tags">${matchedTags.map((t) => `<span class="search-tag">${escapeHtml(t)}</span>`).join('')}</div>`
           : '';
         const externalAttrs = r.item.external ? ' target="_blank" rel="noopener noreferrer"' : '';
-        html += `<a class="search-result" href="${r.item.url}" data-search-index="${idx}"${externalAttrs}>
+        const externalHint = r.item.external ? '<span class="visually-hidden"> (opens in new tab)</span>' : '';
+        html += `<a class="search-result" href="${r.item.url}" id="search-result-${idx}" role="option" aria-selected="false" data-search-index="${idx}"${externalAttrs}>
           <div class="search-result-top">
             <span class="search-result-type" data-type="${r.item.type}">${TYPE_LABELS[r.item.type]}</span>
             <span class="search-result-meta">${metaHtml}</span>
@@ -207,14 +296,20 @@
           <span class="search-result-title">${titleHtml}</span>
           <span class="search-result-desc">${descHtml}</span>
           ${tagsHtml}
+          ${externalHint}
         </a>`;
         idx++;
       }
-      html += '</div>';
+      html += '</div></div>';
+      groupIdx++;
     }
 
     container.innerHTML = html;
+    updateComboboxState(true);
     activeIndex = -1;
+
+    const count = capped.length;
+    announceStatus(`${count} result${count === 1 ? '' : 's'} found`);
   }
 
   function escapeHtml(str: string): string {
@@ -230,11 +325,19 @@
   }
 
   function updateHighlight(links: HTMLAnchorElement[]) {
+    const input = getInput();
     links.forEach((el, i) => {
-      el.classList.toggle('search-result--active', i === activeIndex);
+      const isActive = i === activeIndex;
+      el.classList.toggle('search-result--active', isActive);
+      el.setAttribute('aria-selected', String(isActive));
     });
     if (activeIndex >= 0 && links[activeIndex]) {
       links[activeIndex].scrollIntoView({ block: 'nearest' });
+      if (input) {
+        input.setAttribute('aria-activedescendant', links[activeIndex].id);
+      }
+    } else if (input) {
+      input.removeAttribute('aria-activedescendant');
     }
   }
 
@@ -296,6 +399,9 @@
     }
 
     if (!isOpen()) return;
+
+    // Focus trap
+    handleFocusTrap(e);
 
     if (e.key === 'Escape') {
       e.preventDefault();
@@ -412,6 +518,11 @@
     padding: var(--space-sm) 0;
   }
 
+  .search-input:focus-visible {
+    outline: none;
+    box-shadow: 0 1px 0 0 var(--color-accent);
+  }
+
   .search-input::placeholder {
     color: var(--color-text-muted);
   }
@@ -493,6 +604,11 @@
     border-color: var(--color-text-muted);
     background: var(--color-bg-elevated);
     color: var(--color-text);
+  }
+
+  .search-results :global(.search-result:focus-visible) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
 
   /* Top row: type badge + meta */

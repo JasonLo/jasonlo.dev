@@ -146,7 +146,25 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
         if (next) next.disabled = currentPage === totalPages;
       }
 
+      // If URL has a hash targeting an item in this list, jump to its page
+      const hash = window.location.hash.slice(1);
+      if (hash) {
+        const items = getItems();
+        const targetIndex = items.findIndex((item) => item.id === hash);
+        if (targetIndex >= 0) {
+          currentPage = Math.floor(targetIndex / pageSize) + 1;
+        }
+      }
+
       applyPage();
+
+      // After pagination is applied, scroll to the hash target
+      if (hash) {
+        const target = document.getElementById(hash);
+        if (target && (target as HTMLElement).style.display !== 'none') {
+          requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+        }
+      }
 
       document.getElementById(listId + '-prev')?.addEventListener('click', () => {
         if (currentPage > 1) {
