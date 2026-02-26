@@ -1,0 +1,666 @@
+---
+---
+
+<div id="search-modal" class="search-overlay" role="dialog" aria-modal="true" aria-label="Site search" hidden>
+  <div class="search-backdrop" data-search-close></div>
+  <div class="search-container">
+    <div class="search-header">
+      <svg class="search-input-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        id="search-input"
+        class="search-input"
+        type="text"
+        placeholder="Search projects, blog, tools..."
+        autocomplete="off"
+        aria-label="Search"
+      />
+      <kbd class="search-kbd">ESC</kbd>
+    </div>
+    <div id="search-results" class="search-results" aria-live="polite">
+      <div class="search-empty">Start typing to search&hellip;</div>
+    </div>
+    <div class="search-footer">
+      <span class="search-hint"><kbd>&uarr;</kbd><kbd>&darr;</kbd> Navigate</span>
+      <span class="search-hint"><kbd>&crarr;</kbd> Open</span>
+      <span class="search-hint"><kbd>ESC</kbd> Close</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  import Fuse, { type FuseResult } from 'fuse.js';
+
+  type ItemType = 'project' | 'blog' | 'tool' | 'publication' | 'journey';
+
+  interface SearchItem {
+    type: ItemType;
+    title: string;
+    description: string;
+    url: string;
+    tags: string[];
+    meta: string;
+    external?: boolean;
+  }
+
+  const TYPE_LABELS: Record<SearchItem['type'], string> = {
+    project: 'Project',
+    blog: 'Blog',
+    tool: 'Tool',
+    publication: 'Publication',
+    journey: 'Journey',
+  };
+
+  let fuse: Fuse<SearchItem> | null = null;
+  let indexPromise: Promise<SearchItem[]> | null = null;
+  let activeIndex = -1;
+
+  function loadIndex(): Promise<SearchItem[]> {
+    if (!indexPromise) {
+      indexPromise = fetch('/search-index.json')
+        .then((r) => r.json())
+        .then((data: SearchItem[]) => {
+          fuse = new Fuse(data, {
+            keys: [
+              { name: 'title', weight: 2 },
+              { name: 'tags', weight: 1.5 },
+              { name: 'description', weight: 1 },
+              { name: 'meta', weight: 0.5 },
+            ],
+            threshold: 0.3,
+            includeMatches: true,
+          });
+          return data;
+        });
+    }
+    return indexPromise;
+  }
+
+  function getModal() {
+    return document.getElementById('search-modal');
+  }
+
+  function getInput() {
+    return document.getElementById('search-input') as HTMLInputElement | null;
+  }
+
+  function getResultsContainer() {
+    return document.getElementById('search-results');
+  }
+
+  function openModal() {
+    const modal = getModal();
+    if (!modal) return;
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    loadIndex();
+    const input = getInput();
+    if (input) {
+      input.value = '';
+      input.focus();
+    }
+    renderEmpty();
+    activeIndex = -1;
+  }
+
+  function closeModal() {
+    const modal = getModal();
+    if (!modal) return;
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    activeIndex = -1;
+  }
+
+  function isOpen() {
+    const modal = getModal();
+    return modal ? !modal.hidden : false;
+  }
+
+  function renderEmpty() {
+    const container = getResultsContainer();
+    if (!container) return;
+    container.innerHTML = '<div class="search-empty">Start typing to search&hellip;</div>';
+  }
+
+  function renderNoResults() {
+    const container = getResultsContainer();
+    if (!container) return;
+    container.innerHTML = '<div class="search-empty">No results found</div>';
+  }
+
+  function highlightMatches(text: string, indices: readonly [number, number][] | undefined, maxLen?: number): string {
+    if (!indices || indices.length === 0) {
+      const truncated = maxLen && text.length > maxLen ? text.slice(0, maxLen) + '…' : text;
+      return escapeHtml(truncated);
+    }
+
+    const src = maxLen && text.length > maxLen ? text.slice(0, maxLen) + '…' : text;
+    const chars = Array.from(src);
+    const highlighted = new Set<number>();
+    for (const [start, end] of indices) {
+      for (let i = start; i <= end && i < src.length; i++) {
+        highlighted.add(i);
+      }
+    }
+
+    let html = '';
+    let inMark = false;
+    for (let i = 0; i < chars.length; i++) {
+      if (highlighted.has(i) && !inMark) {
+        html += '<mark>';
+        inMark = true;
+      } else if (!highlighted.has(i) && inMark) {
+        html += '</mark>';
+        inMark = false;
+      }
+      html += escapeHtml(chars[i]);
+    }
+    if (inMark) html += '</mark>';
+    return html;
+  }
+
+  function getMatchIndices(result: FuseResult<SearchItem>, key: string): readonly [number, number][] | undefined {
+    if (!result.matches) return undefined;
+    const match = result.matches.find((m) => m.key === key);
+    return match?.indices;
+  }
+
+  function renderResults(results: FuseResult<SearchItem>[]) {
+    const container = getResultsContainer();
+    if (!container) return;
+
+    if (results.length === 0) {
+      renderNoResults();
+      return;
+    }
+
+    const capped = results.slice(0, 10);
+
+    const grouped = new Map<ItemType, FuseResult<SearchItem>[]>();
+    for (const r of capped) {
+      const type = r.item.type;
+      if (!grouped.has(type)) grouped.set(type, []);
+      grouped.get(type)!.push(r);
+    }
+
+    let html = '';
+    let idx = 0;
+    for (const [type, items] of grouped) {
+      html += `<div class="search-group"><div class="search-group-label">${TYPE_LABELS[type]}s</div>`;
+      for (const r of items) {
+        const titleHtml = highlightMatches(r.item.title, getMatchIndices(r, 'title'));
+        const descHtml = highlightMatches(r.item.description, getMatchIndices(r, 'description'), 120);
+        const metaHtml = highlightMatches(r.item.meta, getMatchIndices(r, 'meta'));
+        // Show up to 3 matched tags
+        const matchedTags = r.item.tags.slice(0, 3);
+        const tagsHtml = matchedTags.length > 0
+          ? `<div class="search-result-tags">${matchedTags.map((t) => `<span class="search-tag">${escapeHtml(t)}</span>`).join('')}</div>`
+          : '';
+        const externalAttrs = r.item.external ? ' target="_blank" rel="noopener noreferrer"' : '';
+        html += `<a class="search-result" href="${r.item.url}" data-search-index="${idx}"${externalAttrs}>
+          <div class="search-result-top">
+            <span class="search-result-type" data-type="${r.item.type}">${TYPE_LABELS[r.item.type]}</span>
+            <span class="search-result-meta">${metaHtml}</span>
+          </div>
+          <span class="search-result-title">${titleHtml}</span>
+          <span class="search-result-desc">${descHtml}</span>
+          ${tagsHtml}
+        </a>`;
+        idx++;
+      }
+      html += '</div>';
+    }
+
+    container.innerHTML = html;
+    activeIndex = -1;
+  }
+
+  function escapeHtml(str: string): string {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function getResultLinks(): HTMLAnchorElement[] {
+    const container = getResultsContainer();
+    if (!container) return [];
+    return Array.from(container.querySelectorAll<HTMLAnchorElement>('.search-result'));
+  }
+
+  function updateHighlight(links: HTMLAnchorElement[]) {
+    links.forEach((el, i) => {
+      el.classList.toggle('search-result--active', i === activeIndex);
+    });
+    if (activeIndex >= 0 && links[activeIndex]) {
+      links[activeIndex].scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  let debounceTimer: ReturnType<typeof setTimeout>;
+
+  function onInput() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      const input = getInput();
+      if (!input) return;
+      const query = input.value.trim();
+      if (!query) {
+        renderEmpty();
+        return;
+      }
+      if (!fuse) {
+        loadIndex().then(() => onInput());
+        return;
+      }
+      const results = fuse.search(query);
+      renderResults(results);
+    }, 150);
+  }
+
+  // Event delegation — works with View Transitions
+  document.addEventListener('click', (e) => {
+    const target = e.target as Element;
+
+    if (target.closest('[data-search-open]')) {
+      e.preventDefault();
+      openModal();
+      return;
+    }
+
+    if (target.closest('[data-search-close]')) {
+      closeModal();
+      return;
+    }
+
+    // Close modal when a result is clicked — let the <a> navigate naturally
+    const resultLink = target.closest('.search-result') as HTMLAnchorElement | null;
+    if (resultLink) {
+      closeModal();
+      // Don't preventDefault — browser follows the <a> href natively,
+      // matching how UpdatesFeed latest-card links work
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    // Cmd+K / Ctrl+K to toggle
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      if (isOpen()) {
+        closeModal();
+      } else {
+        openModal();
+      }
+      return;
+    }
+
+    if (!isOpen()) return;
+
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      closeModal();
+      return;
+    }
+
+    const links = getResultLinks();
+    if (links.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIndex = (activeIndex + 1) % links.length;
+      updateHighlight(links);
+      return;
+    }
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIndex = activeIndex <= 0 ? links.length - 1 : activeIndex - 1;
+      updateHighlight(links);
+      return;
+    }
+
+    if (e.key === 'Enter') {
+      // If no selection, default to first result
+      const target = activeIndex >= 0 ? links[activeIndex] : links[0];
+      if (target) {
+        e.preventDefault();
+        // Simulate a click — the click handler closes the modal,
+        // browser follows the <a> href natively (same as UpdatesFeed)
+        target.click();
+      }
+    }
+  });
+
+  // Bind input event via delegation
+  document.addEventListener('input', (e) => {
+    if ((e.target as Element).id === 'search-input') {
+      onInput();
+    }
+  });
+
+  // Close modal on navigation (View Transitions)
+  document.addEventListener('astro:before-swap', () => {
+    closeModal();
+  });
+
+  // Re-initialize state on page load (View Transitions)
+  document.addEventListener('astro:page-load', () => {
+    activeIndex = -1;
+  });
+</script>
+
+<style>
+  .search-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 15vh;
+  }
+
+  .search-overlay[hidden] {
+    display: none;
+  }
+
+  .search-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .search-container {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    margin: 0 var(--space-md);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    max-height: 70vh;
+    overflow: hidden;
+  }
+
+  .search-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .search-input-icon {
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+  }
+
+  .search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--color-text);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    padding: var(--space-sm) 0;
+  }
+
+  .search-input::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  .search-kbd {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 6px;
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--border-radius-sm);
+    line-height: 1;
+  }
+
+  .search-results {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .search-results :global(.search-empty) {
+    padding: var(--space-2xl) 0;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+  }
+
+  /* --- Group headings --- */
+
+  .search-results :global(.search-group + .search-group) {
+    margin-top: var(--space-md);
+  }
+
+  .search-results :global(.search-group-label) {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .search-results :global(.search-group-label)::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border-subtle);
+  }
+
+  /* --- Result cards (matches case-snapshot / latest-card) --- */
+
+  .search-results :global(.search-result) {
+    display: block;
+    padding: 1rem 1.25rem;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    text-decoration: none;
+    color: var(--color-text);
+    transition: border-color 0.2s ease, background 0.2s ease;
+    cursor: pointer;
+  }
+
+  .search-results :global(.search-result:last-child) {
+    margin-bottom: 0;
+  }
+
+  .search-results :global(.search-result:hover),
+  .search-results :global(.search-result.search-result--active) {
+    border-color: var(--color-text-muted);
+    background: var(--color-bg-elevated);
+    color: var(--color-text);
+  }
+
+  /* Top row: type badge + meta */
+
+  .search-results :global(.search-result-top) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.375rem;
+    gap: 0.5rem;
+  }
+
+  .search-results :global(.search-result-type) {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    border-radius: 3px;
+  }
+
+  .search-results :global(.search-result-type[data-type="project"]) {
+    background: var(--color-accent-muted);
+    color: var(--color-accent);
+  }
+
+  .search-results :global(.search-result-type[data-type="publication"]) {
+    background: color-mix(in srgb, var(--color-type-learning) 12%, transparent);
+    color: var(--color-type-learning);
+  }
+
+  .search-results :global(.search-result-type[data-type="journey"]) {
+    background: color-mix(in srgb, var(--color-type-transition) 12%, transparent);
+    color: var(--color-type-transition);
+  }
+
+  .search-results :global(.search-result-type[data-type="tool"]) {
+    background: color-mix(in srgb, var(--color-type-tool) 12%, transparent);
+    color: var(--color-type-tool);
+  }
+
+  .search-results :global(.search-result-type[data-type="blog"]) {
+    background: color-mix(in srgb, var(--color-type-blog) 12%, transparent);
+    color: var(--color-type-blog);
+  }
+
+  :global([data-theme="light"]) .search-results :global(.search-result-type) {
+    background: var(--color-bg);
+  }
+
+  .search-results :global(.search-result-meta) {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Title */
+
+  .search-results :global(.search-result-title) {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+  }
+
+  /* Description */
+
+  .search-results :global(.search-result-desc) {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+  }
+
+  /* Tags */
+
+  .search-results :global(.search-result-tags) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-top: 0.5rem;
+  }
+
+  .search-results :global(.search-tag) {
+    font-size: 0.6875rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 3px;
+    background: var(--color-bg);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+  }
+
+  /* Match highlighting */
+
+  .search-results :global(mark) {
+    background: color-mix(in srgb, var(--color-type-milestone) 18%, transparent);
+    color: inherit;
+    border-radius: 2px;
+    padding: 0.05em 0.15em;
+  }
+
+  .search-footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+
+  .search-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+
+  .search-hint kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    padding: 1px 5px;
+    font-family: inherit;
+    font-size: 0.6875rem;
+    color: var(--color-text-muted);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--border-radius-sm);
+    line-height: 1.4;
+  }
+
+  @media (max-width: 640px) {
+    .search-overlay {
+      padding-top: 0;
+      align-items: flex-start;
+    }
+
+    .search-container {
+      max-width: 100%;
+      max-height: 100vh;
+      margin: 0;
+      border-radius: 0;
+      border: none;
+    }
+
+    .search-results :global(.search-result) {
+      padding: 0.875rem 1rem;
+    }
+
+    .search-results :global(.search-result-tags) {
+      display: none;
+    }
+
+    .search-footer {
+      display: none;
+    }
+  }
+</style>

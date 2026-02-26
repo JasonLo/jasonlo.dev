@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from '../config';
+import SearchButton from './SearchButton.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
 const currentPath = Astro.url.pathname;
@@ -36,6 +37,7 @@ const isActive = (href: string) => {
     </ul>
   </div>
   <div class="nav-end">
+    <SearchButton />
     <ThemeToggle />
   </div>
 </nav>
@@ -149,6 +151,7 @@ const isActive = (href: string) => {
     flex-shrink: 0;
     display: flex;
     align-items: center;
+    gap: 0.25rem;
     padding: 0 0.75rem;
     border-left: 1px solid var(--color-border);
     background: var(--color-bg);
