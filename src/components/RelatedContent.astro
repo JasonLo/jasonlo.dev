@@ -35,7 +35,7 @@ const hasRelated = projects.length > 0;
         </svg>
         Related Projects
       </h3>
-      <ul class="related-list">
+      <ul class="related-list" role="list">
         {projects.map((project) => (
           <li>
             <a href={`/projects/${project.id}`} class="related-item">
