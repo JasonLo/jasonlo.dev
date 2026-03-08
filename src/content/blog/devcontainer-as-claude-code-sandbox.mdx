@@ -55,6 +55,18 @@ The **tradeoff** is speed. Cloud workers operate through the GitHub flow: issue,
 
 A local devcontainer gives you the same isolation model but collapses the feedback loop. Same terminal, real-time output, no round-trip overhead. For fast-moving work, that difference adds up quickly.
 
+## Pair with --worktree for Parallel Agents
+
+Once you have a devcontainer with skip-permission, add `--worktree` to unlock safe parallelism. The `--worktree` flag creates a temporary git worktree for each agent session, giving it an isolated copy of the repository. Multiple agents can work on separate tasks at the same time without stepping on each other's files.
+
+Inside a devcontainer, this combination is especially powerful: each agent gets its own worktree (no merge conflicts between agents), the container isolates everything from your host, and you can run as many agents as your machine can handle. Spin up three agents in parallel for three independent tasks, review their branches when they finish, and merge what looks good.
+
+```bash
+claude --dangerously-skip-permission --worktree
+```
+
+This turns a single devcontainer into a high-throughput local development environment.
+
 ## Summary
 
 | Mode | Safety | Speed |
