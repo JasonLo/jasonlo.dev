@@ -48,7 +48,7 @@ const entryId = `journey-${date.getTime()}`;
     {skills && skills.length > 0 && (
       <div class="timeline-skills">
         <span class="skills-label">Skills:</span>
-        <ul class="skills-list">
+        <ul class="skills-list" role="list">
           {skills.map((skill) => (
             <li class="skill-tag">{skill}</li>
           ))}
@@ -62,9 +62,10 @@ const entryId = `journey-${date.getTime()}`;
           class="expand-toggle" 
           aria-expanded="false" 
           aria-controls={entryId}
+          aria-label={`Read more about ${title}`}
           type="button"
         >
-          <span class="expand-text">Read more</span>
+          <span class="expand-text" aria-hidden="true">Read more</span>
           <svg class="expand-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
@@ -341,7 +342,10 @@ const entryId = `journey-${date.getTime()}`;
           toggle.setAttribute('aria-expanded', String(!expanded));
           target.setAttribute('aria-hidden', String(expanded));
           const textEl = toggle.querySelector('.expand-text');
+          const currentLabel = toggle.getAttribute('aria-label') || '';
+          const baseTitle = currentLabel.replace(/^(Read more about |Show less for )/, '');
           if (textEl) textEl.textContent = expanded ? 'Read more' : 'Show less';
+          toggle.setAttribute('aria-label', expanded ? `Read more about ${baseTitle}` : `Show less for ${baseTitle}`);
         }
       });
     });
