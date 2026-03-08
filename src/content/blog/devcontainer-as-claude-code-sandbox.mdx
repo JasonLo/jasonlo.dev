@@ -1,0 +1,67 @@
+---
+title: "Use .devcontainer as a Claude Code Sandbox"
+description: "A devcontainer gives Claude Code full autonomy inside a disposable environment, without the risk of --dangerously-skip-permission on your host."
+publishDate: 2026-03-08
+tags:
+  - claude-code
+  - devcontainer
+  - security
+draft: true
+---
+
+## The Problem
+
+Claude Code asks for approval on every file edit and shell command. Safe, but slow. Confirming dozens of prompts breaks flow.
+
+The escape hatch is `--dangerously-skip-permission`. It skips all checks. Claude can delete files, run shell commands, and modify your system without asking. On your host machine, that is dangerous.
+
+## Why Skip-Permission Is Risky
+
+The flag disables every guardrail at once. No granularity. If Claude runs a destructive `rm -rf` or a bad `git push --force`, it executes immediately with your full user permissions.
+
+## .devcontainer as a Middle Ground
+
+A devcontainer gives Claude an isolated, disposable Linux environment. Grant full autonomy inside it because the blast radius is contained.
+
+- No confirmation prompts
+- File system isolation
+- No access to host credentials or SSH keys (unless mounted)
+- Reproducible, rebuild in seconds
+
+Minimal `devcontainer.json`:
+```json
+{
+  "name": "Claude Code Sandbox",
+  "image": "mcr.microsoft.com/devcontainers/base:noble",
+  "postCreateCommand": "curl -fsSL https://claude.ai/install.sh | bash"
+}
+```
+
+Reopen in container, then:
+
+```bash
+claude --dangerously-skip-permission
+```
+
+If something breaks, rebuild the container.
+
+**A warning:** a devcontainer protects your host machine, not everything. CLI tools inside the container still have network access. If Claude has your git credentials (e.g., via `gh auth`), it can still `git push --force` to a remote, publish a package, or call an API. The container limits what can go wrong locally, not what can go wrong externally. Be deliberate about what credentials you mount.
+
+## Alternative: Cloud Workers
+
+Another option is to run Claude Code on a cloud worker like GitHub Actions or Codespaces. These already run with `--dangerously-skip-permission` by default because the entire environment is disposable. Credentials are scoped through repository secrets, and the agent cannot touch your local machine at all.
+
+The **tradeoff** is speed. Cloud workers operate through the GitHub flow: issue, PR, review, merge. Every context switch adds latency. Three rounds of feedback means three issue-PR cycles. You are also limited by cloud compute provisioning and queue times.
+
+A local devcontainer gives you the same isolation model but collapses the feedback loop. Same terminal, real-time output, no round-trip overhead. For fast-moving work, that difference adds up quickly.
+
+## Summary
+
+| Mode | Safety | Speed |
+| --- | --- | --- |
+| Default permissions | High | Slow (many prompts) |
+| Skip-permission on host | Low | Fast |
+| Skip-permission in devcontainer | High | Fast |
+| Remote agent (Actions) | High | Slow (gitflow overhead) |
+
+When the confirmation prompts slow you down, reach for a devcontainer, not the skip flag.
