@@ -1,0 +1,60 @@
+---
+title: "Skill Sommelier: Claude Code Plugin"
+role: "Vibe Coder"
+year: 2026
+link: https://github.com/JasonLo/skill-sommelier
+teamSize: 1
+outcomeSummary: "A curated plugin that discovers, manages, and distributes Claude Code skills from GitHub."
+overview: "A Claude Code plugin that provides a curated collection of skills for Python, ML, data engineering, and developer productivity. Distributed via the Claude Code plugin marketplace."
+problem: "Finding quality Claude Code skills across GitHub is manual and time-consuming, and there is no unified way to install, update, and curate a personal collection of skills."
+constraints:
+  - "No application code, purely text-driven"
+approach: "Built a plugin repository structured as a pure text library where each skill is a SKILL.md file with YAML frontmatter and procedural instructions. Includes meta-skills for self-updating, discovering trending skills, and crafting new ones."
+keyDecisions:
+  - decision: "Pure text architecture"
+    reasoning: "For fun, and explore alternatives way of `coding` in a low risk environment."
+    alternatives:
+      - "Script-based plugin with CLI commands"
+      - "MCP server integration"
+  - decision: "Self-evolving meta-skills"
+    reasoning: "Including skills that discover, craft, and update other skills creates a self-improving ecosystem without manual curation."
+  - decision: "Claude Code plugin marketplace distribution"
+    reasoning: "The marketplace provides a standard install path, making adoption frictionless for Claude Code users."
+    alternatives:
+      - "Manual git clone installation"
+techStack:
+  - "Claude Code"
+  - "Claude Code Plugin Marketplace"
+  - "GitHub Actions"
+  - "SKILL.md (Agent Skills Specification)"
+impact:
+  qualitative: "Streamlined my own Claude Code workflow by providing reusable skills for common tasks like Python project setup, slide creation, and repository simplification."
+learnings:
+  - "A text-only architecture can be surprisingly powerful when the consumer is an LLM."
+  - "Meta-skills that improve the skill collection itself create a compelling self-evolving loop."
+featured: true
+status: ongoing
+draft: false
+---
+
+## The Self-Evolving Loop
+
+The most interesting aspect of skill-sommelier is that it contains skills whose sole purpose is to improve the collection itself. Four meta-skills form a closed loop:
+
+1. **discover-skills** searches GitHub for trending SKILL.md files across repos tagged with `claude-code-skills`, `claude-skills`, and `agent-skills`. It validates each candidate against the Agent Skills spec, then ranks results against a user profile (also created by a skill) for personalized recommendations.
+
+2. **self-evolve** orchestrates the full cycle: it calls discover-skills to find promising candidates, fetches and studies their implementations via raw GitHub URLs, then categorizes improvements into new skills to add, enhancements to existing skills, and repo-level convention changes. Low-risk additions (new skills) proceed automatically, while modifications to existing skills require user approval.
+
+3. **skill-craft** handles the creation side. When self-evolve identifies a gap or when a user wants a new capability, skill-craft researches the domain, checks for overlaps with existing skills, and writes a spec-compliant SKILL.md with proper frontmatter, phased instructions, and supporting reference files.
+
+4. **self-update** closes the distribution loop. After new skills are committed and pushed, users with the plugin installed can run self-update to compare their local git HEAD against the remote, review a changelog of affected skills, and pull updates with a single confirmation.
+
+The result is a system where the plugin can scan the ecosystem for ideas, adapt them to its own conventions, and distribute improvements to users, all orchestrated by Claude Code itself. The human role shifts from writing skills to curating proposals and approving changes.
+
+## Text as Code
+
+Traditional programming ship executable code. Skill-sommelier ships only Markdown files. This works because the "runtime" is an LLM that interprets natural language instructions directly. A SKILL.md file with phased steps, decision tables, and bash snippets is as executable to Claude Code as compiled code is to a CPU.
+
+But this project is less about the plugin itself and more about exploring what "coding" means when your runtime understands natural language. Writing a SKILL.md feels different from writing a Python script. You think in phases and decision points rather than functions and control flow. Error handling becomes "if this happens, ask the user" instead of try/catch blocks. The whole process is closer to writing a runbook for a colleague than writing software.
+
+Contributing a new skill requires no programming knowledge, no build tooling, and no dependency management. If a skill breaks, you rewrite the paragraph. If a new pattern emerges in the community, self-evolve can pick it up and adapt. The cost of experimentation is close to zero, which makes it a good sandbox for testing how far text-as-code can go.
