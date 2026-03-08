@@ -37,6 +37,17 @@ status: ongoing
 draft: false
 ---
 
+## Installation
+
+In Claude CLI, run:
+
+```
+/plugin marketplace add JasonLo/skill-sommelier
+/plugin install skill-sommelier@skill-sommelier
+```
+
+After installing, all skills are namespaced as `/skill-sommelier:<skill-name>` (e.g., `/skill-sommelier:discover-skills`). Run `/plugin marketplace update` at any time to pull the latest additions.
+
 ## The Self-Evolving Loop
 
 The most interesting aspect of skill-sommelier is that it contains skills whose sole purpose is to improve the collection itself. Four meta-skills form a closed loop:
