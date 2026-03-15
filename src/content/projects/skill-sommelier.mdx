@@ -22,6 +22,11 @@ keyDecisions:
     reasoning: "The marketplace provides a standard install path, making adoption frictionless for Claude Code users."
     alternatives:
       - "Manual git clone installation"
+  - decision: "Benchmark-driven skill tuning inspired by karpathy/autoresearch"
+    reasoning: "Manual prompt tuning is guesswork. A fixed-evaluation iterative loop turns skill quality into a measurable optimization problem."
+    alternatives:
+      - "Manual A/B testing of skill variants"
+      - "User feedback-driven iteration"
 techStack:
   - "Claude Code"
   - "Claude Code Plugin Marketplace"
@@ -32,6 +37,7 @@ impact:
 learnings:
   - "A text-only architecture can be surprisingly powerful when the consumer is an LLM."
   - "Meta-skills that improve the skill collection itself create a compelling self-evolving loop."
+  - "Borrowing the fixed-eval iterative loop from ML training (à la autoresearch) works surprisingly well for prompt optimization."
 featured: true
 status: ongoing
 draft: false
@@ -60,7 +66,17 @@ The most interesting aspect of skill-sommelier is that it contains skills whose 
 
 4. **self-update** closes the distribution loop. After new skills are committed and pushed, users with the plugin installed can run self-update to compare their local git HEAD against the remote, review a changelog of affected skills, and pull updates with a single confirmation.
 
-The result is a system where the plugin can scan the ecosystem for ideas, adapt them to its own conventions, and distribute improvements to users, all orchestrated by Claude Code itself. The human role shifts from writing skills to curating proposals and approving changes.
+5. **skill-tune** adds empirical refinement to the loop. Inspired by [karpathy/autoresearch](https://github.com/karpathy/autoresearch), it runs skills against test cases, measures output quality, and iteratively tunes the SKILL.md instructions to maximize results — treating prompt engineering as an optimization problem rather than guesswork.
+
+The result is a system where the plugin can scan the ecosystem for ideas, adapt them to its own conventions, benchmark and refine their instructions, and distribute improvements to users, all orchestrated by Claude Code itself. The human role shifts from writing skills to curating proposals and approving changes.
+
+## Skill Tune
+
+The self-evolving loop can discover and craft skills, but how do you know if a skill is actually good? Skill-tune borrows the core idea from [karpathy/autoresearch](https://github.com/karpathy/autoresearch): fix the evaluation, then let the agent iterate. Where autoresearch modifies `train.py` and measures `val_bpb`, skill-tune modifies a SKILL.md and measures task completion quality against a set of test cases.
+
+The workflow is straightforward. You define a benchmark: a set of inputs and expected outputs (or a rubric) for a given skill. Skill-tune then enters a loop — rewrite the skill instructions, run the skill against all test cases, score the results, keep or discard the changes. Each iteration takes minutes, so you can run dozens of variants overnight.
+
+This turns prompt engineering from a manual craft into a measurable optimization problem. Instead of guessing whether "be concise" or "limit output to 3 bullet points" works better, skill-tune tries both and keeps the winner. The result is skills that are empirically tuned rather than vibes-tuned, and the benchmark suite doubles as a regression test — if a future edit degrades quality, you know immediately.
 
 ## Text as Code
 
