@@ -93,6 +93,7 @@ const {
   learnings,
   relatedProjects,
   status,
+  updatedDate,
 } = project.data;
 
 // Status display configuration
@@ -120,6 +121,11 @@ const allText = [
   project.body || '',
 ].join(' ');
 const readingTime = formatReadingTime(calculateReadingTime(allText));
+const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
 ---
 
 <BaseLayout>
@@ -129,6 +135,7 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
     description={outcomeSummary}
     type="article"
     publishDate={new Date(year, 0, 1)}
+    updatedDate={updatedDate}
   />
 
   <StructuredData
@@ -140,6 +147,7 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
       impact: impact.qualitative,
       techStack,
       year,
+      updatedDate,
     }}
   />
 
@@ -172,6 +180,12 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
         )}
         <span class="meta-separator">·</span>
         <span class="meta-item">{readingTime}</span>
+        {formattedUpdatedDate && (
+          <>
+            <span class="meta-separator">·</span>
+            <span class="meta-item">Updated <time datetime={updatedDate!.toISOString()}>{formattedUpdatedDate}</time></span>
+          </>
+        )}
         {link && (
           <>
             <span class="meta-separator">·</span>

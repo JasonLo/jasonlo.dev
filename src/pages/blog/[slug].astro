@@ -23,13 +23,15 @@ if (!post) {
 
 const { Content } = await render(post);
 
-const { title, description, publishDate, tags } = post.data;
+const { title, description, publishDate, updatedDate, tags } = post.data;
 
-const formattedDate = publishDate.toLocaleDateString('en-US', {
+const dateFormatOptions: Intl.DateTimeFormatOptions = {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
-});
+};
+const formattedDate = publishDate.toLocaleDateString('en-US', dateFormatOptions);
+const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', dateFormatOptions);
 
 const readingTime = formatReadingTime(calculateReadingTime(post.body ?? ''));
 ---
@@ -41,12 +43,19 @@ const readingTime = formatReadingTime(calculateReadingTime(post.body ?? ''));
     description={description}
     type="article"
     publishDate={publishDate}
+    updatedDate={updatedDate}
   />
 
   <div class="blog-post">
     <header class="post-header">
       <div class="post-meta">
         <time datetime={publishDate.toISOString()}>{formattedDate}</time>
+        {formattedUpdatedDate && (
+          <>
+            <span class="meta-separator">·</span>
+            <span>Updated <time datetime={updatedDate!.toISOString()}>{formattedUpdatedDate}</time></span>
+          </>
+        )}
         <span class="meta-separator">·</span>
         <span>{readingTime}</span>
       </div>
