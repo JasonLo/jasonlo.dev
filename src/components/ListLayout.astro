@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SEO from './SEO.astro';
-import PageStats from './PageStats.astro';
 
 interface SortOption {
   key: string;
@@ -40,7 +39,7 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
         {intro}
       </p>
       <div class="page-controls">
-        <PageStats text={`${itemCount} ${itemLabel}${statsExtra ? ` · ${statsExtra}` : ''}`} />
+        <p class="page-stats">{itemCount} {itemLabel}{statsExtra ? ` · ${statsExtra}` : ''}</p>
         {sortOptions && sortOptions.length > 0 && (
           <div class="sort-controls" role="group" aria-labelledby="sort-label">
             <span class="sort-label" id="sort-label">Sort by</span>
@@ -194,6 +193,12 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
 </script>
 
 <style>
+  .page-stats {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-top: 1rem;
+  }
+
   .pagination {
     display: flex;
     align-items: center;

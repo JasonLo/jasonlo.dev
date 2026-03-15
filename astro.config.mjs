@@ -3,7 +3,6 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  output: 'static',
   site: 'https://jasonlo.dev',
   integrations: [
     mdx(),
@@ -16,7 +15,6 @@ export default defineConfig({
         limitInputPixels: 33177600,
       }
     },
-    remotePatterns: [],
   },
   markdown: {
     shikiConfig: {

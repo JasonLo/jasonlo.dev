@@ -29,7 +29,6 @@ const siteURL = siteConfig.url.endsWith('/') ? siteConfig.url : `${siteConfig.ur
 const defaultImage = `${siteURL}og-image.png`;
 const ogImage = image || defaultImage;
 const absoluteImageURL = ogImage.startsWith('http') ? ogImage : `${siteURL}${ogImage.replace(/^\//, '')}`;
-const twitterHandle = undefined;
 ---
 
 <!-- Page Title -->
@@ -68,12 +67,6 @@ const twitterHandle = undefined;
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={absoluteImageURL} />
-{twitterHandle && (
-  <>
-    <meta name="twitter:site" content={twitterHandle} />
-    <meta name="twitter:creator" content={twitterHandle} />
-  </>
-)}
 
 <!-- Robots -->
 <meta name="robots" content="index, follow" />

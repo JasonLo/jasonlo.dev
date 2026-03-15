@@ -12,7 +12,7 @@ There are no test or lint commands configured.
 
 ## Architecture
 
-Astro v5 static site (SSG) using MDX content collections and vanilla CSS. Based on the "Case" portfolio theme — a case-study-first portfolio for engineers.
+Astro 6 static site (SSG) using MDX content collections and vanilla CSS. Based on the "Case" portfolio theme — a case-study-first portfolio for engineers.
 
 ### Configuration
 
