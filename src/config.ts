@@ -24,6 +24,7 @@ export const siteConfig = {
   social: {
     github: 'https://github.com/jasonlo',
     linkedin: 'https://linkedin.com/in/jasonlcm',
+    x: 'https://x.com/JasonLoCM',
     mastodon: '',
     bluesky: '',
     scholar: 'https://scholar.google.com/citations?hl=en&user=84y-HKEAAAAJ',
