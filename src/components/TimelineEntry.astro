@@ -22,6 +22,8 @@ const typeLabels = {
   transition: 'Transition'
 };
 
+import ChevronDown from '../assets/icons/chevron-down.svg';
+
 const entryId = `journey-${date.getTime()}`;
 ---
 
@@ -66,9 +68,7 @@ const entryId = `journey-${date.getTime()}`;
           type="button"
         >
           <span class="expand-text" aria-hidden="true">Read more</span>
-          <svg class="expand-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
+          <ChevronDown class="expand-icon" aria-hidden="true" width={16} height={16} />
         </button>
         
         <div id={entryId} class="timeline-body" aria-hidden="true">
