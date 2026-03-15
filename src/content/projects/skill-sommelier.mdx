@@ -1,15 +1,15 @@
 ---
 title: "Skill Sommelier: Claude Code Plugin"
-role: "Vibe Coder"
+role: "AI Engineer"
 year: 2026
 link: https://github.com/JasonLo/skill-sommelier
 teamSize: 1
 outcomeSummary: "A curated plugin that discovers, manages, and distributes Claude Code skills from GitHub."
-overview: "A Claude Code plugin that provides a curated collection of skills for Python, ML, data engineering, and developer productivity. Distributed via the Claude Code plugin marketplace."
-problem: "Finding quality Claude Code skills across GitHub is manual and time-consuming, and there is no unified way to install, update, and curate a personal collection of skills."
+overview: "A personalized self-improving Claude Code skills manager. Discovers skills from GitHub, ranks them to your profile, and uses its own skills to validate, optimize, and evolve the collection."
+problem: "Finding quality Claude Code skills across GitHub is manual and time-consuming, and it is difficult to tell which skills are good and which are not."
 constraints:
   - "No application code, purely text-driven"
-approach: "Built a plugin repository structured as a pure text library where each skill is a SKILL.md file with YAML frontmatter and procedural instructions. Includes meta-skills for self-updating, discovering trending skills, and crafting new ones."
+approach: "Built a Claude Code plugin repository. It includes meta-skills for personalized skill discovery, automated skill creation and consolidation, and ongoing tuning and optimization."
 keyDecisions:
   - decision: "Pure text architecture"
     reasoning: "For fun, and explore alternatives way of `coding` in a low risk environment."
@@ -42,46 +42,3 @@ featured: true
 status: ongoing
 draft: false
 ---
-
-## Installation
-
-In Claude CLI, run:
-
-```
-/plugin marketplace add JasonLo/skill-sommelier
-/plugin install skill-sommelier@skill-sommelier
-```
-
-After installing, all skills are namespaced as `/skill-sommelier:<skill-name>` (e.g., `/skill-sommelier:discover-skills`). Run `/plugin marketplace update` at any time to pull the latest additions.
-
-## The Self-Evolving Loop
-
-The most interesting aspect of skill-sommelier is that it contains skills whose sole purpose is to improve the collection itself. Four meta-skills form a closed loop:
-
-1. **discover-skills** searches GitHub for trending SKILL.md files across repos tagged with `claude-code-skills`, `claude-skills`, and `agent-skills`. It validates each candidate against the Agent Skills spec, then ranks results against a user profile (also created by a skill) for personalized recommendations.
-
-2. **self-evolve** orchestrates the full cycle: it calls discover-skills to find promising candidates, fetches and studies their implementations via raw GitHub URLs, then categorizes improvements into new skills to add, enhancements to existing skills, and repo-level convention changes. Low-risk additions (new skills) proceed automatically, while modifications to existing skills require user approval.
-
-3. **skill-craft** handles the creation side. When self-evolve identifies a gap or when a user wants a new capability, skill-craft researches the domain, checks for overlaps with existing skills, and writes a spec-compliant SKILL.md with proper frontmatter, phased instructions, and supporting reference files.
-
-4. **self-update** closes the distribution loop. After new skills are committed and pushed, users with the plugin installed can run self-update to compare their local git HEAD against the remote, review a changelog of affected skills, and pull updates with a single confirmation.
-
-5. **skill-tune** adds empirical refinement to the loop. Inspired by [karpathy/autoresearch](https://github.com/karpathy/autoresearch), it runs skills against test cases, measures output quality, and iteratively tunes the SKILL.md instructions to maximize results — treating prompt engineering as an optimization problem rather than guesswork.
-
-The result is a system where the plugin can scan the ecosystem for ideas, adapt them to its own conventions, benchmark and refine their instructions, and distribute improvements to users, all orchestrated by Claude Code itself. The human role shifts from writing skills to curating proposals and approving changes.
-
-## Skill Tune
-
-The self-evolving loop can discover and craft skills, but how do you know if a skill is actually good? Skill-tune borrows the core idea from [karpathy/autoresearch](https://github.com/karpathy/autoresearch): fix the evaluation, then let the agent iterate. Where autoresearch modifies `train.py` and measures `val_bpb`, skill-tune modifies a SKILL.md and measures task completion quality against a set of test cases.
-
-The workflow is straightforward. You define a benchmark: a set of inputs and expected outputs (or a rubric) for a given skill. Skill-tune then enters a loop — rewrite the skill instructions, run the skill against all test cases, score the results, keep or discard the changes. Each iteration takes minutes, so you can run dozens of variants overnight.
-
-This turns prompt engineering from a manual craft into a measurable optimization problem. Instead of guessing whether "be concise" or "limit output to 3 bullet points" works better, skill-tune tries both and keeps the winner. The result is skills that are empirically tuned rather than vibes-tuned, and the benchmark suite doubles as a regression test — if a future edit degrades quality, you know immediately.
-
-## Text as Code
-
-Traditional programming ship executable code. Skill-sommelier ships only Markdown files. This works because the "runtime" is an LLM that interprets natural language instructions directly. A SKILL.md file with phased steps, decision tables, and bash snippets is as executable to Claude Code as compiled code is to a CPU.
-
-But this project is less about the plugin itself and more about exploring what "coding" means when your runtime understands natural language. Writing a SKILL.md feels different from writing a Python script. You think in phases and decision points rather than functions and control flow. Error handling becomes "if this happens, ask the user" instead of try/catch blocks. The whole process is closer to writing a runbook for a colleague than writing software.
-
-Contributing a new skill requires no programming knowledge, no build tooling, and no dependency management. If a skill breaks, you rewrite the paragraph. If a new pattern emerges in the community, self-evolve can pick it up and adapt. The cost of experimentation is close to zero, which makes it a good sandbox for testing how far text-as-code can go.
