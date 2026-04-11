@@ -1,0 +1,39 @@
+---
+title: "Claude Code Quota ESP32 Display"
+role: "Vibe Coder, Builder"
+year: 2026
+link: https://github.com/JasonLo/claude-quota-esp32
+duration: "A few hours"
+teamSize: 1
+outcomeSummary: "A physical desk display that shows Claude Code quota usage in real time on an ESP32."
+overview: "You wouldn't type /time to check the clock — you'd look at the one on your desk. Same idea, but for Claude Code quota. Half joking."
+problem: "No ambient way to track Claude Code quota. Checking /usage requires context-switching and doesn't stick in your head."
+constraints:
+  - "Must run standalone on a microcontroller with no desktop dependencies"
+  - "CircuitPython ecosystem — limited libraries and memory"
+  - "OAuth token refresh not available on-device; relies on long-lived access token"
+approach: "Single-file CircuitPython script — connects to WiFi, polls the Anthropic usage API, renders quota bars on the ST7789 display. Refreshes every 15 minutes."
+keyDecisions:
+  - decision: "CircuitPython over MicroPython or Arduino"
+    reasoning: "CircuitPython has first-class Adafruit hardware support and a simpler development loop — just copy files to the CIRCUITPY drive."
+    alternatives:
+      - "MicroPython"
+      - "Arduino/C++"
+  - decision: "Adafruit ESP32-S3 Reverse TFT"
+    reasoning: "Built-in display, WiFi, and USB-C in a compact form factor. No wiring or soldering required."
+    alternatives:
+      - "ESP32 + separate TFT display"
+      - "Raspberry Pi Zero with e-ink"
+techStack:
+  - "Claude Code"
+  - "CircuitPython"
+  - "Adafruit ESP32-S3 Reverse TFT"
+impact:
+  qualitative: "Quota is now glanceable — no context-switching needed."
+learnings:
+  - "CircuitPython makes hardware prototyping surprisingly fast — edit, save, run."
+  - "Sometimes the best solution to a software problem is a physical object on your desk."
+featured: false
+status: completed
+draft: false
+---
