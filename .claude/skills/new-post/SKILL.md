@@ -38,6 +38,7 @@ Read `src/content.config.ts` to confirm the exact schema for the chosen post typ
 
 **Project:**
 - `title`, `role`, `year`, `outcomeSummary`, `overview`, `problem`
+- `updatedDate` — set to today's date (YYYY-MM-DD). This is used by the front page Latest Updates feed for sorting; without it, projects default to January 1st of their `year`.
 - `constraints` — array of constraints faced
 - `approach` — how the problem was solved
 - `keyDecisions` — array of {decision, reasoning, alternatives?}
