@@ -11,12 +11,12 @@ export const siteConfig = {
   url: 'https://jasonlo.dev',
   language: 'en',
   title: 'Jason Lo Portfolio',
-  description: 'Data scientist specializing in AI-driven interdisciplinary research and engineering solutions.',
+  description: 'AI tech lead building disciplined AI systems across research and production.',
 
   author: {
     name: 'Jason Lo',
-    title: 'Data Scientist',
-    bio: 'Bringing AI to interdisciplinary research.',
+    title: 'AI Tech Lead',
+    bio: 'Leading AI from research to production.',
     email: 'lcmjlo@gmail.com',
     location: 'Madison, WI',
   },

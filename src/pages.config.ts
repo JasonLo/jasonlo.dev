@@ -75,8 +75,8 @@ export const pagesConfig = {
   blog: {
     title: 'Blog',
     heading: 'Blog',
-    description: 'Thoughts, notes, and write-ups on AI, data science, and engineering.',
-    intro: 'Thoughts, notes, and write-ups on AI, data science, and engineering.',
+    description: 'Thoughts, notes, and write-ups on AI, engineering leadership, and system design.',
+    intro: 'Thoughts, notes, and write-ups on AI, engineering leadership, and system design.',
   },
 
 } as const;
