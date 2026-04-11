@@ -6,7 +6,9 @@ export default defineConfig({
   site: 'https://jasonlo.dev',
   integrations: [
     mdx(),
-    sitemap(),
+    sitemap({
+      filter: (page) => !page.includes('/s/'),
+    }),
   ],
   image: {
     service: {

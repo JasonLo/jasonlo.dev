@@ -1,0 +1,27 @@
+---
+import shortlinks from '../../data/shortlinks.json';
+
+export function getStaticPaths() {
+  return Object.entries(shortlinks).map(([key, url]) => ({
+    params: { key },
+    props: { url: url as string },
+  }));
+}
+
+const { url } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0; url=${url}`} />
+    <meta name="robots" content="noindex" />
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    <p>Redirecting to <a href={url}>{url}</a>...</p>
+    <script is:inline define:vars={{ url }}>
+      window.location.replace(url);
+    </script>
+  </body>
+</html>
