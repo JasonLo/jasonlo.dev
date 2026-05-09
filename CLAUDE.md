@@ -23,19 +23,19 @@ Astro 6 static site (SSG) using MDX content collections and vanilla CSS. Based o
 
 ### Content Collections
 
-All content lives in `src/content/` as MDX files. Schemas are defined in `src/content.config.ts`:
+All content lives in `src/content/` as MDX files. Schemas are defined in `src/content.config.ts`. All collections support an optional `updatedDate` field, which feeds the Latest Updates feed.
 
 | Collection | Key frontmatter |
 | --- | --- |
-| `projects` | title, role, year, link, duration, teamSize, outcomeSummary, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, featured, status, relatedProjects, draft |
-| `publications` | title, description, authors, journal, publishDate, doi, oaUrl, citedByCount, tags, draft |
-| `journey` | date, title, description, type (milestone/learning/transition), skills, draft |
-| `tools` | name, description, url, date, is_favorite, best_for, not_for, personal_remarks, license, tags, draft |
-| `blog` | title, description, publishDate, tags, draft |
+| `projects` | title, role, year, updatedDate, link, duration, teamSize, outcomeSummary, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, featured, status, relatedProjects, draft |
+| `publications` | title, description, authors, journal, publishDate, updatedDate, doi, oaUrl, citedByCount, tags, draft |
+| `journey` | date, updatedDate, title, description, type (milestone/learning/transition), skills, draft |
+| `tools` | name, description, url, date, updatedDate, is_favorite, best_for, not_for, personal_remarks, license, tags, draft |
+| `blog` | title, description, publishDate, updatedDate, tags, draft |
 
 ### Routing
 
-File-based routing in `src/pages/`. Dynamic routes use `[slug].astro` for individual items and `[...page].astro` for paginated listings (publications). Static pages: index, projects (listing), journey, tools, blog, 404. Generated files: `llms.txt.ts`, `robots.txt.ts`, `search-index.json.ts`.
+File-based routing in `src/pages/`. Dynamic routes use `[slug].astro` for individual items (projects, blog) and `[...page].astro` for paginated listings (publications). Static pages: index, projects (listing), journey, tools, blog, 404. Shortlinks live at `s/[key].astro` (sourced from `src/data/shortlinks.json`) and are excluded from the sitemap via the filter in `astro.config.mjs`. Generated files: `llms.txt.ts`, `robots.txt.ts`, `search-index.json.ts`.
 
 ### Layouts
 

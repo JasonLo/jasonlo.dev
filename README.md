@@ -7,7 +7,7 @@ Source code for [jasonlo.dev](https://jasonlo.dev) — a personal portfolio buil
 
 ## Stack
 
-- **Astro v5** — Static site generation with MDX content collections
+- **Astro 6** — Static site generation with MDX content collections
 - **Vanilla CSS** — Dark/light theme, WCAG AA compliant
 - **Bun** — Package manager and runtime
 - **GitHub Actions** — Auto-deploy on push + weekly publication sync via ORCID & OpenAlex
