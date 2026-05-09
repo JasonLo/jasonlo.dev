@@ -1,0 +1,59 @@
+---
+title: "Specs Are the New Lock-In (A Speculation)"
+description: "Speculation: AI coding companies may be moving the abstraction layer from code to language, and specs may be quietly trained to favor their home model. I have no inside information — just a hunch from my own usage."
+publishDate: 2026-05-09
+tags:
+  - AI
+  - Coding Agent
+  - Opinion
+  - LLM
+draft: false
+updatedDate: 2026-05-09
+---
+
+**A note up front: everything below is speculation.** I have no inside information about how any AI coding company trains or evaluates anything. I am an outside user pattern-matching on my own experience, and I could be wrong about all of this. I am writing it down because the hunch keeps recurring and I want to argue with it in public.
+
+With that caveat, here is what I suspect the AI coding companies might be doing.
+
+## The abstraction moved from code to language
+
+For most of software history the unit of reuse was code: functions, libraries, frameworks. The act of programming was the act of writing the artifact you would later run.
+
+With capable coding agents, that has flipped. The artifact you author is no longer the code, it is the **plan**, **design doc**, or **spec** that the agent compiles into code. The code is downstream, ephemeral, and often regenerable. The spec is the thing you version, review, and protect.
+
+This is not a new idea in spirit, declarative DSLs and model-driven engineering have circled it for decades. What is new is that the "compiler" is now a probabilistic model, and the spec is written in natural language. Every coding company is converging on this layer: Cursor's rules files, Claude's `CLAUDE.md` and skills, OpenAI's spec-driven flows, the various "agent.md" conventions. They all want to own the format you write your intent in.
+
+## Specs may interact with model choice in an adversarial way
+
+Here is the part I find interesting, and the most speculative part of the post. A spec is not neutral. It is a prompt, and prompts have model-specific failure modes. The wording, structure, and order of constraints that nudge one model toward a correct one-shot can quietly mislead another. That much I think is uncontroversial.
+
+The leap I am making is the next one: **if I were a frontier lab shipping a coding agent, I would have an obvious incentive to make specs written in my format, by my tools, for my users, work best on my model.** You would not need to sabotage competitors. You would only need to optimize the joint distribution of (spec format × model behavior) on your home turf. Whether anyone is actually doing this, I genuinely do not know.
+
+This is the kind of objective reinforcement learning is good at, at least in principle. You could imagine a loop like:
+
+1. Generate or collect candidate specs for a task.
+2. Have the home model attempt the implementation.
+3. Have a competitor model attempt the same implementation from the same spec.
+4. Reward specs (and spec-authoring behaviors) where the home model succeeds and the competitor model does not, conditional on both being plausible.
+
+The result, in this hypothetical, would not be a spec that breaks competitors. It would be a spec that subtly fits the contours of one model's priors better than another's. If something like this is happening, the lock-in is not in the API or the IDE. It is in the document you wrote. To be clear, I have zero evidence anyone is running this loop. It is just the most natural training objective I can think of that would explain what I see.
+
+## What I actually observe
+
+What pushed me to write this is empirical, but the empirical part is just my own anecdotes. Take it as such.
+
+I tried to one-shot OpenAI's Symphony from the spec file they provided. The spec looks beautiful — well structured, sectioned, unambiguous on the surface. On Claude Opus 4.7 it does not land for me. The implementation drifts in places the spec seems to have anticipated, almost as if the spec assumes a different decoding bias than Claude has.
+
+The mirror feels true to me as well. Specs I write that one-shot cleanly on Claude Opus 4.7 produce confidently wrong code when handed to a competitor model. And even within the Claude family, Opus 4.7 still struggles to one-shot some implementations from specs that look fine to me — which, if the adversarial-training story were true, would suggest the optimization is far from converged. It is also entirely consistent with the boring explanation: specs are hard, one-shot is a high bar, and models just differ.
+
+None of this proves intent, and a sample size of "things I personally tried" is not evidence of anything systematic. But the pattern is consistent enough in my own usage that I have stopped treating specs as portable artifacts and started treating them, tentatively, as **model-conditioned programs** that happen to be written in English.
+
+## What I am doing about it, just in case
+
+A few working assumptions I am operating under, hedged for the very real chance I am wrong:
+
+- **Treat the spec as part of the toolchain.** A spec that works on model A is not evidence it will work on model B. Re-validate when you switch.
+- **Watch for format wars.** Whether or not it is intentional, the companies that own the spec format end up owning the integration surface.
+- **Keep your intent separable from your spec.** The intent (what you want) should survive a model swap. The spec (how you ask) might not.
+
+If the speculation is right, the next phase of competition is not which model is smartest. It is whose spec format your team learns to write in, and that would be a much stickier moat than benchmarks. If the speculation is wrong, then I am just bad at writing portable specs, which is also useful to know. Either way, I would love to be argued out of this — drop me a note if you have evidence one way or the other.
