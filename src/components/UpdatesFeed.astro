@@ -9,6 +9,8 @@ interface Props {
 
 const { limit = 3, excludedProjectIds = new Set(), mode = 'latest' } = Astro.props;
 
+const DESCRIPTION_WORD_LIMIT = 10;
+
 // Gather all posts from different collections
 const allJourney = await getCollection('journey', ({ data }) => data.draft !== true);
 const allProjects = await getCollection('projects', ({ data }) => data.draft !== true);
@@ -101,10 +103,9 @@ if (mode === 'random') {
         ? { target: '_blank', rel: 'noopener noreferrer' } 
         : {};
       
-      // Truncate description to 20 words if longer
       const words = post.description.split(/\s+/);
-      const truncatedDescription = words.length > 10 
-        ? words.slice(0, 10).join(' ') + '...'
+      const truncatedDescription = words.length > DESCRIPTION_WORD_LIMIT
+        ? words.slice(0, DESCRIPTION_WORD_LIMIT).join(' ') + '...'
         : post.description;
       
       const showNewTabNotice = isExternal && post.link !== '#';

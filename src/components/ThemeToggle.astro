@@ -58,7 +58,7 @@ import MoonIcon from '../assets/icons/moon.svg';
 </style>
 
 <script>
-  // Toggle theme and persist to localStorage
+  // aria-label sync on page-load is handled centrally in BaseLayout.
   const setTheme = (theme: 'light' | 'dark') => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
@@ -68,18 +68,6 @@ import MoonIcon from '../assets/icons/moon.svg';
     }
   };
 
-  // Sync aria-label with the actual current theme on each page load
-  function syncLabel() {
-    const current = document.documentElement.getAttribute('data-theme') || 'dark';
-    const btn = document.querySelector<HTMLButtonElement>('.theme-toggle');
-    if (btn) {
-      btn.setAttribute('aria-label', current === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-    }
-  }
-  document.addEventListener('astro:page-load', syncLabel);
-
-  // Use event delegation on document to handle clicks
-  // This works reliably with View Transitions
   document.addEventListener('click', (e) => {
     const toggle = (e.target as Element).closest('.theme-toggle');
     if (toggle) {
@@ -88,7 +76,6 @@ import MoonIcon from '../assets/icons/moon.svg';
     }
   });
 
-  // Follow system preference changes when user hasn't manually chosen
   window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
     if (!localStorage.getItem('theme')) {
       setTheme(e.matches ? 'light' : 'dark');

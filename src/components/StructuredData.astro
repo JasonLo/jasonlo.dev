@@ -1,27 +1,72 @@
 ---
 import { siteConfig } from '../config';
 
-interface Props {
-  type: 'WebSite' | 'Project' | 'Article' | 'Person' | 'BreadcrumbList';
-  data?: Record<string, any>;
+interface WebSiteData {
+  name?: string;
+  description?: string;
+  url?: string;
 }
 
-const { type, data = {} } = Astro.props;
+interface PersonData {
+  name?: string;
+  jobTitle?: string;
+  description?: string;
+  url?: string;
+  email?: string;
+  image?: string;
+  socialLinks?: string[];
+  skills?: string[];
+}
+
+interface ProjectData {
+  title: string;
+  description?: string;
+  outcomeSummary?: string;
+  authorName?: string;
+  year?: number;
+  techStack?: string[];
+  problem?: string;
+  impact?: string;
+}
+
+interface ArticleData {
+  title: string;
+  description?: string;
+  authorName?: string;
+  publishDate?: Date;
+  updatedDate?: Date;
+  image?: string;
+  url?: string;
+  tags?: string[];
+}
+
+interface BreadcrumbData {
+  items?: { name: string; url: string }[];
+}
+
+type Props =
+  | { type: 'WebSite'; data?: WebSiteData }
+  | { type: 'Person'; data?: PersonData }
+  | { type: 'Project'; data: ProjectData }
+  | { type: 'Article'; data: ArticleData }
+  | { type: 'BreadcrumbList'; data: BreadcrumbData };
+
+const props = Astro.props as Props;
 
 const siteURL = siteConfig.url.endsWith('/') ? siteConfig.url.slice(0, -1) : siteConfig.url;
 const socialLinks = Object.values(siteConfig.social).filter(Boolean);
+const baseContext = 'https://schema.org';
 
-function generateStructuredData(type: string, data: Record<string, any>) {
-  const baseContext = 'https://schema.org';
-  
-  switch (type) {
-    case 'WebSite':
+function generateStructuredData(): Record<string, unknown> | null {
+  switch (props.type) {
+    case 'WebSite': {
+      const d = props.data ?? {};
       return {
         '@context': baseContext,
         '@type': 'WebSite',
-        name: data.name || siteConfig.title,
-        description: data.description || siteConfig.description,
-        url: data.url || siteURL,
+        name: d.name ?? siteConfig.title,
+        description: d.description ?? siteConfig.description,
+        url: d.url ?? siteURL,
         inLanguage: siteConfig.language,
         author: {
           '@type': 'Person',
@@ -29,46 +74,42 @@ function generateStructuredData(type: string, data: Record<string, any>) {
           jobTitle: siteConfig.author.title,
           url: siteURL,
         },
-        potentialAction: {
-          '@type': 'SearchAction',
-          target: {
-            '@type': 'EntryPoint',
-            urlTemplate: `${siteURL}/publications?q={search_term_string}`,
-          },
-          'query-input': 'required name=search_term_string',
-        },
       };
+    }
 
-    case 'Project':
+    case 'Project': {
+      const d = props.data;
       return {
         '@context': baseContext,
         '@type': 'CreativeWork',
-        name: data.title,
-        description: data.description || data.outcomeSummary,
+        name: d.title,
+        description: d.description ?? d.outcomeSummary,
         author: {
           '@type': 'Person',
-          name: data.authorName || siteConfig.author.name,
+          name: d.authorName ?? siteConfig.author.name,
         },
-        dateCreated: data.year ? `${data.year}-01-01` : undefined,
-        keywords: data.techStack?.join(', '),
-        about: data.problem,
-        result: data.impact,
+        dateCreated: d.year ? `${d.year}-01-01` : undefined,
+        keywords: d.techStack?.join(', '),
+        about: d.problem,
+        result: d.impact,
       };
-    
-    case 'Article':
+    }
+
+    case 'Article': {
+      const d = props.data;
       return {
         '@context': baseContext,
         '@type': 'Article',
-        headline: data.title,
-        description: data.description,
+        headline: d.title,
+        description: d.description,
         author: {
           '@type': 'Person',
-          name: data.authorName || siteConfig.author.name,
+          name: d.authorName ?? siteConfig.author.name,
           url: siteURL,
         },
-        datePublished: data.publishDate?.toISOString(),
-        dateModified: data.updatedDate?.toISOString() || data.publishDate?.toISOString(),
-        image: data.image || `${siteURL}/og-image.png`,
+        datePublished: d.publishDate?.toISOString(),
+        dateModified: d.updatedDate?.toISOString() ?? d.publishDate?.toISOString(),
+        image: d.image ?? `${siteURL}/og-image.png`,
         publisher: {
           '@type': 'Person',
           name: siteConfig.author.name,
@@ -76,62 +117,49 @@ function generateStructuredData(type: string, data: Record<string, any>) {
         },
         mainEntityOfPage: {
           '@type': 'WebPage',
-          '@id': data.url || Astro.url.href,
+          '@id': d.url ?? Astro.url.href,
         },
-        keywords: data.tags?.join(', '),
+        keywords: d.tags?.join(', '),
         inLanguage: siteConfig.language,
       };
-    
-    case 'Person':
+    }
+
+    case 'Person': {
+      const d = props.data ?? {};
       return {
         '@context': baseContext,
         '@type': 'Person',
-        name: data.name || siteConfig.author.name,
-        jobTitle: data.jobTitle || siteConfig.author.title,
-        description: data.description || siteConfig.author.bio,
-        url: data.url || siteURL,
-        sameAs: data.socialLinks || socialLinks,
-        email: data.email || siteConfig.author.email,
-        image: data.image,
-        knowsAbout: data.skills || [],
+        name: d.name ?? siteConfig.author.name,
+        jobTitle: d.jobTitle ?? siteConfig.author.title,
+        description: d.description ?? siteConfig.author.bio,
+        url: d.url ?? siteURL,
+        sameAs: d.socialLinks ?? socialLinks,
+        email: d.email ?? siteConfig.author.email,
+        image: d.image,
+        knowsAbout: d.skills ?? [],
       };
+    }
 
-    case 'BreadcrumbList':
+    case 'BreadcrumbList': {
+      const d = props.data;
       return {
         '@context': baseContext,
         '@type': 'BreadcrumbList',
-        itemListElement: data.items?.map((item: { name: string; url: string }, index: number) => ({
+        itemListElement: d.items?.map((item, index) => ({
           '@type': 'ListItem',
           position: index + 1,
           name: item.name,
           item: item.url.startsWith('http') ? item.url : `${siteURL}${item.url}`,
         })),
       };
-    
-    default:
-      return null;
-  }
-}
-
-const structuredData = generateStructuredData(type, data);
-
-function cleanObject(obj: any): any {
-  if (obj === null || obj === undefined) return null;
-  if (typeof obj !== 'object') return obj;
-  if (Array.isArray(obj)) return obj.map(cleanObject).filter(item => item !== undefined);
-  
-  const cleaned: any = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (value !== undefined && value !== null) {
-      cleaned[key] = cleanObject(value);
     }
   }
-  return cleaned;
 }
 
-const cleanedData = cleanObject(structuredData);
+const structuredData = generateStructuredData();
+const json = structuredData
+  ? JSON.stringify(structuredData, (_, v) => (v == null ? undefined : v), 2)
+  : null;
 ---
 
-{cleanedData && (
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(cleanedData, null, 2)} />
-)}
+{json && <script is:inline type="application/ld+json" set:html={json} />}

@@ -104,22 +104,16 @@ const statusConfig = {
 };
 const statusInfo = statusConfig[status || 'completed'];
 
-/**
- * Calculates reading time from all case study content
- * 
- * Combines all text sections including overview, problem, approach, decisions,
- * impact, learnings, and optional markdown body to estimate total reading time.
- */
 const allText = [
   overview,
   problem,
   approach,
-  ...constraints,
-  ...keyDecisions.map(d => `${d.decision} ${d.reasoning} ${d.alternatives?.join(' ') || ''}`),
-  impact.qualitative,
-  ...learnings,
+  ...(constraints ?? []),
+  ...(keyDecisions ?? []).map(d => `${d.decision} ${d.reasoning} ${d.alternatives?.join(' ') || ''}`),
+  impact?.qualitative,
+  ...(learnings ?? []),
   project.body || '',
-].join(' ');
+].filter(Boolean).join(' ');
 const readingTime = formatReadingTime(calculateReadingTime(allText));
 const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', {
   year: 'numeric',
@@ -144,10 +138,9 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', {
       title,
       outcomeSummary,
       problem,
-      impact: impact.qualitative,
+      impact: impact?.qualitative,
       techStack,
       year,
-      updatedDate,
     }}
   />
 
@@ -203,69 +196,89 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', {
       </div>
     </header>
 
-    <div class="two-col">
-      <section class="case-study-section">
-        <h2>Overview</h2>
-        <p>{overview}</p>
-      </section>
-      <section class="case-study-section">
-        <h2>Problem</h2>
-        <p>{problem}</p>
-      </section>
-    </div>
-
-    <div class="two-col">
-      <section class="case-study-section">
-        <h2>Approach</h2>
-        <p>{approach}</p>
-      </section>
-      <section class="case-study-section">
-        <h2>Constraints</h2>
-        <ul class="constraints-list">
-          {constraints.map((constraint) => (
-            <li>{constraint}</li>
-          ))}
-        </ul>
-      </section>
-    </div>
-
-    <section class="case-study-section">
-      <h2>Key Decisions</h2>
-      <div class="decisions-list">
-        {keyDecisions.map((decision) => (
-          <div class="decision-item">
-            <h3 class="decision-title">{decision.decision}</h3>
-            <p class="decision-reasoning-text">{decision.reasoning}</p>
-            {decision.alternatives && decision.alternatives.length > 0 && (
-              <div class="decision-alternatives">
-                <span class="alt-label">Alternatives:</span>
-                {decision.alternatives.map((alt) => (
-                  <span class="alt-badge">{alt}</span>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <div class="two-col">
-      <section class="case-study-section">
-        <h2>Result & Impact</h2>
-        {impact.metrics && impact.metrics.length > 0 && (
-          <ImpactMetrics metrics={impact.metrics} />
+    {(overview || problem) && (
+      <div class="two-col">
+        {overview && (
+          <section class="case-study-section">
+            <h2>Overview</h2>
+            <p>{overview}</p>
+          </section>
         )}
-        <p class="impact-qualitative">{impact.qualitative}</p>
-      </section>
+        {problem && (
+          <section class="case-study-section">
+            <h2>Problem</h2>
+            <p>{problem}</p>
+          </section>
+        )}
+      </div>
+    )}
+
+    {(approach || (constraints && constraints.length > 0)) && (
+      <div class="two-col">
+        {approach && (
+          <section class="case-study-section">
+            <h2>Approach</h2>
+            <p>{approach}</p>
+          </section>
+        )}
+        {constraints && constraints.length > 0 && (
+          <section class="case-study-section">
+            <h2>Constraints</h2>
+            <ul class="constraints-list">
+              {constraints.map((constraint) => (
+                <li>{constraint}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+    )}
+
+    {keyDecisions && keyDecisions.length > 0 && (
       <section class="case-study-section">
-        <h2>Learnings</h2>
-        <ul class="learnings-list">
-          {learnings.map((learning) => (
-            <li>{learning}</li>
+        <h2>Key Decisions</h2>
+        <div class="decisions-list">
+          {keyDecisions.map((decision) => (
+            <div class="decision-item">
+              <h3 class="decision-title">{decision.decision}</h3>
+              <p class="decision-reasoning-text">{decision.reasoning}</p>
+              {decision.alternatives && decision.alternatives.length > 0 && (
+                <div class="decision-alternatives">
+                  <span class="alt-label">Alternatives:</span>
+                  {decision.alternatives.map((alt) => (
+                    <span class="alt-badge">{alt}</span>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
-        </ul>
+        </div>
       </section>
-    </div>
+    )}
+
+    {((impact && (impact.qualitative || (impact.metrics && impact.metrics.length > 0))) || (learnings && learnings.length > 0)) && (
+      <div class="two-col">
+        {impact && (impact.qualitative || (impact.metrics && impact.metrics.length > 0)) && (
+          <section class="case-study-section">
+            <h2>Result & Impact</h2>
+            {impact.metrics && impact.metrics.length > 0 && (
+              <ImpactMetrics metrics={impact.metrics} />
+            )}
+            {impact.qualitative && <p class="impact-qualitative">{impact.qualitative}</p>}
+          </section>
+        )}
+        {learnings && learnings.length > 0 && (
+          <section class="case-study-section">
+            <h2>Learnings</h2>
+            <ul class="learnings-list">
+              {learnings.map((learning) => (
+                <li>{learning}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+    )}
 
     <!-- Additional MDX Content (if any) -->
     {Content && (

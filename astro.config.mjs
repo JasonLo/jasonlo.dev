@@ -1,9 +1,10 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import { siteConfig } from './src/config.ts';
 
 export default defineConfig({
-  site: 'https://jasonlo.dev',
+  site: siteConfig.url,
   integrations: [
     mdx(),
     sitemap({

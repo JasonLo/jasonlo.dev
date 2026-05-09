@@ -44,14 +44,18 @@ export async function GET() {
       tags: t.data.tags ?? [],
       meta: String(t.data.date.getFullYear()),
     })),
-    ...publications.map((p) => ({
-      type: 'publication' as const,
-      title: p.data.title,
-      description: p.data.journal,
-      url: `/publications#${p.id}`,
-      tags: p.data.tags ?? [],
-      meta: String(p.data.publishDate.getFullYear()),
-    })),
+    ...publications.map((p) => {
+      const externalUrl = p.data.doi ?? p.data.oaUrl;
+      return {
+        type: 'publication' as const,
+        title: p.data.title,
+        description: p.data.journal,
+        url: externalUrl ?? `/publications#${p.id}`,
+        tags: p.data.tags ?? [],
+        meta: String(p.data.publishDate.getFullYear()),
+        external: Boolean(externalUrl),
+      };
+    }),
     ...journey.map((j) => ({
       type: 'journey' as const,
       title: j.data.title,

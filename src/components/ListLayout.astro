@@ -80,116 +80,122 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
 
 <script>
   document.addEventListener('astro:page-load', () => {
-    document.querySelectorAll('.sort-controls').forEach((controls) => {
-      const list = controls.closest('.page-container')?.querySelector('.row-list');
-      if (!list) return;
-
-      controls.querySelectorAll('.sort-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const key = btn.getAttribute('data-sort-key');
-          if (!key) return;
-
-          controls.querySelectorAll('.sort-btn').forEach((b) => {
-            b.classList.remove('active');
-            b.setAttribute('aria-pressed', 'false');
-          });
-          btn.classList.add('active');
-          btn.setAttribute('aria-pressed', 'true');
-
-          const statusEl = controls.closest('.page-container')?.querySelector('.sort-status');
-          if (statusEl) statusEl.textContent = `Sorted by ${btn.textContent?.trim() ?? key}`;
-
-          const items = [...list.querySelectorAll('.row-item')];
-          const vals = items.map((el) => el.getAttribute('data-sort-' + key) || '');
-          const numeric = vals.every((v) => v !== '' && !isNaN(Number(v)));
-
-          const indices = items.map((_, i) => i);
-          indices.sort((a, b) =>
-            numeric ? Number(vals[b]) - Number(vals[a]) : vals[a].localeCompare(vals[b])
-          );
-          indices.forEach((i) => list.appendChild(items[i]));
-        });
-      });
-    });
-
-    // Pagination
-    document.querySelectorAll('.row-list').forEach((list) => {
-      const listId = list.id;
-      const pagination = document.getElementById(listId + '-pagination');
-      if (!pagination) return;
-
-      const pageSizeAttr = (pagination as HTMLElement).dataset.pageSize;
-      const pageSize = pageSizeAttr ? parseInt(pageSizeAttr, 10) : 10;
-      let currentPage = 1;
-
-      function getItems() {
-        return Array.from(list.querySelectorAll('.row-item'));
-      }
-
-      function applyPage() {
-        const items = getItems();
-        const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
-        currentPage = Math.min(currentPage, totalPages);
-        const start = (currentPage - 1) * pageSize;
-        const end = start + pageSize;
-        items.forEach((item, i) => {
-          (item as HTMLElement).style.display = i >= start && i < end ? '' : 'none';
-        });
-        const cur = document.getElementById(listId + '-page-current');
-        const tot = document.getElementById(listId + '-page-total');
-        const prev = document.getElementById(listId + '-prev') as HTMLButtonElement | null;
-        const next = document.getElementById(listId + '-next') as HTMLButtonElement | null;
-        if (cur) cur.textContent = String(currentPage);
-        if (tot) tot.textContent = String(totalPages);
-        if (prev) prev.disabled = currentPage === 1;
-        if (next) next.disabled = currentPage === totalPages;
-      }
-
-      // If URL has a hash targeting an item in this list, jump to its page
-      const hash = window.location.hash.slice(1);
-      if (hash) {
-        const items = getItems();
-        const targetIndex = items.findIndex((item) => item.id === hash);
-        if (targetIndex >= 0) {
-          currentPage = Math.floor(targetIndex / pageSize) + 1;
-        }
-      }
-
-      applyPage();
-
-      // After pagination is applied, scroll to the hash target
-      if (hash) {
-        const target = document.getElementById(hash);
-        if (target && (target as HTMLElement).style.display !== 'none') {
-          requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
-        }
-      }
-
-      document.getElementById(listId + '-prev')?.addEventListener('click', () => {
-        if (currentPage > 1) {
-          currentPage--;
-          applyPage();
-          list.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-
-      document.getElementById(listId + '-next')?.addEventListener('click', () => {
-        const totalPages = Math.ceil(getItems().length / pageSize);
-        if (currentPage < totalPages) {
-          currentPage++;
-          applyPage();
-          list.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-
-      // Reset to page 1 after sort
-      list.closest('.page-container')?.querySelectorAll('.sort-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          queueMicrotask(() => { currentPage = 1; applyPage(); });
-        });
-      });
-    });
+    document.querySelectorAll<HTMLElement>('.page-container').forEach(wireContainer);
   });
+
+  function wireContainer(container: HTMLElement) {
+    if (container.dataset.wired === 'true') return;
+    container.dataset.wired = 'true';
+
+    const list = container.querySelector<HTMLElement>('.row-list');
+    if (!list) return;
+
+    const pagination = document.getElementById(list.id + '-pagination');
+    const pageSize = pagination ? parseInt(pagination.dataset.pageSize ?? '10', 10) : 0;
+    const state = { currentPage: 1, pageSize, list };
+
+    container.querySelectorAll<HTMLElement>('.sort-btn').forEach((btn) => {
+      btn.addEventListener('click', () => onSortClick(btn, container, state));
+    });
+
+    if (pagination) {
+      wirePagination(list.id, state);
+      jumpToHash(state);
+      applyPage(state);
+    }
+  }
+
+  type State = { currentPage: number; pageSize: number; list: HTMLElement };
+
+  function onSortClick(btn: HTMLElement, container: HTMLElement, state: State) {
+    const key = btn.getAttribute('data-sort-key');
+    if (!key) return;
+
+    container.querySelectorAll('.sort-btn').forEach((b) => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+
+    const statusEl = container.querySelector('.sort-status');
+    if (statusEl) statusEl.textContent = `Sorted by ${btn.textContent?.trim() ?? key}`;
+
+    const items = [...state.list.querySelectorAll<HTMLElement>('.row-item')];
+    const vals = items.map((el) => el.getAttribute('data-sort-' + key) ?? '');
+    const numeric = vals.every((v) => v !== '' && !isNaN(Number(v)));
+
+    const indices = items.map((_, i) => i);
+    indices.sort((a, b) =>
+      numeric ? Number(vals[b]) - Number(vals[a]) : vals[a].localeCompare(vals[b])
+    );
+    indices.forEach((i) => state.list.appendChild(items[i]));
+
+    if (state.pageSize > 0) {
+      state.currentPage = 1;
+      applyPage(state);
+    }
+  }
+
+  function wirePagination(listId: string, state: State) {
+    document.getElementById(listId + '-prev')?.addEventListener('click', () => {
+      if (state.currentPage > 1) {
+        state.currentPage--;
+        applyPage(state);
+        state.list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+
+    document.getElementById(listId + '-next')?.addEventListener('click', () => {
+      const totalPages = Math.ceil(getItems(state.list).length / state.pageSize);
+      if (state.currentPage < totalPages) {
+        state.currentPage++;
+        applyPage(state);
+        state.list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+
+  function jumpToHash(state: State) {
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+    const items = getItems(state.list);
+    const targetIndex = items.findIndex((item) => item.id === hash);
+    if (targetIndex >= 0) {
+      state.currentPage = Math.floor(targetIndex / state.pageSize) + 1;
+      requestAnimationFrame(() => {
+        const target = document.getElementById(hash);
+        if (target && target.style.display !== 'none') {
+          target.scrollIntoView({ block: 'start' });
+        }
+      });
+    }
+  }
+
+  function getItems(list: HTMLElement): HTMLElement[] {
+    return Array.from(list.querySelectorAll<HTMLElement>('.row-item'));
+  }
+
+  function applyPage(state: State) {
+    const items = getItems(state.list);
+    const totalPages = Math.max(1, Math.ceil(items.length / state.pageSize));
+    state.currentPage = Math.min(state.currentPage, totalPages);
+    const start = (state.currentPage - 1) * state.pageSize;
+    const end = start + state.pageSize;
+    items.forEach((item, i) => {
+      item.style.display = i >= start && i < end ? '' : 'none';
+    });
+
+    const listId = state.list.id;
+    const cur = document.getElementById(listId + '-page-current');
+    const tot = document.getElementById(listId + '-page-total');
+    const prev = document.getElementById(listId + '-prev') as HTMLButtonElement | null;
+    const next = document.getElementById(listId + '-next') as HTMLButtonElement | null;
+    if (cur) cur.textContent = String(state.currentPage);
+    if (tot) tot.textContent = String(totalPages);
+    if (prev) prev.disabled = state.currentPage === 1;
+    if (next) next.disabled = state.currentPage === totalPages;
+  }
 </script>
 
 <style>

@@ -41,6 +41,30 @@ import '../styles/utilities.css';
         e.newDocument.documentElement.setAttribute('data-theme', theme);
       });
     </script>
+
+    <!-- Cross-cutting per-page chrome sync: active nav link + theme-toggle aria-label -->
+    <script>
+      function syncChrome() {
+        const path = window.location.pathname;
+        document.querySelectorAll<HTMLAnchorElement>('.nav-link').forEach((link) => {
+          const href = link.getAttribute('href');
+          const active = href === '/' ? path === '/' : Boolean(href && path.startsWith(href));
+          link.classList.toggle('nav-link--active', active);
+          if (active) {
+            link.setAttribute('aria-current', 'page');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+
+        const theme = document.documentElement.getAttribute('data-theme') ?? 'dark';
+        const toggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
+        if (toggle) {
+          toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+        }
+      }
+      document.addEventListener('astro:page-load', syncChrome);
+    </script>
     
     <style>
       body {

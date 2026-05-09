@@ -41,34 +41,6 @@ const isActive = (href: string) => {
   </div>
 </nav>
 
-<script>
-  function updateActiveNav() {
-    const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll('.nav-link');
-    
-    navLinks.forEach((link) => {
-      const href = link.getAttribute('href');
-      let isActive = false;
-      
-      if (href === '/') {
-        isActive = currentPath === '/';
-      } else if (href) {
-        isActive = currentPath.startsWith(href);
-      }
-      
-      link.classList.toggle('nav-link--active', isActive);
-      if (isActive) {
-        link.setAttribute('aria-current', 'page');
-      } else {
-        link.removeAttribute('aria-current');
-      }
-    });
-  }
-
-  // Run on initial load and after each navigation
-  document.addEventListener('astro:page-load', updateActiveNav);
-</script>
-
 <style>
   .site-nav {
     display: flex;
