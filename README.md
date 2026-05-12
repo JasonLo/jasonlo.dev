@@ -10,7 +10,7 @@ Source code for [jasonlo.dev](https://jasonlo.dev) — a personal portfolio buil
 - **Astro 6** — Static site generation with MDX content collections
 - **Vanilla CSS** — Dark/light theme, WCAG AA compliant
 - **Bun** — Package manager and runtime
-- **GitHub Actions** — Auto-deploy on push + weekly publication sync via ORCID & OpenAlex
+- **GitHub Actions** — Auto-deploy on push + weekly scheduled jobs (publication sync, doc cleanup, WCAG audit)
 
 ## Development
 
@@ -38,10 +38,14 @@ src/
   layouts/           # BaseLayout
   components/        # Astro components (ListLayout, SEO, etc.)
   styles/            # global.css, typography.css, utilities.css
+  assets/            # icons/ and other static assets imported by components
+  data/              # shortlinks.json (source for s/[key].astro)
   utils/             # Shared helpers (collections, date, readingTime)
 ```
 
 ## Automation
 
-- **Publish workflow** — Builds and deploys to GitHub Pages on every push to `main`
-- **Publication sync** — Weekly GitHub Action fetches journal articles from ORCID (public API, no auth) and OpenAlex (optional API key), deduplicates by DOI/title, merges the best fields from each source, and commits updates automatically (`scripts/sync-publications-fused.ts`)
+- **Publish workflow** — Builds and deploys to GitHub Pages on every push to `main` (`publish.yml`)
+- **Publication sync** — Weekly GitHub Action fetches journal articles from ORCID (public API, no auth) and OpenAlex (optional API key), deduplicates by DOI/title, merges the best fields from each source, and commits updates automatically (`scripts/sync-publications-fused.ts`, `sync-publications-fused.yml`)
+- **Documentation Cleaner** — Weekly Claude Code Action that tidies docs and opens PRs (`doc-cleaner-claude.yml`)
+- **WCAG Compliance Auditor** — Weekly Claude Code Action that audits accessibility and opens PRs (`wcag-audit-claude.yml`)
