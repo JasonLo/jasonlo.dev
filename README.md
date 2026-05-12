@@ -38,6 +38,7 @@ src/
   layouts/           # BaseLayout
   components/        # Astro components (ListLayout, SEO, etc.)
   styles/            # global.css, typography.css, utilities.css
+  utils/             # Shared helpers (collections, date, readingTime)
 ```
 
 ## Automation
