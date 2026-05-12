@@ -1,5 +1,6 @@
 ---
-import { getCollection } from 'astro:content';
+import { getPublished } from '../utils/collections';
+import { formatDate } from '../utils/date';
 
 interface Props {
   limit?: number;
@@ -11,12 +12,13 @@ const { limit = 3, excludedProjectIds = new Set(), mode = 'latest' } = Astro.pro
 
 const DESCRIPTION_WORD_LIMIT = 10;
 
-// Gather all posts from different collections
-const allJourney = await getCollection('journey', ({ data }) => data.draft !== true);
-const allProjects = await getCollection('projects', ({ data }) => data.draft !== true);
-const allPublications = await getCollection('publications', ({ data }) => data.draft === false);
-const allTools = await getCollection('tools', ({ data }) => data.draft !== true);
-const allBlog = await getCollection('blog', ({ data }) => data.draft !== true);
+const [allJourney, allProjects, allPublications, allTools, allBlog] = await Promise.all([
+  getPublished('journey'),
+  getPublished('projects'),
+  getPublished('publications'),
+  getPublished('tools'),
+  getPublished('blog'),
+]);
 
 // Unify all posts with a common structure
 const allPosts = [
@@ -93,11 +95,7 @@ if (mode === 'random') {
   </div>
   <div class="latest-grid">
     {selectedPosts.map((post) => {
-      const formattedDate = post.date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-      });
+      const formattedDate = formatDate(post.date);
       const isExternal = post.type === 'publication';
       const linkProps = isExternal && post.link !== '#' 
         ? { target: '_blank', rel: 'noopener noreferrer' } 

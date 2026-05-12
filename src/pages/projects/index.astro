@@ -1,12 +1,10 @@
 ---
 import ListLayout from '../../components/ListLayout.astro';
 import ArrowLink from '../../components/ArrowLink.astro';
-import { getCollection } from 'astro:content';
 import { pagesConfig } from '../../pages.config';
+import { getPublished } from '../../utils/collections';
 
-const allProjects = await getCollection('projects', ({ data }) => {
-  return data.draft !== true;
-});
+const allProjects = await getPublished('projects');
 
 // Default sort: featured first, then by year descending
 const sortedProjects = [...allProjects].sort((a, b) => {

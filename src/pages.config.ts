@@ -1,29 +1,13 @@
 /**
  * Page Metadata Configuration
- * 
+ *
  * Centralized SEO metadata for all static pages. Single source of truth
  * for titles and descriptions to ensure consistency across the site.
- * 
- * Usage:
- * ```astro
- * ---
- * import BaseLayout from '../layouts/BaseLayout.astro';
- * import SEO from '../components/SEO.astro';
- * import { pagesConfig } from '../pages.config';
- * ---
- * 
- * <BaseLayout>
- *   <SEO 
- *     slot="head"
- *     title={pagesConfig.projects.title}
- *     description={pagesConfig.projects.description}
- *   />
- *   <!-- Page content -->
- * </BaseLayout>
- * ```
- * 
+ *
  * @module pages.config
  */
+
+import { siteConfig } from './config';
 
 interface PageMeta {
   title: string;
@@ -32,16 +16,10 @@ interface PageMeta {
   intro?: string;
 }
 
-/**
- * Pages configuration object
- * 
- * Contains metadata for all static pages. Dynamic pages (like individual
- * project or article pages) generate their own metadata from content.
- */
 export const pagesConfig = {
   home: {
     title: 'Home',
-    description: 'I\'m Jason Lo, a builder and repairer of systems, driven by the belief that real efficiency comes from rapid iteration and adaptation. My work is an ongoing experiment in applying cutting-edge AI, spanning neuroimaging, literacy, agriculture, and geoscience, to find the simplest and most robust path to discovery.',
+    description: `I'm ${siteConfig.author.name}, a builder and repairer of systems, driven by the belief that real efficiency comes from rapid iteration and adaptation. My work is an ongoing experiment in applying cutting-edge AI, spanning neuroimaging, literacy, agriculture, and geoscience, to find the simplest and most robust path to discovery.`,
   },
 
   journey: {

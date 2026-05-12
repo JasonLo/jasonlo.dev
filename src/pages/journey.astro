@@ -28,15 +28,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SEO from '../components/SEO.astro';
 import TimelineEntry from '../components/TimelineEntry.astro';
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
 import { pagesConfig } from '../pages.config';
+import { getPublished } from '../utils/collections';
 
-/**
- * Queries all journey entries from the content collection
- */
-const allJourneyEntries = await getCollection('journey', ({ data }) => {
-  return data.draft !== true;
-});
+const allJourneyEntries = await getPublished('journey');
 
 /**
  * Sorts journey entries by date in descending order (most recent first)

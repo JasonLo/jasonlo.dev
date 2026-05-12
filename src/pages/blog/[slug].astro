@@ -3,11 +3,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SEO from '../../components/SEO.astro';
 import BackLink from '../../components/BackLink.astro';
 import ScrollToTop from '../../components/ScrollToTop.astro';
-import { getCollection, getEntry, render } from 'astro:content';
+import { getEntry, render } from 'astro:content';
 import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime';
+import { getPublished } from '../../utils/collections';
+import { formatDate } from '../../utils/date';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => data.draft !== true);
+  const posts = await getPublished('blog');
   return posts.map((post) => ({
     params: { slug: post.id },
   }));
@@ -25,13 +27,8 @@ const { Content } = await render(post);
 
 const { title, description, publishDate, updatedDate, tags } = post.data;
 
-const dateFormatOptions: Intl.DateTimeFormatOptions = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-};
-const formattedDate = publishDate.toLocaleDateString('en-US', dateFormatOptions);
-const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', dateFormatOptions);
+const formattedDate = formatDate(publishDate, 'long');
+const formattedUpdatedDate = updatedDate ? formatDate(updatedDate, 'long') : undefined;
 
 const readingTime = formatReadingTime(calculateReadingTime(post.body ?? ''));
 ---

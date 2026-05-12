@@ -1,4 +1,4 @@
-import { getCollection } from 'astro:content';
+import { getPublished } from '../utils/collections';
 
 interface SearchItem {
   type: 'project' | 'blog' | 'tool' | 'publication' | 'journey';
@@ -12,11 +12,11 @@ interface SearchItem {
 
 export async function GET() {
   const [projects, blog, tools, publications, journey] = await Promise.all([
-    getCollection('projects', ({ data }) => !data.draft),
-    getCollection('blog', ({ data }) => !data.draft),
-    getCollection('tools', ({ data }) => !data.draft),
-    getCollection('publications', ({ data }) => !data.draft),
-    getCollection('journey', ({ data }) => !data.draft),
+    getPublished('projects'),
+    getPublished('blog'),
+    getPublished('tools'),
+    getPublished('publications'),
+    getPublished('journey'),
   ]);
 
   const items: SearchItem[] = [

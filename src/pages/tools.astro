@@ -1,12 +1,10 @@
 ---
 import ListLayout from '../components/ListLayout.astro';
 import ArrowLink from '../components/ArrowLink.astro';
-import { getCollection } from 'astro:content';
 import { pagesConfig } from '../pages.config';
+import { getPublished } from '../utils/collections';
 
-const allTools = await getCollection('tools', ({ data }) => {
-  return data.draft !== true;
-});
+const allTools = await getPublished('tools');
 
 // Default sort: favorites first, then by date descending
 const sortedTools = [...allTools].sort((a, b) => {

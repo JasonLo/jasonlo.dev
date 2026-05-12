@@ -39,8 +39,10 @@ import ScrollToTop from '../../components/ScrollToTop.astro';
 import BackLink from '../../components/BackLink.astro';
 import RelatedContent from '../../components/RelatedContent.astro';
 import ImpactMetrics from '../../components/ImpactMetrics.astro';
-import { getCollection, getEntry, render } from 'astro:content';
+import { getEntry, render } from 'astro:content';
 import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime';
+import { getPublished } from '../../utils/collections';
+import { formatDate } from '../../utils/date';
 
 /**
  * Generates static paths for all project entries
@@ -51,9 +53,7 @@ import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime
  * @returns Array of path objects with params
  */
 export async function getStaticPaths() {
-  const projects = await getCollection('projects', ({ data }) => {
-    return data.draft !== true;
-  });
+  const projects = await getPublished('projects');
   return projects.map((project) => ({
     params: { slug: project.id },
   }));
@@ -115,11 +115,7 @@ const allText = [
   project.body || '',
 ].filter(Boolean).join(' ');
 const readingTime = formatReadingTime(calculateReadingTime(allText));
-const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-});
+const formattedUpdatedDate = updatedDate ? formatDate(updatedDate) : undefined;
 ---
 
 <BaseLayout>

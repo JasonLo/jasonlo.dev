@@ -1,18 +1,16 @@
 ---
 import ListLayout from '../../components/ListLayout.astro';
 import ArrowLink from '../../components/ArrowLink.astro';
-import { getCollection } from 'astro:content';
 import { pagesConfig } from '../../pages.config';
 import { siteConfig } from '../../config';
+import { getPublished } from '../../utils/collections';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return [{ params: { page: undefined } }];
 };
 
-const allArticles = await getCollection('publications', ({ data }) => {
-  return data.draft === false;
-});
+const allArticles = await getPublished('publications');
 
 // Default sort: most recent first
 const sortedArticles = [...allArticles].sort(

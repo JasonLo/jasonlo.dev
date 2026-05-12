@@ -4,12 +4,11 @@ import SEO from '../components/SEO.astro';
 import StructuredData from '../components/StructuredData.astro';
 import ArrowLink from '../components/ArrowLink.astro';
 import UpdatesFeed from '../components/UpdatesFeed.astro';
-import { getCollection } from 'astro:content';
 import { siteConfig } from '../config';
+import { pagesConfig } from '../pages.config';
+import { getPublished } from '../utils/collections';
 
-const allProjects = await getCollection('projects', ({ data }) => {
-  return data.draft !== true;
-});
+const allProjects = await getPublished('projects');
 const featuredProjects = allProjects
   .filter(project => project.data.featured === true)
   .sort((a, b) => b.data.year - a.data.year)
@@ -46,9 +45,7 @@ const updateMode = 'latest';
           </div>
           <div class="hero-prose">
             <h2>About Me</h2>
-            <p>
-              I'm {siteConfig.author.name}, a builder and repairer of systems, driven by the belief that real efficiency comes from rapid iteration and adaptation. My work is an ongoing experiment in applying cutting-edge AI, spanning neuroimaging, literacy, agriculture, and geoscience, to find the simplest and most robust path to discovery.
-            </p>
+            <p>{pagesConfig.home.description}</p>
             <h2>Work Philosophy</h2>
             <p>
               Discovery depends on finding the right scale. I favor minimalism, matching methodology to the problem without unnecessary bloat. Efficiency matters to me, not only in code but in how we learn and adapt at the edge of research. I build by pruning the nonessential, ensuring each decision is as lean as the science requires. Every significant decision is documented, because effective engineers clarify their thinking, not just their output.

@@ -1,22 +1,22 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
 import { siteConfig } from '../config';
+import { getPublished } from '../utils/collections';
 
 export const GET: APIRoute = async () => {
   const siteUrl = siteConfig.url.endsWith('/')
     ? siteConfig.url.slice(0, -1)
     : siteConfig.url;
 
-  const projects = (await getCollection('projects', ({ data }) => data.draft !== true))
+  const projects = (await getPublished('projects'))
     .sort((a, b) => b.data.year - a.data.year);
 
-  const publications = (await getCollection('publications', ({ data }) => data.draft !== true))
-    .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+  const publications = (await getPublished('publications'))
+    .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());
 
-  const journey = (await getCollection('journey', ({ data }) => data.draft !== true))
-    .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+  const journey = (await getPublished('journey'))
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-  const tools = (await getCollection('tools', ({ data }) => data.draft !== true))
+  const tools = (await getPublished('tools'))
     .sort((a, b) => {
       if (a.data.is_favorite !== b.data.is_favorite) return a.data.is_favorite ? -1 : 1;
       return a.data.name.localeCompare(b.data.name);
