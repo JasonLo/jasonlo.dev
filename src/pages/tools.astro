@@ -8,7 +8,7 @@ const allTools = await getPublished('tools');
 
 // Default sort: favorites first, then by date descending
 const sortedTools = [...allTools].sort((a, b) => {
-  if (a.data.is_favorite !== b.data.is_favorite) return a.data.is_favorite ? -1 : 1;
+  if (a.data.isFavorite !== b.data.isFavorite) return a.data.isFavorite ? -1 : 1;
   return b.data.date.getTime() - a.data.date.getTime();
 });
 ---
@@ -35,7 +35,7 @@ const sortedTools = [...allTools].sort((a, b) => {
       <RowTag
         id={item.id}
         class="row-item"
-        data-sort-favorite={(item.data.is_favorite ? 1e13 : 0) + item.data.date.getTime()}
+        data-sort-favorite={(item.data.isFavorite ? 1e13 : 0) + item.data.date.getTime()}
         data-sort-recent={item.data.date.getTime()}
         data-sort-name={item.data.name.toLowerCase()}
         {...(item.data.url && { href: item.data.url, target: '_blank', rel: 'noopener noreferrer' })}
@@ -44,7 +44,7 @@ const sortedTools = [...allTools].sort((a, b) => {
         <div class="row-body">
           <div class="row-title-line">
             <span class="row-title">{item.data.name}</span>
-            {item.data.is_favorite && (
+            {item.data.isFavorite && (
               <span class="best-badge">Favorite</span>
             )}
           </div>

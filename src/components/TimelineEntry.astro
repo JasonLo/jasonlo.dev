@@ -1,4 +1,7 @@
 ---
+import { formatDate } from '../utils/date';
+import ChevronDown from '../assets/icons/chevron-down.svg';
+
 interface Props {
   date: Date;
   title: string;
@@ -11,18 +14,13 @@ interface Props {
 
 const { date, title, type, description, skills, hasContent = false, id } = Astro.props;
 
-const formattedDate = new Intl.DateTimeFormat('en-US', {
-  year: 'numeric',
-  month: 'long'
-}).format(date);
+const formattedDate = formatDate(date, 'month-year');
 
 const typeLabels = {
   milestone: 'Milestone',
   learning: 'Learning',
   transition: 'Transition'
 };
-
-import ChevronDown from '../assets/icons/chevron-down.svg';
 
 const entryId = `journey-${date.getTime()}`;
 ---

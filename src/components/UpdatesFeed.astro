@@ -1,6 +1,7 @@
 ---
 import { getPublished } from '../utils/collections';
 import { formatDate } from '../utils/date';
+import { getEntryDate } from '../utils/entryDate';
 
 interface Props {
   limit?: number;
@@ -24,7 +25,7 @@ const [allJourney, allProjects, allPublications, allTools, allBlog] = await Prom
 const allPosts = [
   ...allJourney.map(entry => ({
     type: 'journey' as const,
-    date: entry.data.updatedDate ?? entry.data.date,
+    date: getEntryDate(entry),
     title: entry.data.title,
     description: entry.data.description,
     link: `/journey#${entry.id}`,
@@ -35,7 +36,7 @@ const allPosts = [
     .filter(project => !excludedProjectIds.has(project.id))
     .map(project => ({
       type: 'project' as const,
-      date: project.data.updatedDate ?? new Date(project.data.year, 0, 1),
+      date: getEntryDate(project),
       title: project.data.title,
       description: project.data.outcomeSummary,
       link: `/projects/${project.id}`,
@@ -44,7 +45,7 @@ const allPosts = [
     })),
   ...allPublications.map(pub => ({
     type: 'publication' as const,
-    date: pub.data.updatedDate ?? pub.data.publishDate,
+    date: getEntryDate(pub),
     title: pub.data.title,
     description: pub.data.journal,
     link: pub.data.doi || '#',
@@ -53,7 +54,7 @@ const allPosts = [
   })),
   ...allTools.map(tool => ({
     type: 'tool' as const,
-    date: tool.data.updatedDate ?? tool.data.date,
+    date: getEntryDate(tool),
     title: tool.data.name,
     description: tool.data.description,
     link: `/tools#${tool.id}`,
@@ -62,7 +63,7 @@ const allPosts = [
   })),
   ...allBlog.map(post => ({
     type: 'blog' as const,
-    date: post.data.updatedDate ?? post.data.publishDate,
+    date: getEntryDate(post),
     title: post.data.title,
     description: post.data.description,
     link: `/blog/${post.id}`,

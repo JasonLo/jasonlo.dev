@@ -63,7 +63,9 @@
   
   /* Layout */
   --max-width-prose: 65ch;
-  --max-width-content: 1200px;
+  --max-width-page: 1100px;     /* home, footer — wide layouts */
+  --max-width-list: 800px;      /* list pages, case studies */
+  --max-width-post: 720px;      /* long-form blog posts */
   --border-radius-sm: 0.25rem;
   --border-radius-md: 0.5rem;
   --border-radius-lg: 1rem;

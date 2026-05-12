@@ -76,7 +76,7 @@ const toolsCollection = defineCollection({
     url: z.string().url().optional(),
     date: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
-    is_favorite: z.boolean().default(false),
+    isFavorite: z.boolean().default(false),
     best_for: z.string(),
     not_for: z.string().optional(),
     personal_remarks: z.string().optional(),

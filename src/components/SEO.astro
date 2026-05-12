@@ -26,9 +26,9 @@ const {
 const fullTitle = noSuffix ? title : (title ? `${title} | ${siteConfig.author.name}` : siteConfig.title);
 const currentURL = canonicalURL || Astro.url.href;
 const siteURL = siteConfig.url.endsWith('/') ? siteConfig.url : `${siteConfig.url}/`;
-const defaultImage = `${siteURL}og-image.png`;
-const ogImage = image || defaultImage;
-const absoluteImageURL = ogImage.startsWith('http') ? ogImage : `${siteURL}${ogImage.replace(/^\//, '')}`;
+const absoluteImageURL = image
+  ? (image.startsWith('http') ? image : `${siteURL}${image.replace(/^\//, '')}`)
+  : undefined;
 ---
 
 <!-- Page Title -->
@@ -48,7 +48,7 @@ const absoluteImageURL = ogImage.startsWith('http') ? ogImage : `${siteURL}${ogI
 <meta property="og:url" content={currentURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={absoluteImageURL} />
+{absoluteImageURL && <meta property="og:image" content={absoluteImageURL} />}
 <meta property="og:site_name" content={siteConfig.title} />
 
 <!-- Article-specific Open Graph tags -->
@@ -62,11 +62,11 @@ const absoluteImageURL = ogImage.startsWith('http') ? ogImage : `${siteURL}${ogI
 )}
 
 <!-- Twitter Card Tags -->
-<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:card" content={absoluteImageURL ? 'summary_large_image' : 'summary'} />
 <meta name="twitter:url" content={currentURL} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={absoluteImageURL} />
+{absoluteImageURL && <meta name="twitter:image" content={absoluteImageURL} />}
 
 <!-- Robots -->
 <meta name="robots" content="index, follow" />

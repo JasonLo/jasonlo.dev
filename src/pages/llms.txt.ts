@@ -18,7 +18,7 @@ export const GET: APIRoute = async () => {
 
   const tools = (await getPublished('tools'))
     .sort((a, b) => {
-      if (a.data.is_favorite !== b.data.is_favorite) return a.data.is_favorite ? -1 : 1;
+      if (a.data.isFavorite !== b.data.isFavorite) return a.data.isFavorite ? -1 : 1;
       return a.data.name.localeCompare(b.data.name);
     });
 

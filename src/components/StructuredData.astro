@@ -109,7 +109,7 @@ function generateStructuredData(): Record<string, unknown> | null {
         },
         datePublished: d.publishDate?.toISOString(),
         dateModified: d.updatedDate?.toISOString() ?? d.publishDate?.toISOString(),
-        image: d.image ?? `${siteURL}/og-image.png`,
+        image: d.image,
         publisher: {
           '@type': 'Person',
           name: siteConfig.author.name,
