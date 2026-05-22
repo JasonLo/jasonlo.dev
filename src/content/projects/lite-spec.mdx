@@ -1,0 +1,61 @@
+---
+title: "Lite-Spec: A Three-Skill Dev Loop for Claude Code"
+role: "AI Engineer"
+year: 2026
+link: https://github.com/JasonLo/lite-spec
+teamSize: 1
+outcomeSummary: "A three-skill dev loop that helps me conceptualize features and gate code quality, while leaving implementation details to the agent."
+overview: "A small set of Claude Code skills (the ls- family) for the AI-era spec workflow. The core is a three-step loop — intent, decisions, check — backed by two bootstrap skills (init, constitution). I write what I want and what's non-negotiable; the agent writes the code."
+problem: "Once Claude does the typing, my bottleneck stops being implementation and starts being conceptualization and review. Existing spec frameworks (GitHub Spec Kit, OpenSpec, BMAD-METHOD) over-index on producing artifacts a human team will read; what I actually need is a tight loop that nails down intent up front and grades the agent's output at the end."
+constraints:
+  - "Stay out of implementation — the spec describes what and why, never how"
+  - "Plain Markdown in-repo — no external services, databases, or CI hooks"
+  - "Acceptance criteria must be machine-gradeable so the gate is mechanical, not vibes"
+  - "Composable with Claude Code's native skill mechanism — no custom runtime"
+approach: "Three skills carry the dev loop: ls-intent captures per-feature outcomes in EARS notation (conceptualize), ls-decisions appends one-line choices with rationale (capture), and ls-check grades code SHALL-by-SHALL against intent and constitution (gate). Two bootstrap skills sit outside the loop: ls-init scaffolds the repo once, and ls-constitution locks in non-negotiable principles that every check validates against."
+keyDecisions:
+  - decision: "Spec the what, not the how"
+    reasoning: "Implementation is the part agents are best at. Over-specifying code structure burns the human budget on the wrong layer and constrains the agent in ways that rarely improve outcomes. The skills capture outcomes and constraints, not function signatures."
+    alternatives:
+      - "Full design-doc-style specs with module layouts"
+      - "Pseudocode-level intent"
+  - decision: "EARS notation for acceptance criteria"
+    reasoning: "Phrasing each outcome as `WHEN <trigger> THE SYSTEM SHALL <response>` gives the drift checker a discrete unit to match against code. Free-form prose intent is unverifiable in practice."
+    alternatives:
+      - "Free-form acceptance criteria in prose"
+      - "Gherkin / BDD scenarios"
+  - decision: "Three-skill dev loop, two-skill bootstrap"
+    reasoning: "Separating the per-feature loop (intent → decisions → check) from the per-project bootstrap (init, constitution) keeps the everyday workflow short. The loop is what you run weekly; the bootstrap is what you run once."
+    alternatives:
+      - "One monolithic skill with sub-commands"
+      - "Flat list of five peer skills with no loop framing"
+  - decision: "Decouple from git-flow"
+    reasoning: "Nothing in lite-spec requires branches, commits, or PRs. Heavier spec frameworks tie ratification to a PR review and bootstrapping to a branch cut, which is the right call for production code but kills momentum on experimental throwaway projects. Skipping that ceremony lets me iterate on intent and check drift on `main` without a Git workflow getting in the way."
+    alternatives:
+      - "Require a branch + PR per intent change (à la GitHub Spec Kit)"
+      - "Tie ls-check to a pre-commit or pre-push hook"
+  - decision: "Split human-owned vs. agent-writable artifacts"
+    reasoning: "Constitution and intent are human-owned (guided path only) so the agent can't quietly rewrite the rules it's being checked against. Decisions are agent-writable so Claude can append at coding speed without breaking flow."
+    alternatives:
+      - "All artifacts human-owned (slow)"
+      - "All artifacts agent-writable (drift risk)"
+techStack:
+  - "Claude Code"
+  - "SKILL.md (Agent Skills Specification)"
+  - "EARS (Easy Approach to Requirements Syntax)"
+  - "Markdown"
+  - "Bash (install script)"
+impact:
+  qualitative: "Shifts my time from typing code to conceptualizing features and reviewing diffs against intent. The drift report is the part I reach for most: it turns 'does this still match what I wanted?' into a checklist instead of a vibe."
+learnings:
+  - "The leverage is at the ends of the loop, not the middle. Tightening intent up front and gating with a SHALL-by-SHALL check at the end matters far more than anything in between."
+  - "EARS is worth the friction. Phrasing outcomes as SHALL statements feels stilted at first, but it's the difference between an intent doc the agent can grade and one it can only summarize."
+  - "Don't spec the implementation. Every time I tried to pin down how the code should look, I either constrained the agent into a worse solution or wrote something that drifted within a week."
+  - "Human-owned vs. agent-writable is the real split. Letting Claude append to `3_DECISIONS.md` while keeping it out of `1_CONSTITUTION.md` was the right boundary."
+  - "Not coupling the workflow to Git is what makes it usable on throwaway experiments. The moment a spec process needs a branch and a PR, I stop running it on the projects that benefit from it most."
+  - "Practical follow-on to the 'specs as the new lock-in' hunch — owning your own spec format, even a small one, is cheaper than learning whichever one the model vendor ships next."
+featured: false
+status: ongoing
+draft: false
+updatedDate: 2026-05-22
+---
