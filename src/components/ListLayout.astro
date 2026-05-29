@@ -32,8 +32,8 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
     type="website"
   />
 
-  <div class="page-container">
-    <header class="page-header">
+  <div class="page-container" data-reveal-group>
+    <header class="page-header" data-reveal>
       <h1 class="page-title">{title}</h1>
       <p class="page-intro">
         {intro}
@@ -60,11 +60,11 @@ const { title, intro, itemCount, itemLabel, statsExtra, sortOptions, defaultSort
     </header>
 
     {itemCount > 0 ? (
-      <div class="row-list" id={listId}>
+      <div class="row-list" id={listId} data-reveal>
         <slot />
       </div>
     ) : (
-      <p class="empty-state">{emptyMessage}</p>
+      <p class="empty-state" data-reveal>{emptyMessage}</p>
     )}
     {pageSize && itemCount > pageSize && (
       <nav class="pagination" aria-label="Page navigation" id={`${listId}-pagination`} data-page-size={pageSize}>

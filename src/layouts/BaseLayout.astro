@@ -42,6 +42,14 @@ import '../styles/utilities.css';
       });
     </script>
 
+    <!-- Enable scroll-reveal only when motion is allowed (pre-paint, no flash).
+         <html> persists across View Transitions, so this runs once. -->
+    <script is:inline>
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('reveal-ready');
+      }
+    </script>
+
     <!-- Cross-cutting per-page chrome sync: active nav link + theme-toggle aria-label -->
     <script>
       function syncChrome() {
@@ -65,7 +73,37 @@ import '../styles/utilities.css';
       }
       document.addEventListener('astro:page-load', syncChrome);
     </script>
-    
+
+    <!-- Scroll reveal: fade/slide elements in as they enter the viewport -->
+    <script>
+      function initReveal() {
+        if (!document.documentElement.classList.contains('reveal-ready')) return;
+
+        // Stagger: items inside a [data-reveal-group] get incremental delays by DOM order.
+        document.querySelectorAll<HTMLElement>('[data-reveal-group]').forEach((group) => {
+          group.querySelectorAll<HTMLElement>(':scope [data-reveal]').forEach((el, i) => {
+            el.style.setProperty('--reveal-delay', `${Math.min(i * 70, 280)}ms`);
+          });
+        });
+
+        const observer = new IntersectionObserver(
+          (entries, obs) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                obs.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.05 }
+        );
+
+        document.querySelectorAll('[data-reveal]').forEach((el) => observer.observe(el));
+      }
+
+      document.addEventListener('astro:page-load', initReveal);
+    </script>
+
     <style>
       body {
         display: flex;

@@ -184,12 +184,15 @@
 .row-arrow {
   color: var(--color-text-muted);
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    transform 0.3s var(--ease-out-expo);
   padding-top: 0.125rem;
 }
 
 .row-item:hover .row-arrow {
   opacity: 1;
+  transform: translateX(3px);
 }
 
 @media (max-width: 640px) {

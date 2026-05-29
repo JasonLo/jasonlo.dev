@@ -91,10 +91,10 @@ if (mode === 'random') {
 ---
 
 <section class="latest-updates" aria-labelledby="updates-feed-heading">
-  <div class="latest-header">
+  <div class="latest-header" data-reveal>
     <h2 id="updates-feed-heading">{mode === 'random' ? 'Random Updates' : 'Latest Updates'}</h2>
   </div>
-  <div class="latest-grid">
+  <div class="latest-grid" data-reveal-group>
     {selectedPosts.map((post) => {
       const formattedDate = formatDate(post.date);
       const isExternal = post.type === 'publication';
@@ -109,7 +109,7 @@ if (mode === 'random') {
       
       const showNewTabNotice = isExternal && post.link !== '#';
       return (
-        <a href={post.link} class="latest-card" {...linkProps}>
+        <a href={post.link} class="latest-card" data-reveal {...linkProps}>
           <div class="latest-meta">
             <span class="latest-date">{formattedDate}</span>
             <span class="latest-type" data-type={post.type}>
@@ -159,7 +159,11 @@ if (mode === 'random') {
     background: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
     border-radius: 8px;
-    transition: border-color 0.2s ease, background 0.2s ease;
+    transition:
+      border-color 0.3s var(--ease-out-expo),
+      background 0.3s var(--ease-out-expo),
+      box-shadow 0.3s var(--ease-out-expo),
+      transform 0.3s var(--ease-out-expo);
     text-decoration: none;
     display: block;
   }
@@ -167,6 +171,8 @@ if (mode === 'random') {
   .latest-card:hover {
     border-color: var(--color-text-muted);
     background: var(--color-bg-elevated);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
   }
 
   .latest-meta {
