@@ -21,9 +21,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "5.0.4",
-    "@astrojs/sitemap": "3.7.2",
-    "astro": "6.3.1",
+    "@astrojs/mdx": "6.0.1",
+    "@astrojs/sitemap": "3.7.3",
+    "astro": "6.4.2",
     "fuse.js": "^7.3.0",
     "sharp": "^0.34.5"
   },
