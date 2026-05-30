@@ -21,7 +21,7 @@ import SearchIcon from '../assets/icons/search.svg';
       />
       <kbd class="search-kbd">ESC</kbd>
     </div>
-    <div id="search-results" class="search-results">
+    <div id="search-results" class="search-results" role="listbox" aria-label="Search results">
       <div class="search-empty">Start typing to search&hellip;</div>
     </div>
     <div id="search-status" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
@@ -279,7 +279,7 @@ import SearchIcon from '../assets/icons/search.svg';
       const items = grouped.get(type);
       if (!items || items.length === 0) continue;
       const groupId = `search-group-${groupIdx}`;
-      html += `<div class="search-group" role="group" aria-labelledby="${groupId}"><div class="search-group-label" id="${groupId}">${TYPE_LABELS[type]}s</div><div role="listbox" aria-label="${TYPE_LABELS[type]}s">`;
+      html += `<div class="search-group" role="group" aria-labelledby="${groupId}"><div class="search-group-label" id="${groupId}">${TYPE_LABELS[type]}s</div>`;
       for (const r of items) {
         const titleHtml = highlightMatches(r.item.title, getMatchIndices(r, 'title'));
         const descHtml = highlightMatches(r.item.description, getMatchIndices(r, 'description'), 120);
@@ -302,7 +302,7 @@ import SearchIcon from '../assets/icons/search.svg';
         </a>`;
         idx++;
       }
-      html += '</div></div>';
+      html += '</div>';
       groupIdx++;
     }
 
