@@ -1,0 +1,48 @@
+---
+title: "Cheatsheet: Self-Maintaining Context for Coding Agents"
+role: "AI Engineer"
+year: 2026
+link: https://github.com/JasonLo/cheatsheet
+teamSize: 1
+outcomeSummary: "A self-maintaining collection of cheatsheets that give Claude Code current context for the tools I use, grounded in how I actually use them."
+overview: "A Claude Code skill plus scheduled workflows that generate and maintain cheatsheets encoding my preferences. Each sheet is grounded in my GitHub usage and reconciled against current docs, then imported into CLAUDE.md so the agent codes the way I do."
+problem: "Off-the-shelf tooling encodes other people's preferences, not mine. Its defaults reflect how others work, and its guidance lags current APIs. I end up rewriting plausible code to match how I actually build."
+constraints:
+  - "Private repo content must never be disclosed by name or verbatim, only generalized patterns"
+  - "Nothing auto-merges; every generated or refreshed sheet needs human review"
+  - "Sheets must stay concise enough to load cheaply into context at every session start"
+approach: "A `/cheatsheet` skill mines my GitHub repos for usage patterns, grounds them in official docs, and writes a sheet with snippets, patterns, and agent rules. An install script imports the collection into `~/.claude/CLAUDE.md`, and scheduled GitHub Actions keep it fresh and suggest gaps to fill."
+keyDecisions:
+  - decision: "Ground sheets in my own GitHub usage, not just docs"
+    reasoning: "Docs capture what a tool can do, not how I use it. Mining real repos produces patterns the agent can copy directly."
+    alternatives:
+      - "Hand-written cheatsheets"
+      - "Pointing the agent at official docs at runtime"
+  - decision: "Scheduled self-maintenance with human-in-the-loop"
+    reasoning: "A monthly refresh re-mines repos and opens PRs; a weekly recommender suggests new sheets. Review keeps quality high while automation prevents staleness."
+    alternatives:
+      - "Manual refresh whenever I notice drift"
+      - "Fully automated auto-merge"
+  - decision: "Generalize, never leak, private repo content"
+    reasoning: "Private code is reduced to generalized patterns and never quoted or named, so the collection is safe to keep public."
+techStack:
+  - "Claude Code"
+  - "Claude Code Skills (SKILL.md)"
+  - "GitHub Actions"
+  - "Python (uv)"
+  - "pytest"
+  - "Shell"
+impact:
+  qualitative: "Less time correcting off-pattern agent output, since it now starts with current context for tools like uv, Pydantic, Astro, and Ruff. The workflows keep sheets fresh on their own, and the public repo doubles as a sharable reference."
+learnings:
+  - "A few real patterns from your own code are worth more to an agent than pages of generic docs."
+  - "Self-maintaining context still needs a human gate: refreshes keep sheets fresh, review keeps them trustworthy."
+  - "Privacy is a design constraint when context is shared across repos and public surfaces."
+featured: false
+status: ongoing
+draft: false
+updatedDate: 2026-06-05
+relatedProjects:
+  - skill-sommelier
+  - code-template-2026
+---
