@@ -398,12 +398,40 @@ async function writeMdxFiles(pubs: Publication[]) {
 
 // ── Main ────────────────────────────────────────────────────────
 
+// Refuse to reconcile if the fetched set is implausibly small relative to
+// what already exists on disk. ORCID can return a 200 with an empty or
+// partially-errored work set; without this guard the destructive reconcile in
+// writeMdxFiles would delete the "orphaned" publications and the workflow would
+// commit + push the deletions as a green run. A floor turns that silent data
+// loss into a loud, visible failure.
+const SYNC_FLOOR_RATIO = 0.8;
+
+async function existingMdxCount(): Promise<number> {
+  try {
+    const files = await readdir(OUTPUT_DIR);
+    return files.filter((f) => f.endsWith(".mdx")).length;
+  } catch {
+    return 0; // directory does not exist yet — first run
+  }
+}
+
 async function main() {
   const [orcidPubs, openAlexPubs] = await Promise.all([fetchOrcid(), fetchOpenAlex()]);
   console.log(`\nMerging: ${orcidPubs.length} ORCID + ${openAlexPubs.length} OpenAlex`);
 
   const merged = dedupeAndMerge(orcidPubs, openAlexPubs);
   console.log(`Result: ${merged.length} unique publications\n`);
+
+  const existingCount = await existingMdxCount();
+  const floor = Math.floor(existingCount * SYNC_FLOOR_RATIO);
+  if (existingCount > 0 && merged.length < floor) {
+    console.error(
+      `Refusing to sync: fetched ${merged.length} publications but ${existingCount} exist on disk ` +
+        `(floor ${floor} = ${SYNC_FLOOR_RATIO * 100}%). This usually means an upstream API hiccup ` +
+        `returned a partial/empty result. Aborting before the destructive reconcile.`
+    );
+    process.exit(1);
+  }
 
   await writeMdxFiles(merged);
 }

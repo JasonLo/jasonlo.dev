@@ -9,6 +9,12 @@ on:
       - 'astro.config.mjs'
       - 'package.json'
       - 'public/**'
+  # Sync workflows push to main using GITHUB_TOKEN, which does NOT trigger the
+  # push event above (GitHub's anti-recursion rule). Chain off their completion
+  # so synced content actually deploys.
+  workflow_run:
+    workflows: ["Sync Publications (Fused)"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -27,6 +33,10 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # For workflow_run triggers, only proceed when the upstream sync succeeded.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
