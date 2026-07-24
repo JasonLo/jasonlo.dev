@@ -1,37 +1,18 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Build Commands
-
-- `bun run dev` — Start development server
-- `bun run build` — Type-check (`astro check`) then build static site
-- `bun run preview` — Preview production build locally
 
 There are no test or lint commands configured.
 
 ## Architecture
 
-Astro 7 static site (SSG) using MDX content collections and vanilla CSS. Based on the "Case" portfolio theme — a case-study-first portfolio for engineers.
+Based on the "Case" portfolio theme — a case-study-first portfolio for engineers.
 
-### Configuration
-
-- **`astro.config.mjs`** — Build config, integrations (MDX, Sitemap), Sharp image optimization, Shiki syntax highlighting (dual GitHub Light/Dark themes, resolved against `data-theme` in `global.css`)
-- **`src/config.ts`** — Site config: `siteConfig` object with author info, social links, navigation. All values hardcoded (no env vars needed for build)
-- **`src/pages.config.ts`** — SEO metadata per page (title, description, heading, intro)
-- **`src/content.config.ts`** — Content collection schemas with Zod validation
+Shiki's dual GitHub Light/Dark themes are resolved against `data-theme` in `global.css`, so changing one requires changing the other.
 
 ### Content Collections
 
 All content lives in `src/content/` as MDX files. Schemas are defined in `src/content.config.ts`. All collections support an optional `updatedDate` field, which feeds the Latest Updates feed.
-
-| Collection | Key frontmatter |
-| --- | --- |
-| `projects` | title, role, year, updatedDate, link, duration, teamSize, outcomeSummary, overview, problem, constraints, approach, keyDecisions, techStack, impact, learnings, featured, status, relatedProjects, draft |
-| `publications` | title, description, authors, journal, publishDate, updatedDate, doi, oaUrl, citedByCount, tags, draft |
-| `journey` | date, updatedDate, title, description, type (milestone/learning/transition), skills, draft |
-| `tools` | name, description, url, date, updatedDate, is_favorite, best_for, not_for, personal_remarks, license, tags, draft |
-| `blog` | title, description, publishDate, updatedDate, tags, draft |
 
 #### Content style
 
@@ -39,16 +20,11 @@ All content lives in `src/content/` as MDX files. Schemas are defined in `src/co
 
 ### Routing
 
-File-based routing in `src/pages/`. Dynamic routes use `[slug].astro` for individual items (projects, blog) and `[...page].astro` for paginated listings (publications). Static pages: index, projects (listing), journey, tools, blog, 404. Shortlinks live at `s/[key].astro` (sourced from `src/data/shortlinks.json`) and are excluded from the sitemap via the filter in `astro.config.mjs`. Generated files: `llms.txt.ts`, `robots.txt.ts`, `search-index.json.ts`, `rss.xml.ts` (combined RSS feed over all five collections, linked for autodiscovery from `SEO.astro`).
-
-### Layouts
-
-- `BaseLayout.astro` (`src/layouts/`) — HTML wrapper with SEO, nav, footer, theme toggle, ClientRouter (View Transitions). Used directly by all pages including blog posts and project case studies.
-- `ListLayout.astro` (`src/components/`) — Reusable list layout with client-side sort-by (tools, publications, projects, blog)
+Shortlinks live at `s/[key].astro` (sourced from `src/data/shortlinks.json`) and are excluded from the sitemap via the filter in `astro.config.mjs`.
 
 ### Styling
 
-Custom vanilla CSS in `src/styles/` (global.css, typography.css, utilities.css). No Tailwind or CSS framework. Dark/light theme toggle supported. Dark mode uses a slate-blue palette; light mode uses blue-tinted greys. Nav/footer use `--color-bg`, main content uses `--color-bg-content` for subtle contrast.
+Nav/footer use `--color-bg`, main content uses `--color-bg-content` for subtle contrast.
 
 ### Important: View Transitions
 
@@ -56,7 +32,7 @@ The site uses Astro's `ClientRouter` for client-side navigation. Inline scripts 
 
 ## TypeScript
 
-Strict mode (`astro/tsconfigs/strict`). No unused locals/parameters, no implicit returns or fallthrough cases. The `scripts/` directory is excluded from type checking (`tsconfig.json`) since scripts are standalone and share function names.
+The `scripts/` directory is excluded from type checking (`tsconfig.json`) since scripts are standalone and share function names.
 
 ## Scripts
 
