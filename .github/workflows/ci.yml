@@ -1,0 +1,38 @@
+name: CI
+
+# Validates PRs before merge. Without this, `astro check` only ran on main
+# after a merge, so a type error reached the deploy job before anyone saw it.
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "ci-${{ github.ref }}"
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # `bun run build` runs `astro check` (type-check) before building.
+      - name: Type-check and build
+        run: bun run build
