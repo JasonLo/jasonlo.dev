@@ -1,9 +1,26 @@
 name: "Documentation Cleaner"
 
-# Manual-only: the weekly schedule was retired after 20 consecutive runs
-# produced no PRs (docs had converged). Dispatch it after a refactor, when
-# there is actually drift for it to find.
+# Reactive, not scheduled: the weekly cron was retired after 20 consecutive
+# runs produced no PRs (docs had converged). Docs only drift when the code
+# they describe changes, so this fires on pushes to main that touch build
+# config, routing, or scripts — not on content or styling edits.
+#
+# Note the paths below deliberately exclude the docs themselves. Merging this
+# workflow's own PR therefore cannot retrigger it.
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'astro.config.mjs'
+      - 'package.json'
+      - 'tsconfig.json'
+      - 'src/config.ts'
+      - 'src/content.config.ts'
+      - 'src/pages.config.ts'
+      - 'src/pages/**'
+      - 'scripts/**'
+      - '.github/workflows/**'
   workflow_dispatch:
 
 permissions:
@@ -12,6 +29,9 @@ permissions:
 
 concurrency:
   group: "doc-cleaner"
+  # Only the latest state of main is worth auditing; superseded runs would
+  # otherwise queue for a full 20 minutes each.
+  cancel-in-progress: true
 
 jobs:
   clean:
