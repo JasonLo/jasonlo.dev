@@ -19,27 +19,53 @@ on:
       - 'src/styles/**'
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-
 concurrency:
-  group: "wcag-audit"
+  # Scoped by event so the short dispatch job below never cancels the long
+  # audit run it just started (they are separate runs of this same workflow).
+  group: "wcag-audit-${{ github.event_name }}"
   # Only the latest state of main is worth auditing; superseded runs would
   # otherwise queue for a full 30 minutes each.
   cancel-in-progress: true
 
 jobs:
+  # claude-code-action rejects the push event outright ("Unsupported event type:
+  # push"), so the trigger above cannot drive the agent directly. This job
+  # re-enters the workflow via workflow_dispatch, which is a supported event and
+  # which GITHUB_TOKEN is explicitly permitted to trigger -- the documented
+  # exception to GitHub's anti-recursion rule that otherwise ignores
+  # token-driven events. Path filtering thus stays declarative in `on:` above.
+  dispatch:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Re-trigger this workflow as workflow_dispatch
+        run: gh workflow run wcag-audit-claude.yml --ref "$GITHUB_REF_NAME"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+
   audit:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v7
 
+      # No --max-turns: the 2026-07-05 run died on "Reached maximum number of
+      # turns (30)" before it could report or open a PR. This audit reads every
+      # .astro/.css/.mdx file, so 30 turns is not a realistic budget. Cost stays
+      # bounded by timeout-minutes above -- the same call made for the doc
+      # cleaner in 055c900.
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: "--max-turns 30"
           prompt: |
             # WCAG Compliance Auditor
 
