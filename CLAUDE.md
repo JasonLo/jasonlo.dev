@@ -39,7 +39,7 @@ All content lives in `src/content/` as MDX files. Schemas are defined in `src/co
 
 ### Routing
 
-File-based routing in `src/pages/`. Dynamic routes use `[slug].astro` for individual items (projects, blog) and `[...page].astro` for paginated listings (publications). Static pages: index, projects (listing), journey, tools, blog, 404. Shortlinks live at `s/[key].astro` (sourced from `src/data/shortlinks.json`) and are excluded from the sitemap via the filter in `astro.config.mjs`. Generated files: `llms.txt.ts`, `robots.txt.ts`, `search-index.json.ts`.
+File-based routing in `src/pages/`. Dynamic routes use `[slug].astro` for individual items (projects, blog) and `[...page].astro` for paginated listings (publications). Static pages: index, projects (listing), journey, tools, blog, 404. Shortlinks live at `s/[key].astro` (sourced from `src/data/shortlinks.json`) and are excluded from the sitemap via the filter in `astro.config.mjs`. Generated files: `llms.txt.ts`, `robots.txt.ts`, `search-index.json.ts`, `rss.xml.ts` (combined RSS feed over all five collections, linked for autodiscovery from `SEO.astro`).
 
 ### Layouts
 

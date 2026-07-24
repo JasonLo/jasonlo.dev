@@ -40,6 +40,14 @@ const absoluteImageURL = image
 <!-- Canonical URL -->
 <link rel="canonical" href={currentURL} />
 
+<!-- RSS Feed Autodiscovery -->
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={`${siteConfig.title} RSS Feed`}
+  href={`${siteURL}rss.xml`}
+/>
+
 <!-- Author -->
 <meta name="author" content={siteConfig.author.name} />
 
