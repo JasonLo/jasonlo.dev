@@ -21,7 +21,17 @@ export default defineConfig({
   },
   markdown: {
     shikiConfig: {
-      theme: 'github-dark',
+      // Dual themes so code blocks can follow the site's theme toggle.
+      themes: {
+        light: 'github-light',
+        dark: 'github-dark'
+      },
+      // `false` = emit only `--shiki-light` / `--shiki-dark` custom properties,
+      // with no inline `color:` fallback. The site's `[data-theme]` rules in
+      // src/styles/global.css resolve those variables, since Shiki's default
+      // dual-theme output keys off `prefers-color-scheme` and would desync
+      // from the explicit toggle.
+      defaultColor: false,
       wrap: true
     }
   },

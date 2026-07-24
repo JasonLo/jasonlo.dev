@@ -198,6 +198,36 @@ pre code {
   padding: 0;
 }
 
+/* Syntax Highlighting (Shiki dual theme)
+   astro.config.mjs sets `themes: { light, dark }` with `defaultColor: false`,
+   so Shiki emits per-token `--shiki-light` / `--shiki-dark` custom properties
+   and no inline `color`. The rules below resolve those against the site's
+   `data-theme` attribute rather than `prefers-color-scheme`, so code blocks
+   stay in sync with the theme toggle.
+   Only token colors come from Shiki: its `--shiki-light-bg` / `--shiki-dark-bg`
+   values are intentionally never referenced, so the code block keeps
+   `--color-bg-secondary` from the `pre` rule above in both themes. */
+.astro-code,
+.astro-code span {
+  color: var(--shiki-dark, inherit);
+  font-style: var(--shiki-dark-font-style, inherit);
+  font-weight: var(--shiki-dark-font-weight, inherit);
+  text-decoration: var(--shiki-dark-text-decoration, inherit);
+}
+
+[data-theme="light"] .astro-code,
+[data-theme="light"] .astro-code span {
+  color: var(--shiki-light, inherit);
+  font-style: var(--shiki-light-font-style, inherit);
+  font-weight: var(--shiki-light-font-weight, inherit);
+  text-decoration: var(--shiki-light-text-decoration, inherit);
+}
+
+/* Site background wins over Shiki's theme background in both modes. */
+pre.astro-code {
+  background-color: var(--color-bg-secondary);
+}
+
 /* Utility Classes */
 .prose {
   max-width: var(--max-width-prose);

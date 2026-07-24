@@ -16,7 +16,7 @@ Astro 7 static site (SSG) using MDX content collections and vanilla CSS. Based o
 
 ### Configuration
 
-- **`astro.config.mjs`** — Build config, integrations (MDX, Sitemap), Sharp image optimization, Shiki syntax highlighting (GitHub Dark theme)
+- **`astro.config.mjs`** — Build config, integrations (MDX, Sitemap), Sharp image optimization, Shiki syntax highlighting (dual GitHub Light/Dark themes, resolved against `data-theme` in `global.css`)
 - **`src/config.ts`** — Site config: `siteConfig` object with author info, social links, navigation. All values hardcoded (no env vars needed for build)
 - **`src/pages.config.ts`** — SEO metadata per page (title, description, heading, intro)
 - **`src/content.config.ts`** — Content collection schemas with Zod validation
