@@ -1,9 +1,22 @@
 name: "WCAG Compliance Auditor"
 
-# Manual-only: the weekly schedule was retired after 19 consecutive runs
-# produced no PRs (the site was already AA-clean). Dispatch it after UI or
-# style changes, when there is actually something new to audit.
+# Reactive, not scheduled: the weekly cron was retired after 19 consecutive
+# runs produced no PRs (the site was already AA-clean). Accessibility can only
+# regress when markup, styles, or content change, so this fires on pushes to
+# main that touch those files.
+#
+# Unlike the doc cleaner, this workflow's own fixes land in .astro/.css files
+# that match the paths below, so merging its PR triggers one more run. That
+# run finds nothing and opens no PR, so it self-terminates rather than looping.
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**/*.astro'
+      - 'src/**/*.css'
+      - 'src/**/*.mdx'
+      - 'src/styles/**'
   workflow_dispatch:
 
 permissions:
@@ -12,6 +25,9 @@ permissions:
 
 concurrency:
   group: "wcag-audit"
+  # Only the latest state of main is worth auditing; superseded runs would
+  # otherwise queue for a full 30 minutes each.
+  cancel-in-progress: true
 
 jobs:
   audit:
