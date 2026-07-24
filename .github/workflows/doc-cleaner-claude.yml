@@ -1,15 +1,14 @@
 name: "Documentation Cleaner"
 
+# Manual-only: the weekly schedule was retired after 20 consecutive runs
+# produced no PRs (docs had converged). Dispatch it after a refactor, when
+# there is actually drift for it to find.
 on:
-  schedule:
-    - cron: "23 1 * * 0" # Weekly on Sunday
   workflow_dispatch:
 
 permissions:
   contents: write
   pull-requests: write
-  issues: write
-  id-token: write
 
 concurrency:
   group: "doc-cleaner"

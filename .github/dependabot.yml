@@ -1,0 +1,11 @@
+version: 2
+updates:
+  # Action version bumps were previously manual. npm deps are deliberately
+  # left out; Astro upgrades are handled by hand.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "chore(ci)"
+    open-pull-requests-limit: 3

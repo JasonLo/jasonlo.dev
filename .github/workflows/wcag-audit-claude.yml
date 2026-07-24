@@ -1,15 +1,14 @@
 name: "WCAG Compliance Auditor"
 
+# Manual-only: the weekly schedule was retired after 19 consecutive runs
+# produced no PRs (the site was already AA-clean). Dispatch it after UI or
+# style changes, when there is actually something new to audit.
 on:
-  schedule:
-    - cron: "42 19 * * 0" # Weekly on Sunday
   workflow_dispatch:
 
 permissions:
   contents: write
   pull-requests: write
-  issues: write
-  id-token: write
 
 concurrency:
   group: "wcag-audit"
