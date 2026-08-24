@@ -175,10 +175,13 @@ jobs:
         if: always()
         run: |
           if [ -f wcag-report.md ]; then
-            cat wcag-report.md >> "$GITHUB_STEP_SUMMARY"
+            echo "Publishing wcag-report.md ($(wc -l < wcag-report.md) lines):"
+            # tee, not a bare redirect: the summary is otherwise invisible in the
+            # logs, which makes a broken report step impossible to diagnose.
+            tee -a "$GITHUB_STEP_SUMMARY" < wcag-report.md
+            rm -f wcag-report.md
           else
-            echo "## WCAG 2.2 Audit" >> "$GITHUB_STEP_SUMMARY"
-            echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo "The audit agent produced no report file." >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning::Audit agent produced no wcag-report.md"
+            printf '## WCAG 2.2 Audit\n\nThe audit agent produced no report file.\n' \
+              | tee -a "$GITHUB_STEP_SUMMARY"
           fi
-          rm -f wcag-report.md
