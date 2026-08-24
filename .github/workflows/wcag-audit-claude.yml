@@ -55,6 +55,9 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      # claude-code-action mints its GitHub App token by exchanging an OIDC
+      # token, so the job fails at startup without this.
+      id-token: write
     steps:
       - uses: actions/checkout@v7
 
