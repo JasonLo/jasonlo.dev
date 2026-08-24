@@ -62,3 +62,6 @@ coverage/
 .settings/
 *.sublime-project
 *.sublime-workspace
+
+# WCAG audit report, published to the job summary and never committed
+wcag-report.md

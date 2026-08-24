@@ -161,7 +161,24 @@ jobs:
             - **Major** — Significant barrier
             - **Minor** — Best-practice improvement
 
-            End the report with a summary: `X critical, Y major, Z minor issues found. N fixed automatically.`
+            End the report with a summary line: `X critical, Y major, Z minor issues found. N fixed automatically.`
 
-            If you made any edits, create a pull request with title `a11y: WCAG 2.2 audit fixes` and the findings table in the body.
-            If no violations were found, comment on the workflow run that the audit passed cleanly.
+            **Always write the report to `wcag-report.md` in the repository root**, even when the audit is clean (in that case the table is empty and the summary line reads all zeroes). Start the file with a `## WCAG 2.2 Audit` heading. A later workflow step publishes this file to the run's job summary, which is the only place the result becomes visible. Never commit `wcag-report.md` or include it in a pull request; it is gitignored.
+
+            If you made any edits, also create a pull request titled `a11y: WCAG 2.2 audit fixes` with the findings table in the body. If no violations were found, open no pull request — the job summary alone records the clean result.
+
+      # The agent's own output is only visible by digging through raw job logs,
+      # and a workflow_dispatch run has no commentable object, so the report is
+      # surfaced here instead. always() so a timed-out or failed audit still
+      # publishes whatever it managed to write.
+      - name: Publish audit report to job summary
+        if: always()
+        run: |
+          if [ -f wcag-report.md ]; then
+            cat wcag-report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "## WCAG 2.2 Audit" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "The audit agent produced no report file." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          rm -f wcag-report.md
