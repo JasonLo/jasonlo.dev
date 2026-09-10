@@ -1,6 +1,6 @@
-import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import { defineConfig } from 'astro/config';
 import { siteConfig } from './src/config.ts';
 
 export default defineConfig({
@@ -16,7 +16,7 @@ export default defineConfig({
       entrypoint: 'astro/assets/services/sharp',
       config: {
         limitInputPixels: 33177600,
-      }
+      },
     },
   },
   markdown: {
@@ -24,7 +24,7 @@ export default defineConfig({
       // Dual themes so code blocks can follow the site's theme toggle.
       themes: {
         light: 'github-light',
-        dark: 'github-dark'
+        dark: 'github-dark',
       },
       // `false` = emit only `--shiki-light` / `--shiki-dark` custom properties,
       // with no inline `color:` fallback. The site's `[data-theme]` rules in
@@ -32,8 +32,8 @@ export default defineConfig({
       // dual-theme output keys off `prefers-color-scheme` and would desync
       // from the explicit toggle.
       defaultColor: false,
-      wrap: true
-    }
+      wrap: true,
+    },
   },
   experimental: {
     contentIntellisense: true,

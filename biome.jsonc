@@ -1,0 +1,30 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.12/schema.json",
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": {
+    // .astro is deliberately excluded. Biome parses only the `---` frontmatter,
+    // as a standalone module, and cannot see the template below it, so every
+    // import and const used only in markup is reported as unused (139 false
+    // positives across this repo). Astro files are covered by `astro check`,
+    // which understands both halves, plus noUnusedLocals / noUnusedParameters
+    // in tsconfig.json.
+    "includes": ["src/**/*.ts", "scripts/**/*.ts", "*.mjs", "*.json"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": { "preset": "recommended" }
+  }
+}

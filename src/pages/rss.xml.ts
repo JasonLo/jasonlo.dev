@@ -48,9 +48,7 @@ type FeedItem = RSSFeedItem & { pubDate: Date };
  * Matches the normalization used in `robots.txt.ts` and `llms.txt.ts` so that
  * concatenating `/some/path` never produces a double slash.
  */
-const siteUrl = siteConfig.url.endsWith('/')
-  ? siteConfig.url.slice(0, -1)
-  : siteConfig.url;
+const siteUrl = siteConfig.url.endsWith('/') ? siteConfig.url.slice(0, -1) : siteConfig.url;
 
 /** Escapes the five XML character entities for safe interpolation into `customData`. */
 function escapeXml(value: string): string {
@@ -93,48 +91,58 @@ export const GET: APIRoute = async () => {
   ]);
 
   const items: FeedItem[] = [
-    ...journey.map((entry): FeedItem => ({
-      title: entry.data.title,
-      description: entry.data.description,
-      pubDate: getEntryDate(entry),
-      link: `${siteUrl}/journey/#${entry.id}`,
-      categories: ['journey'],
-      customData: guidData('journey', entry.id),
-    })),
-    ...projects.map((entry): FeedItem => ({
-      title: entry.data.title,
-      description: entry.data.outcomeSummary,
-      pubDate: getEntryDate(entry),
-      link: `${siteUrl}/projects/${entry.id}/`,
-      categories: ['project'],
-      customData: guidData('projects', entry.id),
-    })),
-    ...publications.map((entry): FeedItem => ({
-      title: entry.data.title,
-      description: entry.data.journal,
-      pubDate: getEntryDate(entry),
-      // DOIs are already absolute and are passed through untouched. Without one,
-      // link to the on-site listing rather than an unusable placeholder anchor.
-      link: entry.data.doi ?? `${siteUrl}/publications/`,
-      categories: ['publication'],
-      customData: guidData('publications', entry.id),
-    })),
-    ...tools.map((entry): FeedItem => ({
-      title: entry.data.name,
-      description: entry.data.description,
-      pubDate: getEntryDate(entry),
-      link: `${siteUrl}/tools/#${entry.id}`,
-      categories: ['tool'],
-      customData: guidData('tools', entry.id),
-    })),
-    ...blog.map((entry): FeedItem => ({
-      title: entry.data.title,
-      description: entry.data.description,
-      pubDate: getEntryDate(entry),
-      link: `${siteUrl}/blog/${entry.id}/`,
-      categories: ['blog'],
-      customData: guidData('blog', entry.id),
-    })),
+    ...journey.map(
+      (entry): FeedItem => ({
+        title: entry.data.title,
+        description: entry.data.description,
+        pubDate: getEntryDate(entry),
+        link: `${siteUrl}/journey/#${entry.id}`,
+        categories: ['journey'],
+        customData: guidData('journey', entry.id),
+      }),
+    ),
+    ...projects.map(
+      (entry): FeedItem => ({
+        title: entry.data.title,
+        description: entry.data.outcomeSummary,
+        pubDate: getEntryDate(entry),
+        link: `${siteUrl}/projects/${entry.id}/`,
+        categories: ['project'],
+        customData: guidData('projects', entry.id),
+      }),
+    ),
+    ...publications.map(
+      (entry): FeedItem => ({
+        title: entry.data.title,
+        description: entry.data.journal,
+        pubDate: getEntryDate(entry),
+        // DOIs are already absolute and are passed through untouched. Without one,
+        // link to the on-site listing rather than an unusable placeholder anchor.
+        link: entry.data.doi ?? `${siteUrl}/publications/`,
+        categories: ['publication'],
+        customData: guidData('publications', entry.id),
+      }),
+    ),
+    ...tools.map(
+      (entry): FeedItem => ({
+        title: entry.data.name,
+        description: entry.data.description,
+        pubDate: getEntryDate(entry),
+        link: `${siteUrl}/tools/#${entry.id}`,
+        categories: ['tool'],
+        customData: guidData('tools', entry.id),
+      }),
+    ),
+    ...blog.map(
+      (entry): FeedItem => ({
+        title: entry.data.title,
+        description: entry.data.description,
+        pubDate: getEntryDate(entry),
+        link: `${siteUrl}/blog/${entry.id}/`,
+        categories: ['blog'],
+        customData: guidData('blog', entry.id),
+      }),
+    ),
   ].sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
 
   return rss({

@@ -1,6 +1,6 @@
 import { defineCollection } from 'astro:content';
-import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
+import { z } from 'astro/zod';
 
 const projectsCollection = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/projects' }),
@@ -18,18 +18,28 @@ const projectsCollection = defineCollection({
     problem: z.string().optional(),
     constraints: z.array(z.string()).optional(),
     approach: z.string().optional(),
-    keyDecisions: z.array(z.object({
-      decision: z.string(),
-      reasoning: z.string(),
-      alternatives: z.array(z.string()).optional(),
-    })).optional(),
-    impact: z.object({
-      metrics: z.array(z.object({
-        label: z.string(),
-        value: z.string(),
-      })).optional(),
-      qualitative: z.string().optional(),
-    }).optional(),
+    keyDecisions: z
+      .array(
+        z.object({
+          decision: z.string(),
+          reasoning: z.string(),
+          alternatives: z.array(z.string()).optional(),
+        }),
+      )
+      .optional(),
+    impact: z
+      .object({
+        metrics: z
+          .array(
+            z.object({
+              label: z.string(),
+              value: z.string(),
+            }),
+          )
+          .optional(),
+        qualitative: z.string().optional(),
+      })
+      .optional(),
     learnings: z.array(z.string()).optional(),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),

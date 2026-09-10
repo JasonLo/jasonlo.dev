@@ -2,7 +2,15 @@
 
 ## Build Commands
 
-There are no test or lint commands configured.
+- `bun run build` — `astro check` (type-checks `src/` and `scripts/`) then builds.
+- `bun run lint` — Biome check (format + lint) over `.ts`, `.mjs`, `.json`.
+- `bun run lint:fix` — apply Biome's safe fixes.
+
+Biome deliberately does not cover `.astro`: it parses only the `---` frontmatter
+as a standalone module, so anything used only in the template below reads as
+unused. Those files are covered by `astro check` instead. See `biome.jsonc`.
+
+There are no tests configured.
 
 ## Architecture
 
@@ -32,10 +40,13 @@ The site uses Astro's `ClientRouter` for client-side navigation. Inline scripts 
 
 ## TypeScript
 
-The `scripts/` directory is excluded from type checking (`tsconfig.json`) since scripts are standalone and share function names.
+`scripts/` is type-checked along with `src/`. Both scripts are ES modules, so
+their same-named top-level helpers (`main`, etc.) stay in separate module scopes
+and do not collide.
 
 ## Scripts
 
+- **`scripts/generate-og-image.ts`** — Renders `public/og-image.png` (1200x630) from the palette in `global.css` and the identity in `config.ts`. The name is drawn with the brand wordmark's vector path, so it carries no font dependency; the smaller lines are text and do resolve against system fonts. Re-run with `bun run og-image` after changing the author name, title, location, tagline, or palette.
 - **`scripts/sync-publications-fused.ts`** — Fused publication sync that fetches journal articles from ORCID (public, no auth) and OpenAlex (optional `OPENALEX_API_KEY`), deduplicates by DOI / title slug, merges best fields, and writes MDX to `src/content/publications/`. Run with `bun run scripts/sync-publications-fused.ts`.
 
 ## Deployment

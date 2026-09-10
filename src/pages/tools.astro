@@ -40,7 +40,7 @@ const sortedTools = [...allTools].sort((a, b) => {
         data-sort-name={item.data.name.toLowerCase()}
         {...(item.data.url && { href: item.data.url, target: '_blank', rel: 'noopener noreferrer' })}
       >
-        <div class="row-date">{item.data.date.getFullYear()}</div>
+        <div class="row-date">{item.data.date.getUTCFullYear()}</div>
         <div class="row-body">
           <div class="row-title-line">
             <span class="row-title">{item.data.name}</span>

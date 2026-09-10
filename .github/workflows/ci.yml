@@ -33,6 +33,13 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # Formatting + lint on .ts/.mjs/.json. Astro files are covered by the
+      # `astro check` in the build step below, which understands their template.
+      - name: Lint
+        run: bun run lint
+
       # `bun run build` runs `astro check` (type-check) before building.
+      # `scripts/` is included in that check, so the sync and image generators
+      # are type-checked here too.
       - name: Type-check and build
         run: bun run build

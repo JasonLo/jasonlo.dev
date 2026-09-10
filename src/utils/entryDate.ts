@@ -11,7 +11,7 @@ export function getEntryDate(entry: DatedEntry): Date {
   if (entry.data.updatedDate) return entry.data.updatedDate;
   switch (entry.collection) {
     case 'projects':
-      return new Date(entry.data.year, 0, 1);
+      return new Date(Date.UTC(entry.data.year, 0, 1));
     case 'publications':
     case 'blog':
       return entry.data.publishDate;

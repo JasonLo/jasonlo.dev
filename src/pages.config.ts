@@ -25,22 +25,25 @@ export const pagesConfig = {
   journey: {
     title: 'Journey - Career Growth & Learning Timeline',
     heading: 'Journey',
-    description: 'A chronological timeline of my professional journey, highlighting key milestones, learning moments, and career transitions.',
+    description:
+      'A chronological timeline of my professional journey, highlighting key milestones, learning moments, and career transitions.',
     intro: 'A timeline of my professional growth and learning progression.',
   },
 
   projects: {
     title: 'Projects',
     heading: 'Projects',
-    description: 'Detailed projects showcasing problem-solving approach, technical decisions, and measurable impact.',
+    description:
+      'Detailed projects showcasing problem-solving approach, technical decisions, and measurable impact.',
     intro: 'Projects that demonstrate how I approach problems.',
   },
 
   publications: {
     title: 'Publications - Academic Research',
-    description: 'Jason Lo\'s Research publications.',
+    description: "Jason Lo's Research publications.",
     heading: 'Publications',
-    intro: 'My research publications, automatically aggregated and synchronized from ORCID and OpenAlex.',
+    intro:
+      'My research publications, automatically aggregated and synchronized from ORCID and OpenAlex.',
   },
 
   tools: {
@@ -56,7 +59,6 @@ export const pagesConfig = {
     description: 'Thoughts, notes, and write-ups on AI, engineering leadership, and system design.',
     intro: 'Thoughts, notes, and write-ups on AI, engineering leadership, and system design.',
   },
-
 } as const;
 
 export type PagesConfig = typeof pagesConfig;

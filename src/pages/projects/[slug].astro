@@ -124,7 +124,7 @@ const formattedUpdatedDate = updatedDate ? formatDate(updatedDate) : undefined;
     title={`${title} - Project`}
     description={outcomeSummary}
     type="article"
-    publishDate={new Date(year, 0, 1)}
+    publishDate={new Date(Date.UTC(year, 0, 1))}
     updatedDate={updatedDate}
   />
 

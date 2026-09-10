@@ -34,7 +34,7 @@ export async function GET() {
       description: b.data.description,
       url: `/blog/${b.id}`,
       tags: b.data.tags ?? [],
-      meta: String(b.data.publishDate.getFullYear()),
+      meta: String(b.data.publishDate.getUTCFullYear()),
     })),
     ...tools.map((t) => ({
       type: 'tool' as const,
@@ -42,7 +42,7 @@ export async function GET() {
       description: t.data.description,
       url: `/tools#${t.id}`,
       tags: t.data.tags ?? [],
-      meta: String(t.data.date.getFullYear()),
+      meta: String(t.data.date.getUTCFullYear()),
     })),
     ...publications.map((p) => {
       const externalUrl = p.data.doi ?? p.data.oaUrl;
@@ -52,7 +52,7 @@ export async function GET() {
         description: p.data.journal,
         url: externalUrl ?? `/publications#${p.id}`,
         tags: p.data.tags ?? [],
-        meta: String(p.data.publishDate.getFullYear()),
+        meta: String(p.data.publishDate.getUTCFullYear()),
         external: Boolean(externalUrl),
       };
     }),
@@ -62,7 +62,7 @@ export async function GET() {
       description: j.data.description,
       url: `/journey#${j.id}`,
       tags: j.data.skills ?? [],
-      meta: String(j.data.date.getFullYear()),
+      meta: String(j.data.date.getUTCFullYear()),
     })),
   ];
 

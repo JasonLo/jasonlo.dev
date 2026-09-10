@@ -46,7 +46,7 @@ try {
   pageSize={15}
 >
   {sortedArticles.map((article) => {
-    const year = article.data.publishDate.getFullYear();
+    const year = article.data.publishDate.getUTCFullYear();
     const RowTag = article.data.doi ? 'a' : 'div';
     return (
       <RowTag

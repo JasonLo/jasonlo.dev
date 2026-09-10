@@ -12,15 +12,15 @@
  * Usage: bun run scripts/sync-publications-fused.ts
  */
 
-import { readdir, readFile, writeFile, mkdir, unlink } from "fs/promises";
-import { join } from "path";
+import { mkdir, readdir, readFile, unlink, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
 // ── Config ──────────────────────────────────────────────────────
 
-const ORCID_ID = "0000-0002-8428-1086";
-const OPENALEX_AUTHOR_ID = "a5021047469";
+const ORCID_ID = '0000-0002-8428-1086';
+const OPENALEX_AUTHOR_ID = 'a5021047469';
 const OPENALEX_API_KEY = process.env.OPENALEX_API_KEY;
-const OUTPUT_DIR = "src/content/publications";
+const OUTPUT_DIR = 'src/content/publications';
 const BATCH_SIZE = 50;
 
 // ── Types ───────────────────────────────────────────────────────
@@ -34,61 +34,61 @@ interface Publication {
   oaUrl: string | null;
   citedByCount: number;
   tags: string[];
-  source: "openalex" | "orcid";
+  source: 'openalex' | 'orcid';
 }
 
 interface OrcidWorkSummary {
-  "put-code": number;
+  'put-code': number;
   title: { title: { value: string } };
   type: string;
-  "journal-title": { value: string } | null;
-  "publication-date": {
+  'journal-title': { value: string } | null;
+  'publication-date': {
     year: { value: string } | null;
     month: { value: string } | null;
     day: { value: string } | null;
   } | null;
-  "external-ids": {
-    "external-id": Array<{
-      "external-id-type": string;
-      "external-id-value": string;
-      "external-id-relationship": string;
+  'external-ids': {
+    'external-id': Array<{
+      'external-id-type': string;
+      'external-id-value': string;
+      'external-id-relationship': string;
     }>;
   };
 }
 
 interface OrcidWorksResponse {
   group: Array<{
-    "external-ids": {
-      "external-id": Array<{
-        "external-id-type": string;
-        "external-id-value": string;
+    'external-ids': {
+      'external-id': Array<{
+        'external-id-type': string;
+        'external-id-value': string;
       }>;
     };
-    "work-summary": OrcidWorkSummary[];
+    'work-summary': OrcidWorkSummary[];
   }>;
 }
 
 interface OrcidWork {
-  "put-code": number;
+  'put-code': number;
   title: { title: { value: string }; subtitle: { value: string } | null };
-  "journal-title": { value: string } | null;
+  'journal-title': { value: string } | null;
   type: string;
-  "publication-date": {
+  'publication-date': {
     year: { value: string } | null;
     month: { value: string } | null;
     day: { value: string } | null;
   } | null;
-  "external-ids": {
-    "external-id": Array<{
-      "external-id-type": string;
-      "external-id-value": string;
-      "external-id-relationship": string;
+  'external-ids': {
+    'external-id': Array<{
+      'external-id-type': string;
+      'external-id-value': string;
+      'external-id-relationship': string;
     }>;
   };
   contributors: {
-    contributor: Array<{ "credit-name": { value: string } | null }>;
+    contributor: Array<{ 'credit-name': { value: string } | null }>;
   } | null;
-  citation: { "citation-type": string; "citation-value": string } | null;
+  citation: { 'citation-type': string; 'citation-value': string } | null;
   url: { value: string } | null;
 }
 
@@ -117,11 +117,11 @@ interface OpenAlexResponse {
 function slugify(title: string): string {
   return title
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
     .slice(0, 80)
-    .replace(/-$/, "");
+    .replace(/-$/, '');
 }
 
 function escapeYaml(str: string): string {
@@ -132,11 +132,14 @@ function escapeYaml(str: string): string {
 }
 
 function normalizeDoi(doi: string): string {
-  return doi.toLowerCase().replace(/^https?:\/\/doi\.org\//i, "").trim();
+  return doi
+    .toLowerCase()
+    .replace(/^https?:\/\/doi\.org\//i, '')
+    .trim();
 }
 
 function formatDoiUrl(doi: string): string {
-  return `https://doi.org/${doi.replace(/^https?:\/\/doi\.org\//i, "")}`;
+  return `https://doi.org/${doi.replace(/^https?:\/\/doi\.org\//i, '')}`;
 }
 
 function isDoiUrl(url: string): boolean {
@@ -144,35 +147,36 @@ function isDoiUrl(url: string): boolean {
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url, { headers: { Accept: "application/json" } });
+  const res = await fetch(url, { headers: { Accept: 'application/json' } });
   if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
   return res.json() as Promise<T>;
 }
 
 // ── ORCID ───────────────────────────────────────────────────────
 
-function parseOrcidDate(pd: OrcidWork["publication-date"]): string | null {
+function parseOrcidDate(pd: OrcidWork['publication-date']): string | null {
   if (!pd?.year?.value) return null;
-  const m = pd.month?.value?.padStart(2, "0") ?? "01";
-  const d = pd.day?.value?.padStart(2, "0") ?? "01";
+  const m = pd.month?.value?.padStart(2, '0') ?? '01';
+  const d = pd.day?.value?.padStart(2, '0') ?? '01';
   return `${pd.year.value}-${m}-${d}`;
 }
 
-function parseOrcidDoi(ids: OrcidWork["external-ids"]): string | null {
-  const doi = ids["external-id"].find(
-    (e) => e["external-id-type"] === "doi" && e["external-id-relationship"] === "self"
+function parseOrcidDoi(ids: OrcidWork['external-ids']): string | null {
+  const doi = ids['external-id'].find(
+    (e) => e['external-id-type'] === 'doi' && e['external-id-relationship'] === 'self',
   );
-  return doi ? formatDoiUrl(doi["external-id-value"]) : null;
+  return doi ? formatDoiUrl(doi['external-id-value']) : null;
 }
 
 function parseOrcidAuthors(work: OrcidWork): string[] {
-  const fromContributors = work.contributors?.contributor
-    ?.map((c) => c["credit-name"]?.value)
-    .filter((n): n is string => !!n) ?? [];
+  const fromContributors =
+    work.contributors?.contributor
+      ?.map((c) => c['credit-name']?.value)
+      .filter((n): n is string => !!n) ?? [];
   if (fromContributors.length > 0) return fromContributors;
 
-  if (work.citation?.["citation-type"] === "bibtex") {
-    const match = work.citation["citation-value"].match(/author\s*=\s*\{([^}]+)\}/i);
+  if (work.citation?.['citation-type'] === 'bibtex') {
+    const match = work.citation['citation-value'].match(/author\s*=\s*\{([^}]+)\}/i);
     if (match) return match[1].split(/\s+and\s+/).map((a) => a.trim());
   }
   return [];
@@ -180,7 +184,7 @@ function parseOrcidAuthors(work: OrcidWork): string[] {
 
 function orcidToPublication(work: OrcidWork): Publication | null {
   const title = work.title?.title?.value;
-  const publishDate = parseOrcidDate(work["publication-date"]);
+  const publishDate = parseOrcidDate(work['publication-date']);
   if (!title || !publishDate) return null;
 
   const rawUrl = work.url?.value ?? null;
@@ -188,13 +192,13 @@ function orcidToPublication(work: OrcidWork): Publication | null {
   return {
     title,
     authors: parseOrcidAuthors(work),
-    journal: work["journal-title"]?.value ?? work.title?.subtitle?.value ?? "Unknown Journal",
+    journal: work['journal-title']?.value ?? work.title?.subtitle?.value ?? 'Unknown Journal',
     publishDate,
-    doi: parseOrcidDoi(work["external-ids"]),
+    doi: parseOrcidDoi(work['external-ids']),
     oaUrl: rawUrl && !isDoiUrl(rawUrl) ? rawUrl : null,
     citedByCount: 0,
     tags: [],
-    source: "orcid",
+    source: 'orcid',
   };
 }
 
@@ -203,18 +207,18 @@ async function fetchOrcid(): Promise<Publication[]> {
   console.log(`Fetching works from ORCID (${ORCID_ID})...`);
 
   const { group } = await fetchJson<OrcidWorksResponse>(`${base}/works`);
-  const articles = group.filter((g) => g["work-summary"][0].type === "journal-article");
+  const articles = group.filter((g) => g['work-summary'][0].type === 'journal-article');
   console.log(`  Found ${group.length} work groups, ${articles.length} journal articles`);
 
-  const putCodes = articles.map((g) => g["work-summary"][0]["put-code"]);
+  const putCodes = articles.map((g) => g['work-summary'][0]['put-code']);
   if (putCodes.length === 0) return [];
 
   const works: OrcidWork[] = [];
   for (let i = 0; i < putCodes.length; i += BATCH_SIZE) {
     const batch = putCodes.slice(i, i + BATCH_SIZE);
-    const bulk = await fetchJson<OrcidBulkResponse>(`${base}/works/${batch.join(",")}`);
+    const bulk = await fetchJson<OrcidBulkResponse>(`${base}/works/${batch.join(',')}`);
     for (const entry of bulk.bulk) {
-      if ("work" in entry && entry.work) works.push(entry.work);
+      if ('work' in entry && entry.work) works.push(entry.work);
     }
   }
 
@@ -233,23 +237,23 @@ function openAlexToPublication(work: OpenAlexWork): Publication | null {
   return {
     title: work.title,
     authors: work.authorships.map((a) => a.author.display_name),
-    journal: work.primary_location?.source?.display_name || "Unknown Journal",
+    journal: work.primary_location?.source?.display_name || 'Unknown Journal',
     publishDate: work.publication_date,
     doi: work.doi ? formatDoiUrl(work.doi) : null,
     oaUrl: rawOaUrl && !isDoiUrl(rawOaUrl) ? rawOaUrl : null,
     citedByCount: work.cited_by_count,
     tags: work.topics.slice(0, 3).map((t) => t.display_name.toLowerCase()),
-    source: "openalex",
+    source: 'openalex',
   };
 }
 
 async function fetchOpenAlex(): Promise<Publication[]> {
   if (!OPENALEX_API_KEY) {
-    console.log("No OPENALEX_API_KEY — skipping OpenAlex.");
+    console.log('No OPENALEX_API_KEY — skipping OpenAlex.');
     return [];
   }
 
-  console.log("Fetching publications from OpenAlex...");
+  console.log('Fetching publications from OpenAlex...');
   try {
     const url = `https://api.openalex.org/works?filter=authorships.author.id:${OPENALEX_AUTHOR_ID},type:article&sort=cited_by_count:desc&per_page=200&api_key=${OPENALEX_API_KEY}`;
     const { results } = await fetchJson<OpenAlexResponse>(url);
@@ -265,25 +269,31 @@ async function fetchOpenAlex(): Promise<Publication[]> {
 // ── Deduplication & merge ───────────────────────────────────────
 
 function mergePair(orcid: Publication | undefined, openalex: Publication | undefined): Publication {
-  if (!orcid) return openalex!;
-  if (!openalex) return orcid;
+  // Callers always hold at least one side of the pair; narrowing in this order
+  // proves that to the compiler instead of asserting it, and makes the
+  // impossible case fail loudly rather than returning undefined as Publication.
+  if (!openalex) {
+    if (!orcid) throw new Error('mergePair requires at least one source');
+    return orcid;
+  }
+  if (!orcid) return openalex;
 
   // Prefer the more specific date (not defaulting to Jan 1)
   let publishDate = openalex.publishDate;
-  if (openalex.publishDate.endsWith("-01-01") && !orcid.publishDate.endsWith("-01-01")) {
+  if (openalex.publishDate.endsWith('-01-01') && !orcid.publishDate.endsWith('-01-01')) {
     publishDate = orcid.publishDate;
   }
 
   return {
     title: openalex.title,
     authors: openalex.authors.length >= orcid.authors.length ? openalex.authors : orcid.authors,
-    journal: openalex.journal !== "Unknown Journal" ? openalex.journal : orcid.journal,
+    journal: openalex.journal !== 'Unknown Journal' ? openalex.journal : orcid.journal,
     publishDate,
     doi: openalex.doi ?? orcid.doi,
     oaUrl: openalex.oaUrl ?? orcid.oaUrl,
     citedByCount: openalex.citedByCount,
     tags: openalex.tags.length > 0 ? openalex.tags : orcid.tags,
-    source: "openalex",
+    source: 'openalex',
   };
 }
 
@@ -335,10 +345,10 @@ function dedupeAndMerge(orcidPubs: Publication[], openAlexPubs: Publication[]): 
 
 function toMdx(pub: Publication): string {
   const lines = [
-    "---",
+    '---',
     `title: ${escapeYaml(pub.title)}`,
     `description: ${escapeYaml(pub.title)}`,
-    "authors:",
+    'authors:',
     ...(pub.authors.length > 0
       ? pub.authors.map((a) => `  - ${escapeYaml(a)}`)
       : ['  - "Unknown"']),
@@ -350,11 +360,11 @@ function toMdx(pub: Publication): string {
   if (pub.oaUrl) lines.push(`oaUrl: ${escapeYaml(pub.oaUrl)}`);
   lines.push(`citedByCount: ${pub.citedByCount}`);
   if (pub.tags.length > 0) {
-    lines.push("tags:", ...pub.tags.map((t) => `  - ${escapeYaml(t)}`));
+    lines.push('tags:', ...pub.tags.map((t) => `  - ${escapeYaml(t)}`));
   }
-  lines.push("draft: false", "---", "");
+  lines.push('draft: false', '---', '');
 
-  return lines.join("\n");
+  return lines.join('\n');
 }
 
 // ── Write files ─────────────────────────────────────────────────
@@ -362,7 +372,10 @@ function toMdx(pub: Publication): string {
 async function writeMdxFiles(pubs: Publication[]) {
   await mkdir(OUTPUT_DIR, { recursive: true });
   const existing = new Set(await readdir(OUTPUT_DIR));
-  let created = 0, updated = 0, unchanged = 0, removed = 0;
+  let created = 0,
+    updated = 0,
+    unchanged = 0,
+    removed = 0;
 
   for (const pub of pubs) {
     const filename = `${slugify(pub.title)}.mdx`;
@@ -370,7 +383,7 @@ async function writeMdxFiles(pubs: Publication[]) {
     const content = toMdx(pub);
 
     if (existing.has(filename)) {
-      const prev = await readFile(filepath, "utf-8");
+      const prev = await readFile(filepath, 'utf-8');
       if (prev !== content) {
         await writeFile(filepath, content);
         updated++;
@@ -387,13 +400,15 @@ async function writeMdxFiles(pubs: Publication[]) {
   }
 
   for (const orphan of existing) {
-    if (!orphan.endsWith(".mdx")) continue;
+    if (!orphan.endsWith('.mdx')) continue;
     await unlink(join(OUTPUT_DIR, orphan));
     removed++;
     console.log(`  Removed: ${orphan}`);
   }
 
-  console.log(`\nDone: ${created} created, ${updated} updated, ${unchanged} unchanged, ${removed} removed`);
+  console.log(
+    `\nDone: ${created} created, ${updated} updated, ${unchanged} unchanged, ${removed} removed`,
+  );
 }
 
 // ── Main ────────────────────────────────────────────────────────
@@ -409,7 +424,7 @@ const SYNC_FLOOR_RATIO = 0.8;
 async function existingMdxCount(): Promise<number> {
   try {
     const files = await readdir(OUTPUT_DIR);
-    return files.filter((f) => f.endsWith(".mdx")).length;
+    return files.filter((f) => f.endsWith('.mdx')).length;
   } catch {
     return 0; // directory does not exist yet — first run
   }
@@ -428,7 +443,7 @@ async function main() {
     console.error(
       `Refusing to sync: fetched ${merged.length} publications but ${existingCount} exist on disk ` +
         `(floor ${floor} = ${SYNC_FLOOR_RATIO * 100}%). This usually means an upstream API hiccup ` +
-        `returned a partial/empty result. Aborting before the destructive reconcile.`
+        `returned a partial/empty result. Aborting before the destructive reconcile.`,
     );
     process.exit(1);
   }

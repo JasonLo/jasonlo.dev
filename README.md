@@ -9,6 +9,7 @@ Source code for [jasonlo.dev](https://jasonlo.dev) — a personal portfolio buil
 
 - **Astro 7** — Static site generation with MDX content collections
 - **Vanilla CSS** — Dark/light theme, WCAG AA compliant
+- **Biome** — Lint + format for `.ts`/`.mjs`/`.json` (`.astro` is covered by `astro check`)
 - **Bun** — Package manager and runtime
 - **GitHub Actions** — Auto-deploy on push + weekly scheduled jobs (publication sync, doc cleanup, WCAG audit)
 
@@ -17,7 +18,9 @@ Source code for [jasonlo.dev](https://jasonlo.dev) — a personal portfolio buil
 ```sh
 bun install
 bun run dev       # Start dev server
-bun run build     # Type-check + build
+bun run build     # Type-check (src + scripts) + build
+bun run lint      # Biome: format + lint check
+bun run lint:fix  # Biome: apply safe fixes
 bun run preview   # Preview production build
 ```
 
@@ -41,11 +44,12 @@ src/
   assets/            # icons/ and other static assets imported by components
   data/              # shortlinks.json (source for s/[key].astro)
   utils/             # Shared helpers (collections, date, readingTime)
+scripts/             # generate-og-image.ts, sync-publications-fused.ts (type-checked)
 ```
 
 ## Automation
 
 - **Publish workflow** — Builds and deploys to GitHub Pages on every push to `main` (`publish.yml`)
 - **Publication sync** — Weekly GitHub Action fetches journal articles from ORCID (public API, no auth) and OpenAlex (optional API key), deduplicates by DOI/title, merges the best fields from each source, and commits updates automatically (`scripts/sync-publications-fused.ts`, `sync-publications-fused.yml`)
-- **Documentation Cleaner** — Weekly Claude Code Action that tidies docs and opens PRs (`doc-cleaner-claude.yml`)
-- **WCAG Compliance Auditor** — Weekly Claude Code Action that audits accessibility and opens PRs (`wcag-audit-claude.yml`)
+- **WCAG Compliance Auditor** — Claude Code Action that audits accessibility and opens PRs on pushes to `main` touching markup, styles, or content (`wcag-audit-claude.yml`)
+- **CI** — Lint and type-check + build on every pull request (`ci.yml`)

@@ -46,4 +46,4 @@ export const siteConfig = {
 
 export type SiteConfig = typeof siteConfig;
 export type SocialLinks = typeof siteConfig.social;
-export type NavItem = typeof siteConfig.nav[number];
+export type NavItem = (typeof siteConfig.nav)[number];
