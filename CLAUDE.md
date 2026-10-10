@@ -34,6 +34,8 @@ Shortlinks live at `s/[key].astro` (sourced from `src/data/shortlinks.json`) and
 
 Nav/footer use `--color-bg`, main content uses `--color-bg-content` for subtle contrast.
 
+The "Graph Paper" palette has a visitor-selectable base hue (`ThemePicker.astro`): `data-hue` on `<html>` (localStorage `hue`, absent = ink blue) overrides only the paper tint and accent tokens in `global.css`; `data-theme` (localStorage `theme`, absent = system) still picks light/dark. Hue blocks are not tied to `:root` so the picker's swatches resolve their own hue. Keep every hue × mode at WCAG AA, and mirror ink-blue changes into `404.astro` and `scripts/generate-og-image.ts`.
+
 ### Important: View Transitions
 
 The site uses Astro's `ClientRouter` for client-side navigation. Inline scripts must use `astro:page-load` event (not `DOMContentLoaded`) to re-initialize on navigation.

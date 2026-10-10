@@ -23,13 +23,13 @@ const WIDTH = 1200;
 const HEIGHT = 630;
 const OUTPUT = 'public/og-image.png';
 
-// Mirrors the dark-theme tokens in src/styles/global.css.
+// Mirrors the default (Ink blue) dark-theme tokens in src/styles/global.css.
 const COLORS = {
-  bg: '#201e16',
-  text: '#e7e1d2',
-  textMuted: '#938d78',
-  accent: '#a6b475',
-  border: '#3a3626',
+  bg: '#1f2329',
+  text: '#e3e6ea',
+  textMuted: '#8e97a2',
+  accent: '#8eb6f2',
+  border: '#343b44',
 };
 
 const TAGLINE = 'Lean scientific inference';

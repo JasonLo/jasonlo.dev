@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SEO from '../components/SEO.astro';
 import StructuredData from '../components/StructuredData.astro';
-import ArrowLink from '../components/ArrowLink.astro';
 import UpdatesFeed from '../components/UpdatesFeed.astro';
 import { siteConfig } from '../config';
 import { pagesConfig } from '../pages.config';
@@ -32,252 +31,260 @@ const updateMode = 'latest';
   <StructuredData type="Person" />
 
   <div class="home-page">
-    <section class="hero">
-      <div class="hero-grid">
-        <div class="hero-left" data-reveal-group>
-          <h1 class="hero-title" data-reveal>Lean scientific inference</h1>
-          <p class="hero-sub" data-reveal>
+    <section class="hero-band" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <h1 class="hero-title" id="hero-title">Lean scientific inference</h1>
+        <div class="hero-side">
+          <span class="hero-byline">
+            {siteConfig.author.name}, {siteConfig.author.title}, {siteConfig.author.location}
+          </span>
+          <p class="hero-sub">
             Isolating the signal within the noise. I provide a transparent record of the decisions that transform complex research into disciplined AI applications.
           </p>
-          <div class="hero-cta" data-reveal>
-            <a href="/projects" class="btn-primary">Explore My Projects</a>
-            <a href="/publications" class="btn-primary">Read My Publications</a>
-          </div>
-          <div class="hero-prose" data-reveal>
-            <h2>About Me</h2>
-            <p>{pagesConfig.home.description}</p>
-            <h2>Work Philosophy</h2>
-            <p>
-              Discovery depends on finding the right scale. I favor minimalism, matching methodology to the problem without unnecessary bloat. Efficiency matters to me, not only in code but in how we learn and adapt at the edge of research. I build by pruning the nonessential, ensuring each decision is as lean as the science requires. Every significant decision is documented, because effective engineers clarify their thinking, not just their output.
-            </p>
-          </div>
-          <div class="hero-cta" data-reveal>
-            <a href="/journey" class="btn-primary">Explore My Journey</a>
-          </div>
-        </div>
-
-        <div class="hero-right">
-          <div class="case-snapshots" data-reveal-group>
-            {featuredProjects.map((project) => (
-              <a href={`/projects/${project.id}`} class="case-snapshot" data-reveal>
-                <div class="case-snapshot-body">
-                  <span class="case-label">Project · {project.data.role}</span>
-                  <span class="case-title">{project.data.title}</span>
-                  <span class="case-outcome">{project.data.outcomeSummary}</span>
-                </div>
-                <div class="case-arrow">
-                  <ArrowLink text="" variant="muted" />
-                </div>
-              </a>
-            ))}
+          <div class="hero-cta">
+            <a href="/projects" class="btn btn--solid">Explore my projects</a>
+            <a href="/publications" class="btn btn--line">Read my publications</a>
           </div>
         </div>
       </div>
     </section>
 
-    <UpdatesFeed mode={updateMode} limit={3} excludedProjectIds={featuredProjectIds} />
+    <div class="home-body">
+      <div class="home-col">
+        <section class="home-prose" aria-labelledby="about-heading">
+          <h2 class="home-label" id="about-heading">About me</h2>
+          <p>{pagesConfig.home.description}</p>
+        </section>
+        <section class="home-prose" aria-labelledby="philosophy-heading">
+          <h2 class="home-label" id="philosophy-heading">Work philosophy</h2>
+          <p>
+            Discovery depends on finding the right scale. I favor minimalism, matching methodology to the problem without unnecessary bloat. Efficiency matters to me, not only in code but in how we learn and adapt at the edge of research.
+          </p>
+          <p>
+            I build by pruning the nonessential, ensuring each decision is as lean as the science requires. <mark>Every significant decision is documented, because effective engineers clarify their thinking, not just their output.</mark>
+          </p>
+          <p><a href="/journey" class="text-link">Explore my journey</a></p>
+        </section>
+      </div>
+
+      <div class="home-col">
+        <section aria-labelledby="featured-heading">
+          <h2 class="home-label" id="featured-heading">Featured projects</h2>
+          <ul class="home-rows" role="list">
+            {featuredProjects.map((project) => (
+              <li>
+                <a href={`/projects/${project.id}`} class="home-row">
+                  <span class="home-row-key">{project.data.year}</span>
+                  <span>
+                    <span class="home-row-title">{project.data.title}</span>
+                    <span class="home-row-desc">{project.data.outcomeSummary}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+        <UpdatesFeed mode={updateMode} limit={3} excludedProjectIds={featuredProjectIds} />
+      </div>
+    </div>
   </div>
 
   <style>
-    .home-page {
+    /* Hero band: graph paper with a major line every five minor cells. */
+    .hero-band {
+      background-color: var(--color-bg-content);
+      background-image:
+        linear-gradient(var(--color-border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--color-border) 1px, transparent 1px),
+        linear-gradient(var(--color-border-subtle) 1px, transparent 1px),
+        linear-gradient(90deg, var(--color-border-subtle) 1px, transparent 1px);
+      background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+      background-position: -1px -1px;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .hero-inner {
       max-width: var(--max-width-page);
       margin: 0 auto;
-      padding: 0 1.5rem 3.5rem;
-    }
-
-    .hero {
-      padding: 3.5rem 0 4rem;
-    }
-
-    .hero-grid {
+      padding: 5rem 1.5rem 2.75rem;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3.5rem;
-      align-items: start;
-    }
-
-    .hero-left {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: 2rem 3.5rem;
+      align-items: end;
     }
 
     .hero-title {
-      font-size: 2.25rem;
-      line-height: 1.3;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      color: var(--color-text);
+      margin: 0;
+      font-size: clamp(2.5rem, 6.4vw, 5rem);
+      font-weight: 760;
+      font-stretch: 120%;
+      line-height: 0.96;
+      letter-spacing: -0.03em;
+      text-wrap: balance;
+    }
+
+    .hero-side {
+      display: grid;
+      gap: 1.125rem;
+      padding-top: 1rem;
+      border-top: 2px solid var(--color-text);
+      background: var(--color-bg-content);
+    }
+
+    .hero-byline {
+      font-size: 0.875rem;
+      font-stretch: var(--stretch-label);
+      color: var(--color-text-secondary);
     }
 
     .hero-sub {
-      font-size: 1.125rem;
-      color: var(--color-text-secondary);
-      line-height: 1.6;
+      font-size: 1.0625rem;
+      line-height: 1.55;
+      max-width: 40ch;
     }
 
     .hero-cta {
       display: flex;
-      gap: 1rem;
+      flex-wrap: wrap;
+      gap: 0.625rem;
     }
 
-    .hero-prose {
-      margin-top: 1rem;
-    }
-
-    .hero-prose h2 {
-      font-size: 1.125rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.01em;
-    }
-
-    .hero-prose p {
-      font-size: 0.9375rem;
-      line-height: 1.7;
-      color: var(--color-text-secondary);
-      margin-bottom: 1.25rem;
-    }
-
-    .hero-prose p:last-child {
-      margin-bottom: 0;
-    }
-
-    .btn-primary {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      background: var(--color-text);
-      color: var(--color-bg);
-      font-weight: 600;
-      font-size: 0.9375rem;
-      text-decoration: none;
-      border-radius: 6px;
-      transition:
-        opacity 0.2s ease,
-        transform 0.3s var(--ease-out-expo),
-        box-shadow 0.3s var(--ease-out-expo);
+    .btn {
+      display: inline-flex;
+      align-items: center;
       min-height: 44px;
-      min-width: 44px;
-    }
-
-    .btn-primary:hover {
-      opacity: 0.85;
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
-    }
-    
-    .btn-primary:focus-visible {
-      outline: 2px solid var(--color-accent);
-      outline-offset: 2px;
-    }
-
-    .hero-right {
-      padding-top: 0.5rem;
-    }
-
-    .case-snapshots {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .case-snapshot {
-      display: grid;
-      grid-template-columns: 1fr 1.5rem;
-      gap: 0.75rem;
-      align-items: start;
-      padding: 1.25rem 1.5rem;
-      background: var(--color-bg-secondary);
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
+      padding: 0 1rem;
+      border-radius: 3px;
+      font-weight: 600;
+      font-size: 0.9375rem;
       text-decoration: none;
-      transition:
-        border-color 0.3s var(--ease-out-expo),
-        background 0.3s var(--ease-out-expo),
-        box-shadow 0.3s var(--ease-out-expo),
-        transform 0.3s var(--ease-out-expo);
+      transition: background-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
     }
 
-    .case-snapshot:hover {
-      border-color: var(--color-text-muted);
-      background: var(--color-bg-elevated);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
+    .btn--solid {
+      background: var(--color-text);
+      color: var(--color-bg-content);
     }
 
-    .case-arrow {
-      color: var(--color-text-muted);
-      opacity: 0;
-      transition:
-        opacity 0.15s ease,
-        transform 0.3s var(--ease-out-expo);
-      padding-top: 0.125rem;
+    .btn--solid:hover {
+      background: var(--color-accent);
+      color: var(--color-bg-content);
     }
 
-    .case-snapshot:hover .case-arrow {
-      opacity: 1;
-      transform: translateX(3px);
-    }
-
-    .case-label {
-      display: block;
-      font-size: 0.6875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--color-text-muted);
-      margin-bottom: 0.375rem;
-    }
-
-    .case-title {
-      display: block;
-      font-size: 1rem;
-      font-weight: 600;
+    .btn--line {
       color: var(--color-text);
-      margin-bottom: 0.5rem;
-      line-height: 1.4;
+      box-shadow: inset 0 0 0 1.5px var(--color-text);
     }
 
-    .case-outcome {
-      display: block;
-      font-size: 0.875rem;
+    .btn--line:hover {
+      color: var(--color-accent);
+      box-shadow: inset 0 0 0 1.5px var(--color-accent);
+    }
+
+    .home-body {
+      max-width: var(--max-width-page);
+      margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 2.75rem 4rem;
+    }
+
+    .home-col {
+      display: grid;
+      gap: 2.25rem;
+      align-content: start;
+      min-width: 0;
+    }
+
+    /* Shared with UpdatesFeed, which renders inside the right column. */
+    .home-body :global(.home-label) {
+      margin: 0 0 0.5rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      font-stretch: var(--stretch-label);
+      letter-spacing: 0.02em;
+      line-height: 1.4;
       color: var(--color-text-secondary);
+    }
+
+    .home-prose p {
+      max-width: 58ch;
+      line-height: 1.65;
+    }
+
+    .home-prose p + p {
+      margin-top: 0.875rem;
+    }
+
+    mark {
+      background: linear-gradient(transparent 14%, var(--color-mark) 14%, var(--color-mark) 90%, transparent 90%);
+      color: var(--color-mark-text);
+      padding-inline: 2px;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+
+    .text-link {
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 1px;
+    }
+
+    .home-body :global(.home-rows) {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .home-body :global(.home-row) {
+      display: grid;
+      grid-template-columns: 4.75rem minmax(0, 1fr);
+      gap: 0.875rem;
+      padding: 0.8125rem 0;
+      border-top: 1px solid var(--color-border);
+      color: var(--color-text);
+      text-decoration: none;
+    }
+
+    .home-body :global(.home-row:hover .home-row-title) {
+      color: var(--color-accent);
+    }
+
+    .home-body :global(.home-row-key) {
+      padding-top: 2px;
+      font-size: 0.875rem;
+      font-stretch: 72%;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-text-secondary);
+    }
+
+    .home-body :global(.home-row-title) {
+      display: block;
+      font-weight: 640;
+      line-height: 1.3;
+      transition: color var(--transition-fast);
+    }
+
+    .home-body :global(.home-row-desc) {
+      display: block;
+      margin-top: 3px;
+      font-size: 0.90625rem;
       line-height: 1.5;
+      color: var(--color-text-secondary);
     }
 
     @media (max-width: 768px) {
-      .home-page {
-        padding: 0 1rem 3rem;
+      .hero-inner {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 3rem 1rem 1.75rem;
       }
 
-      .hero {
-        padding: 2.5rem 0 3rem;
-      }
-
-      .hero-grid {
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
-      }
-
-      .hero-title {
-        font-size: 1.75rem;
-      }
-
-      .hero-cta {
-        flex-direction: column;
-      }
-
-      .btn-primary {
-        text-align: center;
-        width: 100%;
-      }
-
-      .case-snapshot {
-        padding: 1rem 1.25rem;
-      }
-
-      .case-arrow {
-        opacity: 1;
+      .home-body {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 2.5rem 1rem 3rem;
       }
     }
   </style>

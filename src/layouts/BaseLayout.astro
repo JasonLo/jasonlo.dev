@@ -4,6 +4,7 @@ import Navigation from '../components/Navigation.astro';
 import SearchModal from '../components/SearchModal.astro';
 import Footer from '../components/Footer.astro';
 import { siteConfig } from '../config';
+import '@fontsource-variable/archivo/wdth.css';
 import '../styles/global.css';
 import '../styles/typography.css';
 import '../styles/utilities.css';
@@ -25,20 +26,26 @@ import '../styles/utilities.css';
     
     <ClientRouter />
     
-    <!-- Prevent flash of wrong theme -->
+    <!-- Prevent flash of wrong theme and hue. A missing `theme` key means
+         "System"; a missing `hue` key means the default (ink blue). -->
     <script is:inline>
       (function() {
         const stored = localStorage.getItem('theme');
         const theme = stored || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
         document.documentElement.setAttribute('data-theme', theme);
+        const hue = localStorage.getItem('hue');
+        if (hue) document.documentElement.setAttribute('data-hue', hue);
       })();
     </script>
     
-    <!-- Preserve theme during View Transitions -->
+    <!-- Preserve theme and hue during View Transitions -->
     <script is:inline>
       document.addEventListener('astro:before-swap', (e) => {
-        const theme = document.documentElement.getAttribute('data-theme');
-        e.newDocument.documentElement.setAttribute('data-theme', theme);
+        const root = document.documentElement;
+        const next = e.newDocument.documentElement;
+        next.setAttribute('data-theme', root.getAttribute('data-theme'));
+        const hue = root.getAttribute('data-hue');
+        if (hue) next.setAttribute('data-hue', hue);
       });
     </script>
 
@@ -50,7 +57,7 @@ import '../styles/utilities.css';
       }
     </script>
 
-    <!-- Cross-cutting per-page chrome sync: active nav link + theme-toggle aria-label -->
+    <!-- Cross-cutting per-page chrome sync: active nav link -->
     <script>
       function syncChrome() {
         const path = window.location.pathname;
@@ -64,12 +71,6 @@ import '../styles/utilities.css';
             link.removeAttribute('aria-current');
           }
         });
-
-        const theme = document.documentElement.getAttribute('data-theme') ?? 'dark';
-        const toggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
-        if (toggle) {
-          toggle.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
-        }
       }
       document.addEventListener('astro:page-load', syncChrome);
     </script>

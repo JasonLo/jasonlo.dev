@@ -11,7 +11,6 @@ interface Props {
 
 const { limit = 3, excludedProjectIds = new Set(), mode = 'latest' } = Astro.props;
 
-const DESCRIPTION_WORD_LIMIT = 10;
 
 const [allJourney, allProjects, allPublications, allTools, allBlog] = await Promise.all([
   getPublished('journey'),
@@ -27,10 +26,7 @@ const allPosts = [
     type: 'journey' as const,
     date: getEntryDate(entry),
     title: entry.data.title,
-    description: entry.data.description,
     link: `/journey#${entry.id}`,
-    meta: entry.data.type,
-    tags: entry.data.skills?.slice(0, 3),
   })),
   ...allProjects
     .filter(project => !excludedProjectIds.has(project.id))
@@ -38,37 +34,25 @@ const allPosts = [
       type: 'project' as const,
       date: getEntryDate(project),
       title: project.data.title,
-      description: project.data.outcomeSummary,
       link: `/projects/${project.id}`,
-      meta: project.data.role,
-      tags: project.data.techStack?.slice(0, 3),
     })),
   ...allPublications.map(pub => ({
     type: 'publication' as const,
     date: getEntryDate(pub),
     title: pub.data.title,
-    description: pub.data.journal,
     link: pub.data.doi || '#',
-    meta: `${pub.data.citedByCount} citations`,
-    tags: pub.data.tags?.slice(0, 3),
   })),
   ...allTools.map(tool => ({
     type: 'tool' as const,
     date: getEntryDate(tool),
     title: tool.data.name,
-    description: tool.data.description,
     link: `/tools#${tool.id}`,
-    meta: tool.data.best_for,
-    tags: tool.data.tags?.slice(0, 3),
   })),
   ...allBlog.map(post => ({
     type: 'blog' as const,
     date: getEntryDate(post),
     title: post.data.title,
-    description: post.data.description,
     link: `/blog/${post.id}`,
-    meta: 'blog',
-    tags: post.data.tags?.slice(0, 3),
   })),
 ];
 
@@ -91,182 +75,64 @@ if (mode === 'random') {
 ---
 
 <section class="latest-updates" aria-labelledby="updates-feed-heading">
-  <div class="latest-header" data-reveal>
-    <h2 id="updates-feed-heading">{mode === 'random' ? 'Random Updates' : 'Latest Updates'}</h2>
-  </div>
-  <div class="latest-grid" data-reveal-group>
+  <h2 class="home-label" id="updates-feed-heading">{mode === 'random' ? 'Random updates' : 'Latest updates'}</h2>
+  <ul class="home-rows" role="list">
     {selectedPosts.map((post) => {
-      const formattedDate = formatDate(post.date);
-      const isExternal = post.type === 'publication';
-      const linkProps = isExternal && post.link !== '#' 
-        ? { target: '_blank', rel: 'noopener noreferrer' } 
-        : {};
-      
-      const words = post.description.split(/\s+/);
-      const truncatedDescription = words.length > DESCRIPTION_WORD_LIMIT
-        ? words.slice(0, DESCRIPTION_WORD_LIMIT).join(' ') + '...'
-        : post.description;
-      
-      const showNewTabNotice = isExternal && post.link !== '#';
+      const isExternal = post.type === 'publication' && post.link !== '#';
+      const linkProps = isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {};
       return (
-        <a href={post.link} class="latest-card" data-reveal {...linkProps}>
-          <div class="latest-meta">
-            <span class="latest-date">{formattedDate}</span>
-            <span class="latest-type" data-type={post.type}>
-              {post.type}
+        <li>
+          <a href={post.link} class="home-row" {...linkProps}>
+            <time class="home-row-key" datetime={post.date.toISOString()}>{formatDate(post.date)}</time>
+            <span>
+              <span class="home-row-title">{post.title}</span>
+              <span class="latest-type" data-type={post.type}>{post.type}</span>
+              {isExternal && <span class="visually-hidden"> (opens in new tab)</span>}
             </span>
-          </div>
-          <h3 class="latest-title">{post.title}</h3>
-          <p class="latest-description">{truncatedDescription}</p>
-          {post.tags && post.tags.length > 0 && (
-            <div class="latest-skills">
-              {post.tags.map((tag) => (
-                <span class="skill-tag">{tag}</span>
-              ))}
-            </div>
-          )}
-          {showNewTabNotice && <span class="visually-hidden"> (opens in new tab)</span>}
-        </a>
+          </a>
+        </li>
       );
     })}
-  </div>
+  </ul>
 </section>
 
 <style>
-  .latest-updates {
-    padding: 4rem 0;
-    border-top: 1px solid var(--color-border);
-  }
-
-  .latest-header {
-    margin-bottom: 2rem;
-  }
-
-  .latest-header h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-
-  .latest-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-
-  .latest-card {
-    padding: 1.5rem;
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    transition:
-      border-color 0.3s var(--ease-out-expo),
-      background 0.3s var(--ease-out-expo),
-      box-shadow 0.3s var(--ease-out-expo),
-      transform 0.3s var(--ease-out-expo);
-    text-decoration: none;
-    display: block;
-  }
-
-  .latest-card:hover {
-    border-color: var(--color-text-muted);
-    background: var(--color-bg-elevated);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
-  }
-
-  .latest-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-    gap: 0.5rem;
-  }
-
-  .latest-date {
-    font-size: 0.8125rem;
-    color: var(--color-text-muted);
-    font-variant-numeric: tabular-nums;
-  }
-
   .latest-type {
-    font-size: 0.6875rem;
-    padding: 0.125rem 0.5rem;
-    border-radius: 3px;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 0.8125rem;
+    font-stretch: var(--stretch-label);
+    color: var(--color-text-secondary);
     text-transform: capitalize;
   }
 
-  .latest-type[data-type="journey"],
-  .latest-type[data-type="transition"] {
-    background: color-mix(in srgb, var(--color-type-transition) 12%, transparent);
-    color: var(--color-type-transition);
+  .latest-type::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--dot, var(--color-accent));
   }
 
-  .latest-type[data-type="project"],
-  .latest-type[data-type="milestone"] {
-    background: var(--color-accent-muted);
-    color: var(--color-accent);
+  .latest-type[data-type='journey'] {
+    --dot: var(--color-type-transition);
   }
 
-  .latest-type[data-type="publication"],
-  .latest-type[data-type="learning"] {
-    background: color-mix(in srgb, var(--color-type-learning) 12%, transparent);
-    color: var(--color-type-learning);
+  .latest-type[data-type='project'] {
+    --dot: var(--color-accent);
   }
 
-  .latest-type[data-type="tool"] {
-    background: color-mix(in srgb, var(--color-type-tool) 12%, transparent);
-    color: var(--color-type-tool);
+  .latest-type[data-type='publication'] {
+    --dot: var(--color-type-learning);
   }
 
-  .latest-type[data-type="blog"] {
-    background: color-mix(in srgb, var(--color-type-blog) 12%, transparent);
-    color: var(--color-type-blog);
+  .latest-type[data-type='tool'] {
+    --dot: var(--color-type-tool);
   }
 
-  :global([data-theme="light"]) .latest-type {
-    background: var(--color-bg);
-  }
-
-  .latest-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    line-height: 1.4;
-    color: var(--color-text);
-  }
-
-  .latest-description {
-    font-size: 0.875rem;
-    line-height: 1.6;
-    color: var(--color-text-secondary);
-    margin-bottom: 0.75rem;
-  }
-
-  .latest-skills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.375rem;
-  }
-
-  .skill-tag {
-    font-size: 0.6875rem;
-    padding: 0.125rem 0.5rem;
-    border-radius: 3px;
-    background: var(--color-bg);
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border);
-  }
-
-  @media (max-width: 768px) {
-    .latest-updates {
-      padding: 3rem 0;
-    }
-
-    .latest-grid {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
+  .latest-type[data-type='blog'] {
+    --dot: var(--color-type-blog);
   }
 </style>

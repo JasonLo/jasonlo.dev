@@ -1,34 +1,35 @@
 /* Global Styles and CSS Custom Properties */
 
 :root {
-  /* Color System - Dark Mode (Sumi & Hinoki — night ground, moss accent) */
-  --color-bg: #16150f;
-  --color-bg-content: #201e16;
-  --color-bg-secondary: #1c1a12;
-  --color-bg-elevated: #2a2619;
-  --color-text: #e7e1d2;
-  --color-text-secondary: #a49d89;
-  --color-text-muted: #938d78;
-  --color-border: #3a3626;
-  --color-border-subtle: #2a2819;
-  --color-accent: #a6b475;
-  --color-accent-hover: #b8c48a;
-  --color-accent-muted: rgba(166, 180, 117, 0.12);
-  --color-accent-glow: rgba(166, 180, 117, 0.2);
+  /* Color System - Graph Paper, dark (default). Ink blue is the base hue;
+     the [data-hue] blocks below override the paper tint and accent only. */
+  --color-text: #e3e6ea;
+  --color-mark: #5c5520;
+  --color-mark-text: #fbf6d0;
+  --color-type-milestone: #d9b54a;
+  --color-type-learning: #7fb8c0;
+  --color-type-transition: #b3a3d6;
+  --color-type-blog: #e39a7f;
+  --color-type-tool: #93c18b;
+  --color-bg: #191c21;
+  --color-bg-content: #1f2329;
+  --color-bg-secondary: #1c2025;
+  --color-bg-elevated: #262b32;
+  --color-border: #343b44;
+  --color-border-subtle: #2a3038;
+  --color-text-secondary: #9ba4ae;
+  --color-text-muted: #8e97a2;
+  --color-accent: #8eb6f2;
+  --color-accent-hover: #a9c7f5;
+  --color-accent-muted: rgba(142, 182, 242, 0.12);
+  --color-accent-glow: var(--color-accent-muted);
 
-  /* Timeline Type Colors — muted earthy set */
-  --color-type-milestone: #d0a95f;  /* ochre */
-  --color-type-learning: #8fa9a6;   /* muted teal */
-  --color-type-transition: #c2a48a; /* warm taupe */
-  --color-type-blog: #cc8462;       /* terracotta */
-  --color-type-tool: #9fae6a;       /* moss */
+  /* Gradients follow the active hue */
+  --gradient-text: linear-gradient(135deg, var(--color-text) 0%, var(--color-accent) 100%);
+  --gradient-accent: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
+  --gradient-card: linear-gradient(135deg, var(--color-accent-muted) 0%, transparent 100%);
+  --gradient-border: linear-gradient(135deg, var(--color-border) 0%, var(--color-border-subtle) 100%);
 
-  /* Gradient Colors */
-  --gradient-text: linear-gradient(135deg, #e7e1d2 0%, #a6b475 100%);
-  --gradient-accent: linear-gradient(135deg, #a6b475 0%, #6a7748 100%);
-  --gradient-card: linear-gradient(135deg, rgba(166, 180, 117, 0.08) 0%, rgba(106, 119, 72, 0.06) 100%);
-  --gradient-border: linear-gradient(135deg, rgba(166, 180, 117, 0.4) 0%, rgba(106, 119, 72, 0.3) 100%);
-  
   /* Spacing System */
   --space-xs: 0.25rem;    /* 4px */
   --space-sm: 0.5rem;     /* 8px */
@@ -40,8 +41,12 @@
   --space-4xl: 6rem;      /* 96px */
   
   /* Font Families */
-  --font-body: system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, 'Times New Roman', serif;
+  --font-body: 'Archivo Variable', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: var(--font-body);
+
+  /* Archivo width axis: wide for headings, narrow for nav, dates and labels */
+  --stretch-display: 118%;
+  --stretch-label: 82%;
 
   /* Typography Scale */
   --font-size-xs: 0.75rem;    /* 12px */
@@ -90,37 +95,212 @@
   --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-/* Light Mode Colors — Sumi & Hinoki (oatmeal paper, sumi ink, deep moss) */
+/* Light Mode Colors - Graph Paper, Ink blue */
 [data-theme="light"] {
-  --color-bg: #e9e4d8;
-  --color-bg-content: #f4efe4;
-  --color-bg-secondary: #e1dccc;
-  --color-bg-elevated: #efe9dc;
-  --color-text: #2c2a23;
-  --color-text-secondary: #605b4c;
-  --color-text-muted: #635d4c;
-  --color-border: #d7cfbd;
-  --color-border-subtle: #ded7c7;
-  --color-accent: #4f5b32;
-  --color-accent-hover: #3c4626;
-  --color-accent-muted: rgba(79, 91, 50, 0.1);
-  --color-accent-glow: rgba(79, 91, 50, 0.15);
+  --color-text: #252930;
+  --color-mark: #f6e86a;
+  --color-mark-text: #252930;
+  --color-type-milestone: #8a6a00;
+  --color-type-learning: #2f6b74;
+  --color-type-transition: #6a5a8c;
+  --color-type-blog: #a3472e;
+  --color-type-tool: #3c6b3a;
+  --color-bg: #e9edf1;
+  --color-bg-content: #f7f9fa;
+  --color-bg-secondary: #e1e6eb;
+  --color-bg-elevated: #ffffff;
+  --color-border: #ccd3db;
+  --color-border-subtle: #e1e6eb;
+  --color-text-secondary: #575f6a;
+  --color-text-muted: #5f6772;
+  --color-accent: #1d58a6;
+  --color-accent-hover: #164684;
+  --color-accent-muted: rgba(29, 88, 166, 0.1);
+  --color-accent-glow: var(--color-accent-muted);
 
-  /* Timeline Type Colors — muted earthy, darkened for paper contrast */
-  --color-type-milestone: #7d5a0e;  /* ochre */
-  --color-type-learning: #3f6360;   /* muted teal */
-  --color-type-transition: #7a5f47; /* warm taupe */
-  --color-type-blog: #a44a24;       /* terracotta */
-  --color-type-tool: #556331;       /* moss */
-
-  /* Light mode gradients */
-  --gradient-text: linear-gradient(135deg, #2c2a23 0%, #4f5b32 100%);
-  --gradient-card: linear-gradient(135deg, rgba(79, 91, 50, 0.05) 0%, rgba(106, 119, 72, 0.04) 100%);
-  
   /* Light mode shadows */
-  --shadow-sm: 0 1px 2px rgba(13, 23, 37, 0.05);
-  --shadow-md: 0 4px 6px rgba(13, 23, 37, 0.08);
-  --shadow-lg: 0 10px 25px rgba(13, 23, 37, 0.12);
+  --shadow-sm: 0 1px 2px rgba(20, 26, 34, 0.05);
+  --shadow-md: 0 4px 6px rgba(20, 26, 34, 0.08);
+  --shadow-lg: 0 10px 25px rgba(20, 26, 34, 0.12);
+}
+
+/* Base hues, chosen by visitors in ThemePicker and stored as `data-hue` on <html>.
+   Selectors are not tied to :root, so any element carrying data-hue (the picker's
+   swatches) resolves that hue's own tokens. Ink blue is repeated here for that reason.
+   Every hue x mode pair meets WCAG AA for text-secondary, text-muted and accent. */
+
+[data-hue="ink"] {
+  --color-bg: #191c21;
+  --color-bg-content: #1f2329;
+  --color-bg-secondary: #1c2025;
+  --color-bg-elevated: #262b32;
+  --color-border: #343b44;
+  --color-border-subtle: #2a3038;
+  --color-text-secondary: #9ba4ae;
+  --color-text-muted: #8e97a2;
+  --color-accent: #8eb6f2;
+  --color-accent-hover: #a9c7f5;
+  --color-accent-muted: rgba(142, 182, 242, 0.12);
+}
+
+[data-theme="light"][data-hue="ink"],
+[data-theme="light"] [data-hue="ink"] {
+  --color-bg: #e9edf1;
+  --color-bg-content: #f7f9fa;
+  --color-bg-secondary: #e1e6eb;
+  --color-bg-elevated: #ffffff;
+  --color-border: #ccd3db;
+  --color-border-subtle: #e1e6eb;
+  --color-text-secondary: #575f6a;
+  --color-text-muted: #5f6772;
+  --color-accent: #1d58a6;
+  --color-accent-hover: #164684;
+  --color-accent-muted: rgba(29, 88, 166, 0.1);
+}
+
+[data-hue="moss"] {
+  --color-bg: #1a1c17;
+  --color-bg-content: #20231c;
+  --color-bg-secondary: #1d2019;
+  --color-bg-elevated: #272b22;
+  --color-border: #363b2e;
+  --color-border-subtle: #2b2f25;
+  --color-text-secondary: #a2a894;
+  --color-text-muted: #959b87;
+  --color-accent: #b0c27a;
+  --color-accent-hover: #c3d295;
+  --color-accent-muted: rgba(176, 194, 122, 0.12);
+}
+
+[data-theme="light"][data-hue="moss"],
+[data-theme="light"] [data-hue="moss"] {
+  --color-bg: #e9ece4;
+  --color-bg-content: #f7f8f4;
+  --color-bg-secondary: #e0e4d9;
+  --color-bg-elevated: #fdfdfb;
+  --color-border: #cbd1c0;
+  --color-border-subtle: #e0e4d9;
+  --color-text-secondary: #585f4f;
+  --color-text-muted: #5f6656;
+  --color-accent: #4a5f22;
+  --color-accent-hover: #3a4b1a;
+  --color-accent-muted: rgba(74, 95, 34, 0.1);
+}
+
+[data-hue="teal"] {
+  --color-bg: #161d1e;
+  --color-bg-content: #1b2425;
+  --color-bg-secondary: #192122;
+  --color-bg-elevated: #222c2d;
+  --color-border: #2f3d3e;
+  --color-border-subtle: #263234;
+  --color-text-secondary: #96a8a9;
+  --color-text-muted: #8a9c9d;
+  --color-accent: #6fc9c9;
+  --color-accent-hover: #8fd8d8;
+  --color-accent-muted: rgba(111, 201, 201, 0.12);
+}
+
+[data-theme="light"][data-hue="teal"],
+[data-theme="light"] [data-hue="teal"] {
+  --color-bg: #e5eeee;
+  --color-bg-content: #f5f9f9;
+  --color-bg-secondary: #dce7e7;
+  --color-bg-elevated: #fdfefe;
+  --color-border: #c4d4d4;
+  --color-border-subtle: #dce7e7;
+  --color-text-secondary: #526364;
+  --color-text-muted: #59696a;
+  --color-accent: #0f6a6e;
+  --color-accent-hover: #0b5356;
+  --color-accent-muted: rgba(15, 106, 110, 0.1);
+}
+
+[data-hue="plum"] {
+  --color-bg: #1d1a20;
+  --color-bg-content: #242027;
+  --color-bg-secondary: #201d23;
+  --color-bg-elevated: #2c2730;
+  --color-border: #3d3542;
+  --color-border-subtle: #312b36;
+  --color-text-secondary: #a99fae;
+  --color-text-muted: #9c92a2;
+  --color-accent: #d4a3e0;
+  --color-accent-hover: #e0bbe9;
+  --color-accent-muted: rgba(212, 163, 224, 0.12);
+}
+
+[data-theme="light"][data-hue="plum"],
+[data-theme="light"] [data-hue="plum"] {
+  --color-bg: #ede9ef;
+  --color-bg-content: #f9f7fa;
+  --color-bg-secondary: #e5e0e8;
+  --color-bg-elevated: #fefdfe;
+  --color-border: #d4cbd9;
+  --color-border-subtle: #e5e0e8;
+  --color-text-secondary: #605869;
+  --color-text-muted: #675f70;
+  --color-accent: #7a3b85;
+  --color-accent-hover: #612e6a;
+  --color-accent-muted: rgba(122, 59, 133, 0.1);
+}
+
+[data-hue="rust"] {
+  --color-bg: #1f1b19;
+  --color-bg-content: #26211e;
+  --color-bg-secondary: #221e1b;
+  --color-bg-elevated: #2e2825;
+  --color-border: #413833;
+  --color-border-subtle: #352e2a;
+  --color-text-secondary: #ad9f97;
+  --color-text-muted: #a0928a;
+  --color-accent: #ef9a72;
+  --color-accent-hover: #f4b291;
+  --color-accent-muted: rgba(239, 154, 114, 0.12);
+}
+
+[data-theme="light"][data-hue="rust"],
+[data-theme="light"] [data-hue="rust"] {
+  --color-bg: #efeae6;
+  --color-bg-content: #faf7f5;
+  --color-bg-secondary: #e8e1dc;
+  --color-bg-elevated: #fefdfc;
+  --color-border: #dacdc4;
+  --color-border-subtle: #e8e1dc;
+  --color-text-secondary: #645a54;
+  --color-text-muted: #6a605a;
+  --color-accent: #a1421c;
+  --color-accent-hover: #823516;
+  --color-accent-muted: rgba(161, 66, 28, 0.1);
+}
+
+[data-hue="graphite"] {
+  --color-bg: #1b1b1c;
+  --color-bg-content: #222223;
+  --color-bg-secondary: #1e1e1f;
+  --color-bg-elevated: #2a2a2b;
+  --color-border: #3a3a3c;
+  --color-border-subtle: #2e2e30;
+  --color-text-secondary: #a3a3a6;
+  --color-text-muted: #96969a;
+  --color-accent: #e3e6ea;
+  --color-accent-hover: #ffffff;
+  --color-accent-muted: rgba(227, 230, 234, 0.12);
+}
+
+[data-theme="light"][data-hue="graphite"],
+[data-theme="light"] [data-hue="graphite"] {
+  --color-bg: #ebebeb;
+  --color-bg-content: #f8f8f8;
+  --color-bg-secondary: #e2e2e2;
+  --color-bg-elevated: #ffffff;
+  --color-border: #cfcfcf;
+  --color-border-subtle: #e2e2e2;
+  --color-text-secondary: #5a5a5a;
+  --color-text-muted: #616161;
+  --color-accent: #252930;
+  --color-accent-hover: #4a4f57;
+  --color-accent-muted: rgba(37, 41, 48, 0.1);
 }
 
 /* CSS Reset and Base Styles */

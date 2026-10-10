@@ -1,0 +1,326 @@
+---
+/**
+ * Appearance picker: light / dark / system mode plus a base hue.
+ * Mode lives in `data-theme` + localStorage `theme` (absent = system).
+ * Hue lives in `data-hue` + localStorage `hue` (absent = ink blue).
+ * Hue tokens are defined in global.css; each swatch carries its own
+ * `data-hue`, so it renders that hue's paper and accent without
+ * duplicating any color values here.
+ */
+const modes = [
+  { id: 'light', label: 'Light' },
+  { id: 'dark', label: 'Dark' },
+  { id: 'system', label: 'System' },
+];
+
+const hues = [
+  { id: 'ink', label: 'Ink blue' },
+  { id: 'moss', label: 'Moss' },
+  { id: 'teal', label: 'Teal' },
+  { id: 'plum', label: 'Plum' },
+  { id: 'rust', label: 'Rust' },
+  { id: 'graphite', label: 'Graphite' },
+];
+---
+
+<div class="theme-picker">
+  <button
+    class="tp-btn"
+    type="button"
+    aria-expanded="false"
+    aria-controls="theme-picker-panel"
+    aria-label="Appearance"
+    title="Appearance"
+  >
+    <span class="tp-dot" aria-hidden="true"></span>
+    <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+      <path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" />
+    </svg>
+  </button>
+
+  <div class="tp-panel" id="theme-picker-panel" hidden>
+    <div class="tp-group">
+      <span class="tp-label" id="tp-mode-label">Mode</span>
+      <div class="tp-seg" role="radiogroup" aria-labelledby="tp-mode-label" data-group="mode">
+        {modes.map((m) => (
+          <button type="button" role="radio" aria-checked="false" tabindex="-1" data-value={m.id}>
+            {m.label}
+          </button>
+        ))}
+      </div>
+    </div>
+    <div class="tp-group">
+      <span class="tp-label" id="tp-hue-label">
+        Color <b class="tp-hue-name">Ink blue</b>
+      </span>
+      <div class="tp-hues" role="radiogroup" aria-labelledby="tp-hue-label" data-group="hue">
+        {hues.map((h) => (
+          <button
+            type="button"
+            role="radio"
+            aria-checked="false"
+            tabindex="-1"
+            data-value={h.id}
+            data-hue={h.id}
+            aria-label={h.label}
+            title={h.label}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .theme-picker {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .tp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 44px;
+    height: 44px;
+    padding: 0 8px;
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: color var(--transition-fast), background var(--transition-fast);
+  }
+
+  .tp-btn:hover,
+  .tp-btn[aria-expanded='true'] {
+    color: var(--color-text);
+    background: var(--color-bg-secondary);
+  }
+
+  .tp-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, var(--color-bg-content) 50%, var(--color-accent) 50%);
+    box-shadow: 0 0 0 1px var(--color-border);
+  }
+
+  .tp-panel {
+    /* Resolved here so swatches (which carry their own data-hue) keep the panel's surface. */
+    --tp-surface: var(--color-bg-elevated);
+    --tp-ring: var(--color-text);
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    z-index: 200;
+    width: 264px;
+    max-width: calc(100vw - 32px);
+    display: grid;
+    gap: var(--space-md);
+    padding: 14px;
+    background: var(--tp-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .tp-group {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .tp-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    font-stretch: var(--stretch-label);
+    color: var(--color-text-secondary);
+  }
+
+  .tp-label b {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+  }
+
+  .tp-seg {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+  }
+
+  .tp-seg button {
+    font: inherit;
+    font-size: 0.875rem;
+    padding: 6px 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+
+  .tp-seg button + button {
+    border-left: 1px solid var(--color-border);
+  }
+
+  .tp-seg button:hover {
+    color: var(--color-text);
+  }
+
+  .tp-seg button[aria-checked='true'] {
+    background: var(--color-text);
+    color: var(--tp-surface);
+  }
+
+  .tp-hues {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+  }
+
+  .tp-hues button {
+    aspect-ratio: 1;
+    border: 0;
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+    /* Tokens here resolve to the swatch's own data-hue. */
+    background: linear-gradient(90deg, var(--color-bg-content) 50%, var(--color-accent) 50%);
+    box-shadow: inset 0 0 0 1px var(--color-border);
+  }
+
+  .tp-hues button[aria-checked='true'] {
+    box-shadow:
+      inset 0 0 0 1px var(--color-border),
+      0 0 0 2px var(--tp-surface),
+      0 0 0 4px var(--tp-ring);
+  }
+
+  .tp-btn:focus-visible,
+  .tp-seg button:focus-visible,
+  .tp-hues button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  type Group = 'mode' | 'hue';
+
+  const root = document.documentElement;
+  const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+  const getMode = () => localStorage.getItem('theme') ?? 'system';
+  const getHue = () => localStorage.getItem('hue') ?? 'ink';
+
+  const applyMode = (mode: string) => {
+    if (mode === 'system') {
+      localStorage.removeItem('theme');
+      root.setAttribute('data-theme', darkQuery.matches ? 'dark' : 'light');
+    } else {
+      localStorage.setItem('theme', mode);
+      root.setAttribute('data-theme', mode);
+    }
+  };
+
+  const applyHue = (hue: string) => {
+    if (hue === 'ink') {
+      localStorage.removeItem('hue');
+      root.removeAttribute('data-hue');
+    } else {
+      localStorage.setItem('hue', hue);
+      root.setAttribute('data-hue', hue);
+    }
+  };
+
+  const sync = () => {
+    const picker = document.querySelector('.theme-picker');
+    if (!picker) return;
+    const values: Record<Group, string> = { mode: getMode(), hue: getHue() };
+    picker.querySelectorAll<HTMLElement>('[role="radiogroup"]').forEach((group) => {
+      const current = values[group.dataset.group as Group];
+      group.querySelectorAll<HTMLButtonElement>('[role="radio"]').forEach((radio) => {
+        const on = radio.dataset.value === current;
+        radio.setAttribute('aria-checked', String(on));
+        radio.tabIndex = on ? 0 : -1;
+      });
+    });
+    const hueRadio = picker.querySelector<HTMLButtonElement>(`[data-group="hue"] [data-value="${values.hue}"]`);
+    const hueLabel = hueRadio?.getAttribute('aria-label') ?? 'Ink blue';
+    const name = picker.querySelector('.tp-hue-name');
+    if (name) name.textContent = hueLabel;
+    const modeLabel = values.mode === 'system' ? 'system mode' : `${values.mode} mode`;
+    picker.querySelector('.tp-btn')?.setAttribute('aria-label', `Appearance: ${hueLabel}, ${modeLabel}`);
+  };
+
+  const choose = (group: Group, value: string) => {
+    if (group === 'mode') applyMode(value);
+    else applyHue(value);
+    sync();
+  };
+
+  const setOpen = (open: boolean, focusTarget?: 'panel' | 'button') => {
+    const btn = document.querySelector<HTMLButtonElement>('.tp-btn');
+    const panel = document.querySelector<HTMLElement>('.tp-panel');
+    if (!btn || !panel) return;
+    panel.hidden = !open;
+    btn.setAttribute('aria-expanded', String(open));
+    if (open && focusTarget === 'panel') {
+      panel.querySelector<HTMLButtonElement>('[role="radio"][tabindex="0"]')?.focus();
+    }
+    if (!open && focusTarget === 'button') btn.focus();
+  };
+
+  // Delegated listeners: the header persists across ClientRouter navigations,
+  // and delegation keeps this correct even if it is ever re-rendered.
+  document.addEventListener('click', (e) => {
+    const target = e.target as Element;
+    if (target.closest('.tp-btn')) {
+      const panel = document.querySelector<HTMLElement>('.tp-panel');
+      setOpen(Boolean(panel?.hidden), 'panel');
+      return;
+    }
+    const radio = target.closest<HTMLButtonElement>('.tp-panel [role="radio"]');
+    if (radio) {
+      const group = radio.closest<HTMLElement>('[role="radiogroup"]')?.dataset.group as Group;
+      choose(group, radio.dataset.value ?? '');
+      return;
+    }
+    if (!target.closest('.theme-picker')) setOpen(false);
+  });
+
+  const STEP: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+
+  document.addEventListener('keydown', (e) => {
+    const panel = document.querySelector<HTMLElement>('.tp-panel');
+    if (!panel || panel.hidden) return;
+    if (e.key === 'Escape') {
+      setOpen(false, 'button');
+      return;
+    }
+    const step = STEP[e.key];
+    const group = (e.target as Element).closest<HTMLElement>('.tp-panel [role="radiogroup"]');
+    if (!step || !group) return;
+    e.preventDefault();
+    const radios = [...group.querySelectorAll<HTMLButtonElement>('[role="radio"]')];
+    const index = radios.indexOf(document.activeElement as HTMLButtonElement);
+    const next = radios[(index + step + radios.length) % radios.length];
+    choose(group.dataset.group as Group, next.dataset.value ?? '');
+    next.focus();
+  });
+
+  // Close when focus leaves the picker (e.g. tabbing past the last swatch).
+  document.addEventListener('focusin', (e) => {
+    if (!(e.target as Element).closest('.theme-picker')) setOpen(false);
+  });
+
+  darkQuery.addEventListener('change', (e) => {
+    if (getMode() === 'system') root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+  });
+
+  document.addEventListener('astro:page-load', sync);
+</script>
