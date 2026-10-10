@@ -127,6 +127,11 @@ const hues = [
     box-shadow: var(--shadow-lg);
   }
 
+  /* `display: grid` above would otherwise override the UA [hidden] rule. */
+  .tp-panel[hidden] {
+    display: none;
+  }
+
   .tp-group {
     display: grid;
     gap: var(--space-sm);
