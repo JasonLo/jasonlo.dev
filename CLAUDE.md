@@ -49,6 +49,12 @@ and do not collide.
 - **`scripts/generate-og-image.ts`** — Renders `public/og-image.png` (1200x630) from the palette in `global.css` and the identity in `config.ts`. The name is drawn with the brand wordmark's vector path, so it carries no font dependency; the smaller lines are text and do resolve against system fonts. Re-run with `bun run og-image` after changing the author name, title, location, tagline, or palette.
 - **`scripts/sync-publications-fused.ts`** — Fused publication sync that fetches journal articles from ORCID (public, no auth) and OpenAlex (optional `OPENALEX_API_KEY`), deduplicates by DOI / title slug, merges best fields, and writes MDX to `src/content/publications/`. Run with `bun run scripts/sync-publications-fused.ts`.
 
+## Git Workflow
+
+This is a single-branch repo: work directly on `main`, no feature branches or PRs.
+Commit to `main` automatically once a task is complete, without asking. Never push;
+the user pushes manually.
+
 ## Deployment
 
 GitHub Pages via GitHub Actions. Custom domain `jasonlo.dev` configured. The `OPENALEX_API_KEY` secret is stored in GitHub Actions secrets for the publication sync workflow (`sync-publications-fused.yml`).
