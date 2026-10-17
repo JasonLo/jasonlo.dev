@@ -1,0 +1,54 @@
+---
+title: "Boundaries Are the Job Now"
+description: "Drawing software boundaries used to be architect work. Now that coding agents handle most of what sits inside a boundary, deciding where the boundaries go is the part of the job developers should move up to."
+publishDate: 2026-10-17
+tags:
+  - AI
+  - Coding Agent
+  - Software Architecture
+  - Opinion
+draft: true
+updatedDate: 2026-10-17
+---
+
+I recently read ByteByteGo's [How Software Boundaries Are the Most Important Skill for Developers](https://blog.bytebytego.com/p/how-software-boundaries-are-the-most). Its premise is simple: no matter how big a system gets, it still has a boundary. A good boundary keeps a set of responsibilities, their rules, and the details needed to apply those rules together, and everything outside can only reach in through a clear interface. Designing one comes down to two decisions: which responsibilities belong together, and which dependencies should exist between the resulting parts.
+
+I agree with all of it. But I think the title undersells how true it has become, and the reason is AI coding.
+
+## Who used to draw the lines
+
+For most of my career, boundary decisions were not really a developer's job. They belonged to whoever held the title of architect or systems engineer. Someone senior decided that billing is its own service, that the ingestion pipeline does not know about the UI, that this module owns the schema and nobody else touches it. Then the rest of us filled in the boxes.
+
+That division of labor made sense. Filling in the boxes was most of the work. Writing the handlers, the queries, the tests, the glue between them took the bulk of a team's time, and it was where most developers built their skill.
+
+## The inside of the box got cheap
+
+Coding agents are now very good at the inside of a box. Give one a well-scoped module with a clear interface and a clear set of rules, and it will produce a working implementation, often faster than I can review it. The lower end of the work, the part that used to occupy most developer hours, has largely been absorbed.
+
+What agents are not good at is deciding where the box goes. Ask one to "add this feature" in a codebase without clear boundaries and it will happily reach across layers, duplicate a rule that already lives somewhere else, and wire a new dependency into whatever is closest. The code compiles. The tests pass. The structure quietly gets worse with every change.
+
+This is not a model failure so much as a missing input. An agent works inside the context it is given. If the boundaries are not in the code, the docs, or the prompt, the agent has nothing to respect.
+
+## Boundaries are what make agents work
+
+The flip side is that good boundaries make agents dramatically more effective:
+
+- **Smaller context.** A module with a clean interface can be understood without loading the rest of the system. That is exactly what an agent with a finite context window needs.
+- **Contained mistakes.** When an agent gets something wrong inside a well-bounded component, the damage stays inside it. When there are no boundaries, a wrong guess leaks everywhere.
+- **Verifiable contracts.** A clear interface is something you can test against. It turns "does this look right?" into "does this satisfy the contract?", which is a question both humans and agents can answer.
+- **Parallel work.** Independent components can be handed to independent agents. Tangled code forces everything through one serial thread of attention.
+
+In other words, the two decisions from the article (what belongs together, and what may depend on what) are now the highest-leverage decisions in an AI-assisted codebase. Everything downstream of them is increasingly automated.
+
+## Time to move up
+
+So here is my takeaway. If the inside of the box is becoming the agent's job, the developer's job moves up a level, to the work that used to sit with architects and systems engineers:
+
+1. **Decide the responsibilities.** Which rules live together, and which component is the single owner of each one.
+2. **Decide the dependencies.** Which way they point, and which ones are forbidden.
+3. **Make the boundaries legible.** Write them down where both people and agents will see them: interfaces, module structure, and the instruction files agents read.
+4. **Review for shape, not just correctness.** When reviewing agent output, the first question is no longer "is this line right?" but "did this change respect the boundaries?"
+
+This is not a promotion anyone hands out. Boundary design comes mostly from experience, from living with the consequences of a bad split. The good news is that agents make those consequences show up faster. You can try a structure, watch how well an agent works inside it, and adjust in days instead of quarters.
+
+The developers who treat that as the new core of the job will do fine. The ones who keep competing with agents on the inside of the box are competing on the part of the work that is getting cheaper every month.
