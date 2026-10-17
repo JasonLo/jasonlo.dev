@@ -1,6 +1,6 @@
 ---
 title: "Boundaries Are the Job Now"
-description: "Drawing software boundaries used to be architect work. Now that coding agents handle most of what sits inside a boundary, deciding where the boundaries go is the part of the job developers should move up to."
+description: "Deciding the structure of a system used to be systems engineering work. Now that coding agents handle the implementation, it is the work developers should move up to."
 publishDate: 2026-10-17
 tags:
   - AI
@@ -11,44 +11,31 @@ draft: true
 updatedDate: 2026-10-17
 ---
 
-I recently read ByteByteGo's [How Software Boundaries Are the Most Important Skill for Developers](https://blog.bytebytego.com/p/how-software-boundaries-are-the-most). Its premise is simple: no matter how big a system gets, it still has a boundary. A good boundary keeps a set of responsibilities, their rules, and the details needed to apply those rules together, and everything outside can only reach in through a clear interface. Designing one comes down to two decisions: which responsibilities belong together, and which dependencies should exist between the resulting parts.
+Deciding the shape of a system, what the parts are, what each one owns, and how they talk to each other, used to be the job of systems engineers and architects. Most developers worked inside those parts. That is where the hours went, and where most of us learned the craft.
 
-I agree with all of it. But I think the title undersells how true it has become, and the reason is AI coding.
+Coding agents have taken over much of that inside work. I think that means developers need to move up.
 
-## Who used to draw the lines
+## Agents are the new subcontractors
 
-For most of my career, boundary decisions were not really a developer's job. They belonged to whoever held the title of architect or systems engineer. Someone senior decided that billing is its own service, that the ingestion pipeline does not know about the UI, that this module owns the schema and nobody else touches it. Then the rest of us filled in the boxes.
+Systems engineering grew out of a specific problem: the people who designed a system were not the people who built its pieces. Subsystems went to other teams or other companies, so the engineer's job was to specify each piece well enough that someone else could build it, and then to verify that the pieces fit.
 
-That division of labor made sense. Filling in the boxes was most of the work. Writing the handlers, the queries, the tests, the glue between them took the bulk of a team's time, and it was where most developers built their skill.
+That is now the everyday situation with coding agents. Give an agent a well-scoped component with a clear interface and clear rules, and it will build it. Give it a vague task in a codebase with no clear structure, and it will reach across layers, duplicate rules that already live elsewhere, and wire in whatever dependency is closest. The tests pass and the system gets worse.
 
-## The inside of the box got cheap
+The agent is not the problem. It works within the structure it is handed. If nobody designed that structure, there is nothing for it to respect.
 
-Coding agents are now very good at the inside of a box. Give one a well-scoped module with a clear interface and a clear set of rules, and it will produce a working implementation, often faster than I can review it. The lower end of the work, the part that used to occupy most developer hours, has largely been absorbed.
+## The box is not the system
 
-What agents are not good at is deciding where the box goes. Ask one to "add this feature" in a codebase without clear boundaries and it will happily reach across layers, duplicate a rule that already lives somewhere else, and wire a new dependency into whatever is closest. The code compiles. The tests pass. The structure quietly gets worse with every change.
+An agent can make every component correct and the system can still fail. Retry storms, inconsistent data, latency that compounds across calls, security that no single module owns: these live between the parts, not inside them. That gap is exactly what systems engineering exists to manage, and it is the part of the work that does not get cheaper when code does.
 
-This is not a model failure so much as a missing input. An agent works inside the context it is given. If the boundaries are not in the code, the docs, or the prompt, the agent has nothing to respect.
+Structure also used to form on its own. Conway's law says a system mirrors the communication structure of the team that builds it, so boundaries emerged from who talked to whom. When agents write most of the code, that force weakens. The structure has to be designed on purpose, or it will not exist.
 
-## Boundaries are what make agents work
+## Moving up
 
-The flip side is that good boundaries make agents dramatically more effective:
+So the developer's job shifts toward what systems engineers have always done:
 
-- **Smaller context.** A module with a clean interface can be understood without loading the rest of the system. That is exactly what an agent with a finite context window needs.
-- **Contained mistakes.** When an agent gets something wrong inside a well-bounded component, the damage stays inside it. When there are no boundaries, a wrong guess leaks everywhere.
-- **Verifiable contracts.** A clear interface is something you can test against. It turns "does this look right?" into "does this satisfy the contract?", which is a question both humans and agents can answer.
-- **Parallel work.** Independent components can be handed to independent agents. Tangled code forces everything through one serial thread of attention.
+- **Allocate responsibility.** Every rule has exactly one owner.
+- **Treat interfaces as contracts.** Write them down, version them, test against them.
+- **Record the tradeoffs.** Why the boundary is here and not there.
+- **Verify the whole, not just the parts.** Plan for integration, not only unit correctness.
 
-In other words, the two decisions from the article (what belongs together, and what may depend on what) are now the highest-leverage decisions in an AI-assisted codebase. Everything downstream of them is increasingly automated.
-
-## Time to move up
-
-So here is my takeaway. If the inside of the box is becoming the agent's job, the developer's job moves up a level, to the work that used to sit with architects and systems engineers:
-
-1. **Decide the responsibilities.** Which rules live together, and which component is the single owner of each one.
-2. **Decide the dependencies.** Which way they point, and which ones are forbidden.
-3. **Make the boundaries legible.** Write them down where both people and agents will see them: interfaces, module structure, and the instruction files agents read.
-4. **Review for shape, not just correctness.** When reviewing agent output, the first question is no longer "is this line right?" but "did this change respect the boundaries?"
-
-This is not a promotion anyone hands out. Boundary design comes mostly from experience, from living with the consequences of a bad split. The good news is that agents make those consequences show up faster. You can try a structure, watch how well an agent works inside it, and adjust in days instead of quarters.
-
-The developers who treat that as the new core of the job will do fine. The ones who keep competing with agents on the inside of the box are competing on the part of the work that is getting cheaper every month.
+This is not easy, and it raises a real question: the judgment to draw good boundaries used to come from years of working inside them. If agents do that work, developers will have to build that judgment some other way. I do not have a full answer. But the work at the bottom is getting cheaper every month, and the work at the top is not. That is where I am heading.
